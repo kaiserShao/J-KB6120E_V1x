@@ -11,7 +11,6 @@ void	mDelay0_5uS( void )  /* 至少延时0.5uS,根据单片机主频调整 */
 
 void	CH376_PORT_INIT( void )  /* 由于使用SPI读写时序,所以进行初始化 */
 {
-	NVI_Init();
 	INT_IRQ_Enable();
 	SPI3_GPIO_Config();
 /* 如果是硬件SPI接口,那么可使用mode3(CPOL=1&CPHA=1)或mode0(CPOL=0&CPHA=0),CH376在时钟上升沿采样输入,下降沿输出,数据位是高位在前 */
