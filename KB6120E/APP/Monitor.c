@@ -144,42 +144,76 @@ void	show_env_state( void )
 }
 static	FP32	fstdx[4][PP_Max];
 static	FP32	fstd, flow;
-void Sampler_TdMonitor( enum enumSamplerSelect SamplerSelect )
-{	
-  FP32	Te   = get_Te();
-  FP32	Ba   = get_Ba();
-  switch(  SamplerSelect )
-  {	
-    case Q_TSP:
-      fstdx[0][PP_TSP] = fstdx[1][PP_TSP];
-      fstdx[1][PP_TSP] = fstdx[2][PP_TSP];
-      fstdx[2][PP_TSP] = fstdx[3][PP_TSP];
-      fstdx[3][PP_TSP] = get_fstd( PP_TSP );
-      break;
-    case Q_SHI:
-      fstdx[0][PP_SHI_C] = fstdx[1][PP_SHI_C];
-      fstdx[1][PP_SHI_C] = fstdx[2][PP_SHI_C];
-      fstdx[2][PP_SHI_C] = fstdx[3][PP_SHI_C];
-      fstdx[3][PP_SHI_C] = get_fstd( PP_SHI_C );
-      fstdx[0][PP_SHI_D] = fstdx[1][PP_SHI_D];
-      fstdx[1][PP_SHI_D] = fstdx[2][PP_SHI_D];
-      fstdx[2][PP_SHI_D] = fstdx[3][PP_SHI_D];
-      fstdx[3][PP_SHI_D] = get_fstd( PP_SHI_D );
-      break;
-    case Q_R24:
-      fstdx[0][PP_R24_A] = fstdx[1][PP_R24_A];
-      fstdx[1][PP_R24_A] = fstdx[2][PP_R24_A];
-      fstdx[2][PP_R24_A] = fstdx[3][PP_R24_A];
-      fstdx[3][PP_R24_A] = get_fstd( PP_R24_A );
-      fstdx[0][PP_R24_B] = fstdx[1][PP_R24_B];
-      fstdx[1][PP_R24_B] = fstdx[2][PP_R24_B];
-      fstdx[2][PP_R24_B] = fstdx[3][PP_R24_B];
-      fstdx[3][PP_R24_B] = get_fstd( PP_R24_B );
-      break;
-    default:  
-      break;
-  }
- 
+static	void Sampler_Tdfilter( void )
+{		
+//   switch(  SamplerSelect )
+//   {	
+//     case Q_TSP:
+//       fstdx[0][PP_TSP] = fstdx[1][PP_TSP];
+//       fstdx[1][PP_TSP] = fstdx[2][PP_TSP];
+//       fstdx[2][PP_TSP] = fstdx[3][PP_TSP];
+//       fstdx[3][PP_TSP] = get_fstd( PP_TSP );
+//       break;
+//     case Q_SHI:
+//       fstdx[0][PP_SHI_C] = fstdx[1][PP_SHI_C];
+//       fstdx[1][PP_SHI_C] = fstdx[2][PP_SHI_C];
+//       fstdx[2][PP_SHI_C] = fstdx[3][PP_SHI_C];
+//       fstdx[3][PP_SHI_C] = get_fstd( PP_SHI_C );
+//       fstdx[0][PP_SHI_D] = fstdx[1][PP_SHI_D];
+//       fstdx[1][PP_SHI_D] = fstdx[2][PP_SHI_D];
+//       fstdx[2][PP_SHI_D] = fstdx[3][PP_SHI_D];
+//       fstdx[3][PP_SHI_D] = get_fstd( PP_SHI_D );
+//       break;
+//     case Q_R24:
+//       fstdx[0][PP_R24_A] = fstdx[1][PP_R24_A];
+//       fstdx[1][PP_R24_A] = fstdx[2][PP_R24_A];
+//       fstdx[2][PP_R24_A] = fstdx[3][PP_R24_A];
+//       fstdx[3][PP_R24_A] = get_fstd( PP_R24_A );
+//       fstdx[0][PP_R24_B] = fstdx[1][PP_R24_B];
+//       fstdx[1][PP_R24_B] = fstdx[2][PP_R24_B];
+//       fstdx[2][PP_R24_B] = fstdx[3][PP_R24_B];
+//       fstdx[3][PP_R24_B] = get_fstd( PP_R24_B );
+//       break;
+//     default:  
+//       break;
+//   }
+	static	uint32_t now,lastsec;
+	now = get_Now();
+	if( lastsec != now )
+	{
+		lastsec = now; 
+		if( Sampler_isRunning( Q_TSP ) )
+		{
+			fstdx[0][PP_TSP] = fstdx[1][PP_TSP];
+			fstdx[1][PP_TSP] = fstdx[2][PP_TSP];
+			fstdx[2][PP_TSP] = fstdx[3][PP_TSP];
+			fstdx[3][PP_TSP] = get_fstd( PP_TSP );
+		}    
+		if( Sampler_isRunning( Q_SHI ) )
+		{
+			fstdx[0][PP_SHI_C] = fstdx[1][PP_SHI_C];
+			fstdx[1][PP_SHI_C] = fstdx[2][PP_SHI_C];
+			fstdx[2][PP_SHI_C] = fstdx[3][PP_SHI_C];
+			fstdx[3][PP_SHI_C] = get_fstd( PP_SHI_C );
+			
+			fstdx[0][PP_SHI_D] = fstdx[1][PP_SHI_D];
+			fstdx[1][PP_SHI_D] = fstdx[2][PP_SHI_D];
+			fstdx[2][PP_SHI_D] = fstdx[3][PP_SHI_D];
+			fstdx[3][PP_SHI_D] = get_fstd( PP_SHI_D );
+		}
+		if( Sampler_isRunning( Q_R24 ) )
+		{		
+			fstdx[0][PP_R24_A] = fstdx[1][PP_R24_A];
+			fstdx[1][PP_R24_A] = fstdx[2][PP_R24_A];
+			fstdx[2][PP_R24_A] = fstdx[3][PP_R24_A];
+			fstdx[3][PP_R24_A] = get_fstd( PP_R24_A );
+			
+			fstdx[0][PP_R24_B] = fstdx[1][PP_R24_B];
+			fstdx[1][PP_R24_B] = fstdx[2][PP_R24_B];
+			fstdx[2][PP_R24_B] = fstdx[3][PP_R24_B];
+			fstdx[3][PP_R24_B] = get_fstd( PP_R24_B ); 
+		}
+	}	  
 }
 /********************************** 功能说明 ***********************************
 *  显示指定采样器的时间状态
@@ -189,7 +223,6 @@ static	void	ShowTimeState ( enum enumSamplerSelect SamplerSelect, enum enumPumpS
 	struct uSamplerQuery * p = & Q_Sampler[SamplerSelect];
 	FP32	Te   = get_Te();
 	FP32	Ba   = get_Ba();  
-  Sampler_TdMonitor(  SamplerSelect ); 
 	Lputs ( 0x0000u, "时间 " );
 	switch ( p->state )
 	{
@@ -211,7 +244,6 @@ static	void	ShowTimeState ( enum enumSamplerSelect SamplerSelect, enum enumPumpS
 *******************************************************************************/
 static	void	ShowPumpBefore( enum enumPumpSelect PumpSelect )
 {  
-  Sampler_TdMonitor(  SamplerSelect ); 
 	Lputs ( 0x0000u, "工 况" );
 	{
 		Lputs ( 0x0200u, "温  度:" );	ShowFP32 ( 0x0207u, get_Tr( PumpSelect ), 0x0602u, "℃" );
@@ -226,7 +258,6 @@ static	void	ShowPumpBefore( enum enumPumpSelect PumpSelect )
 static	void	ShowPumpRunFlow( enum enumPumpSelect PumpSelect )
 {
 	Lputs ( 0x0000u, "流 量" );
-	Sampler_TdMonitor(  SamplerSelect ); 
 	if ( ! Q_Pump[PumpSelect].xp_state )
 	{
 		Lputs( 0x0200u, "                " );
@@ -277,7 +308,6 @@ static	void	ShowPumpRunFlow( enum enumPumpSelect PumpSelect )
 static	void	ShowSumCubage( enum enumPumpSelect PumpSelect )
 {
 	struct	uPumpQuery * p = &Q_Pump[PumpSelect];
-	Sampler_TdMonitor(  SamplerSelect ); 
 	Lputs ( 0x0000u, "累 计" );
 	switch (PumpSelect )
 	{
@@ -308,7 +338,6 @@ static	void	ShowSumCubage( enum enumPumpSelect PumpSelect )
 *******************************************************************************/
 static	void	ShowHCBox( void )
 {   
-  Sampler_TdMonitor(  SamplerSelect ); 
 	switch ( Configure.HeaterType )
 	{
 	default:
@@ -411,7 +440,7 @@ void	disposeKey( const enum enumSamplerSelect SamplerSelect, uint8_t * pOption, 
 	{
 		PumpSelect = PP_Max;
 	}
-	
+	Sampler_Tdfilter();
 	if ( hitKey ( 100u ) )
 	{
 		switch ( getKey() )
@@ -722,9 +751,9 @@ void	monitor ( void )
 {
 
 	while ( Sampler_isRunning( SamplerSelect ) )
-	{
+	{		
+// 		SampleShowState[SamplerSelect] = TRUE;
 		cls();
-		SampleFinishFState[SamplerSelect] = TRUE;
 		switch ( SamplerSelect )
 		{
 		default:	

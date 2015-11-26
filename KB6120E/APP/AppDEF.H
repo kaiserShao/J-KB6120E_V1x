@@ -277,7 +277,7 @@ extern	void	EditionSelsct( void );
 extern	void	show_std_clock( void );
 
 //	SampleSet.c
-extern	BOOL SampleFinishFState[SamplerNum_Max];
+extern	BOOL SampleShowState[SamplerNum_Max];
 #include "SENSOR.H"
 #include "EEPROM.H"
 

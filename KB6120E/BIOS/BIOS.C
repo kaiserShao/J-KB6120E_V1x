@@ -1118,7 +1118,7 @@ static	void	NVIC_Init( void )
 	NVIC_EnableIRQ( EXTI3_IRQn );
 	NVIC_EnableIRQ( EXTI4_IRQn );
 	NVIC_EnableIRQ( EXTI9_5_IRQn );
-
+	NVIC_EnableIRQ( EXTI15_10_IRQn );
 	//	for MODBUS.
 	NVIC_EnableIRQ( TIM4_IRQn );
 	NVIC_EnableIRQ( USART3_IRQn );
