@@ -374,15 +374,13 @@ void Samplestate_Select( BOOL state )
 {
 	static	struct  uMenu	menu1[] =
     {
-        { 0x0103u, "设置采样状态" },
-        { 0x0300u, "暂停" },{ 0x0305u, "停止" },{ 0x030au, "取消" }
-		
+			{ 0x0103u, "设置采样状态" },
+			{ 0x0300u, "暂停" },{ 0x0305u, "停止" },{ 0x030au, "取消" }		
     };
 	static	struct  uMenu	menu2[] =
     {
-        { 0x0103u, "设置采样状态" },
-        { 0x0300u, "恢复" },{ 0x0305u, "停止" },{ 0x030au, "取消" }
-		
+			{ 0x0103u, "设置采样状态" },
+			{ 0x0300u, "恢复" },{ 0x0305u, "停止" },{ 0x030au, "取消" }
     };
 	static	struct  uMenu  * menu[2] =
 	{
@@ -440,7 +438,7 @@ void	disposeKey( const enum enumSamplerSelect SamplerSelect, uint8_t * pOption, 
 	{
 		PumpSelect = PP_Max;
 	}
-	Sampler_Tdfilter();
+	Sampler_Tdfilter();	//	流量滤波
 	if ( hitKey ( 100u ) )
 	{
 		switch ( getKey() )

@@ -72,7 +72,7 @@ void  _task_Sample_TSP( void )
 					Q_Sampler[SamplerSelect].state = state_SUSPEND;
 				}
 
-				if ( PumpState != Q_Pump[PumpSelect].xp_state )
+				if( PumpState != Q_Pump[PumpSelect].xp_state )
 				{
 					Pump_OutCmd( PumpSelect, PumpState );
 					Q_Pump[PumpSelect].xp_state = PumpState;
@@ -220,7 +220,10 @@ void  _task_Sample_TSP( void )
 					}
 				}
 				else
+				{
 					delay(1000u);
+				}
+					
 
 				tt = get_Now() / 60u;
 
