@@ -188,6 +188,13 @@ static	void Sampler_Tdfilter( void )
 			fstdx[1][PP_TSP] = fstdx[2][PP_TSP];
 			fstdx[2][PP_TSP] = fstdx[3][PP_TSP];
 			fstdx[3][PP_TSP] = get_fstd( PP_TSP );
+		}
+		else
+		{
+			fstdx[0][PP_TSP] = 
+			fstdx[1][PP_TSP] = 
+			fstdx[2][PP_TSP] = 
+			fstdx[3][PP_TSP] = 0;
 		}    
 		if( Sampler_isRunning( Q_SHI ) )
 		{
@@ -201,6 +208,17 @@ static	void Sampler_Tdfilter( void )
 			fstdx[2][PP_SHI_D] = fstdx[3][PP_SHI_D];
 			fstdx[3][PP_SHI_D] = get_fstd( PP_SHI_D );
 		}
+		else
+		{
+			fstdx[0][PP_SHI_C] = 
+			fstdx[1][PP_SHI_C] = 
+			fstdx[2][PP_SHI_C] = 
+			fstdx[3][PP_SHI_C] = 0;
+			fstdx[0][PP_SHI_D] = 
+			fstdx[1][PP_SHI_D] = 
+			fstdx[2][PP_SHI_D] = 
+			fstdx[3][PP_SHI_D] = 0;
+		}
 		if( Sampler_isRunning( Q_R24 ) )
 		{		
 			fstdx[0][PP_R24_A] = fstdx[1][PP_R24_A];
@@ -212,6 +230,17 @@ static	void Sampler_Tdfilter( void )
 			fstdx[1][PP_R24_B] = fstdx[2][PP_R24_B];
 			fstdx[2][PP_R24_B] = fstdx[3][PP_R24_B];
 			fstdx[3][PP_R24_B] = get_fstd( PP_R24_B ); 
+		}
+		else
+		{
+			fstdx[0][PP_R24_A] = 
+			fstdx[1][PP_R24_A] = 
+			fstdx[2][PP_R24_A] = 
+			fstdx[3][PP_R24_A] = 0;
+			fstdx[0][PP_R24_B] = 
+			fstdx[1][PP_R24_B] = 
+			fstdx[2][PP_R24_B] = 
+			fstdx[3][PP_R24_B] = 0;
 		}
 	}	  
 }
@@ -762,6 +791,7 @@ void	monitor ( void )
 		}
 	
 	}
+	Sampler_Tdfilter();//	Á÷Á¿ÂË²¨
 
 }
 

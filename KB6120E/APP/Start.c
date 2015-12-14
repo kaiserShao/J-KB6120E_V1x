@@ -165,7 +165,7 @@ __task	int32_t	main( void )
 	beep();
 	RTOS_Init();		  //	尽早执行
 		
-	EditionSelsct();
+// 	EditionSelsct();
 	ConfigureLoad();	//	先确定仪器型号
 	CalibrateLoad();	//	读传感器前执行,	远程存储器中的参数，应等通讯初始化后再读。
 	SampleSetLoad();	//	恢复采样前执行

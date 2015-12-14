@@ -9,24 +9,24 @@
 *******************************************************************************/
 #include "AppDEF.H"
 
-void	EditionSelsct( void )
-{
-// #define	T_KB6120A
-#define	T_KB6120AD
-// #define	T_KB6120AD2
-// 	#define	T_KB2400HL
+// void	EditionSelsct( void )
+// {
+// // #define	T_KB6120A
+// #define	T_KB6120AD
+// // #define	T_KB6120AD2
+// // 	#define	T_KB2400HL
 
-	#ifdef	T_KB6120A
-		eDataValidMask = 0x5A3A;
-	#elif	defined	T_KB6120AD
-		eDataValidMask = 0x5A3B;
-	#elif	defined	T_KB6120AD2
-		eDataValidMask = 0x5A3C;
-	#elif	defined	T_KB2400HL
-		eDataValidMask = 0x5A3D;
-	#endif
+// 	#ifdef	T_KB6120A
+// 		eDataValidMask = 0x5A3A;
+// 	#elif	defined	T_KB6120AD
+// 		eDataValidMask = 0x5A3B;
+// 	#elif	defined	T_KB6120AD2
+// 		eDataValidMask = 0x5A3C;
+// 	#elif	defined	T_KB2400HL
+// 		eDataValidMask = 0x5A3D;
+// 	#endif
 
-}
+// }
 
 
 /********************************** 功能说明 ***********************************
@@ -270,7 +270,7 @@ void	Configure_InstrumentName( void )
 	{
 		if( vbYes == MsgBox( "保存配置?",vbYesNo ) )
 		{
-// 			ConfigureLoadDefault();
+			ConfigureLoadDefault();
 			ConfigureSave();
 		}
 		else
@@ -314,7 +314,7 @@ void	Configure_InstrumentType( void )
 	{
 		if( vbYes == MsgBox( "保存配置?",vbYesNo ) )
 		{
-// 			ConfigureLoadDefault( );
+			ConfigureLoadDefault( );
 			ConfigureSave();
 		}
 		else
@@ -323,34 +323,34 @@ void	Configure_InstrumentType( void )
 	
 }
 
-// void	ConfigureLoadDefault( void )
-// {
-// 	switch ( Configure.InstrumentType )
-// 	{
-// 	case type_KB6120A:		ConfigureLoad_KB6120A();	break;
-// 	case type_KB6120AD:		ConfigureLoad_KB6120AD();	break;
-// 	case type_KB2400HL:		ConfigureLoad_KB2400HL();	break;
-// 	case type_KB6120AD2:	ConfigureLoad_KB6120AD2();break;
-// 	}
-// }
-
 void	ConfigureLoadDefault( void )
 {
-	#ifdef	T_KB6120A
-		ConfigureLoad_KB6120A();
-	#elif	defined	T_KB6120AD
-		ConfigureLoad_KB6120AD();
-	#elif	defined	T_KB6120AD2
-		ConfigureLoad_KB6120AD2();
-	#elif	defined	T_KB2400HL
-		ConfigureLoad_KB2400HL();
-	#endif	
-	if ( Configure.DataValidMask != eDataValidMask )
+	switch ( Configure.InstrumentType )
 	{
-		ConfigureLoadDefault_KB6120E();
-		Configure.DataValidMask = eDataValidMask;
+	case type_KB6120A:		ConfigureLoad_KB6120A();	break;
+	case type_KB6120AD:		ConfigureLoad_KB6120AD();	break;
+	case type_KB2400HL:		ConfigureLoad_KB2400HL();	break;
+	case type_KB6120AD2:	ConfigureLoad_KB6120AD2();break;
 	}
 }
+
+// void	ConfigureLoadDefault( void )
+// {
+// 	#ifdef	T_KB6120A
+// 		ConfigureLoad_KB6120A();
+// 	#elif	defined	T_KB6120AD
+// 		ConfigureLoad_KB6120AD();
+// 	#elif	defined	T_KB6120AD2
+// 		ConfigureLoad_KB6120AD2();
+// 	#elif	defined	T_KB2400HL
+// 		ConfigureLoad_KB2400HL();
+// 	#endif	
+// 	if ( Configure.DataValidMask != eDataValidMask )
+// 	{
+// 		ConfigureLoadDefault_KB6120E();
+// 		Configure.DataValidMask = eDataValidMask;
+// 	}
+// }
 
 /********  (C) COPYRIGHT 2014 青岛金仕达电子科技有限公司  **** End Of File ****/
 
