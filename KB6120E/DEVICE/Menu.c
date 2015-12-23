@@ -90,7 +90,7 @@ uint8_t	Menu_Select_Ex ( const struct uMenu * menu, uint8_t item, void ( *pHook 
 
 	for ( ; ; )
 	{
-		LcmMask ( menu[item].yx, strlen ( menu[item].sz ) );
+		LcmMask( menu[item].yx, strlen ( menu[item].sz ) );
 		do
 		{
 			if ( NULL != pHook )

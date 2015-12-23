@@ -53,7 +53,6 @@ static	void	Configure_Pump( void )
 		do {
 		imax = 
 		i    = 0;
-		ConfigureLoad();
 		if( Configure.PumpType[PP_TSP] != enumPumpNone )
 		{	
 			switch ( Configure.PumpType[PP_TSP] )
@@ -322,44 +321,30 @@ void  menu_Sample_Sum( void )
 }
 
 
-void menu_ExName( void )
-{
-	BOOL changed = FALSE;
-	BOOL Done = FALSE;
-	
-	do{
-		cls();
-		ShowEdition();
-				
-		switch( getKey() )
-		{
-		case	K_OK:	
-			++ Configure.ExName;
-			if ( Configure.ExName >= Name_Max )
-			{
-				Configure.ExName = 0u;
-			}
-			changed = TRUE;	
-			break;
-		case	K_ESC:
-			Done = TRUE;
-			if( changed )
-			{
-				switch( MsgBox("保存修改结果?", vbYesNoCancel|vbDefaultButton3 ) )
-				{
-				case	vbYes		:	ConfigureSave();	break;
-				case	vbNo		:	ConfigureLoad();	break;
-				case	vbCancel:	Done = FALSE;			break;
-				}				
-			}			
-			break;
-		default:
-			break;
-		}
-		
-	}while( !Done );
-}
+extern	void	Configure_InstrumentType( void );
+extern	void	Configure_InstrumentName( void );
 
+void menu_ExName_Config( void )
+{
+	static	struct  uMenu  const  menu[] =
+	{
+		{ 0x0201u, "名称配置" },
+		{ 0x0301u, "仪器名称" },
+		{ 0x0601u, "厂家名称" },
+	};
+	uint8_t item = 1u;
+	do {
+		cls();
+		Menu_Redraw( menu );
+    item = Menu_Select( menu, item );
+    switch( item )
+    {
+		case 1:		Configure_InstrumentName();	break;
+		case 2:			break;
+		default:	break;			
+    }
+  }while( enumSelectESC != item );
+}
 
 void	menu_ConfigureDisplay( void )
 {
@@ -431,17 +416,12 @@ void	menu_ConfigureDisplay( void )
 }
 
 
-
-extern	void	Configure_InstrumentType( void );
-extern	void	Configure_InstrumentName( void );
-
 static	void	menu_Configure_ExPump( void )
 {
 	static	struct  uMenu  const  menu[] =
 	{
-		{ 0x0301u, "装配配置" },
-		{ 0x0201u, "仪器型号" },
-		{ 0x0401u, "仪器名称" },
+		{ 0x0201u, "型号配置" },
+		{ 0x0301u, "仪器型号" },
 		{ 0x0601u, "泵装配情况" },
 
 	};
@@ -454,8 +434,7 @@ static	void	menu_Configure_ExPump( void )
 		switch( item )
 		{
 		case 1:	Configure_InstrumentType();	break;	
-	 	case 2:	Configure_InstrumentName();	break;
-		case 3:	Configure_Pump();						break;
+		case 2:	Configure_Pump();						break;
 		default:	
 			break;
 		}
@@ -473,15 +452,15 @@ static	void	menu_Configure_ExPump( void )
 显示屏幕调整
 文件编号、文件存储内容清零
 *******************************************************************************/
-
+extern	void	menu_NameConfig( void );
 void	menu_ConfigureEx( void )
 {
 	static	struct  uMenu  const  menu[] =
 	{
 		{ 0x0302u, "厂家配置" },
-		{ 0x0202u,  "调试"  }, { 0x0208u, "采样累计" },
-		{ 0x0401u, "泵装配" }, { 0x0408u, "显示" },	//	{ 0x0408u, "压力保护" },
-		{ 0x0602u,  "厂家"  }, { 0x0608u, "程序版本" },
+		{ 0x0202u, "调试" }, { 0x0208u, "采样累计" },
+		{ 0x0402u, "型号" }, { 0x040Au, "显示" },	//	{ 0x0408u, "压力保护" },
+		{ 0x0602u, "名称" }, { 0x0608u, "程序版本" },
 
 	};
 	uint8_t	item = 1u;
@@ -494,7 +473,7 @@ void	menu_ConfigureEx( void )
 		{
 		case 1:	menu_FactoryDebug();			break;	
 	 	case 3:	menu_Configure_ExPump();	break;
-		case 5:	menu_ExName();						break;
+		case 5:	menu_NameConfig();						break;
 		case 2:	menu_Sample_Sum();				break;
 		case 4:	menu_ConfigureDisplay();	break;
 		case 6:	ShowEdition_Inner(); 			break;

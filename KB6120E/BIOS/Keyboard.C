@@ -142,17 +142,15 @@ __task	void	_task_Keyboard( void const * p_arg )
 	for (;;)
 	{
 		Keyboard_IRQ_Enable();			//	允许按键变化触发中断
-		
-
 		delay( 20u );					//	等待按键状态稳定后再读
 		keyPortState = Keyboard_PortRead();
 		KeyboardStateChanged_Poll();	//	等待按键变化事件信号
 		do 
     {
 			keyDebounce = keyPortState;
-			delay( 20u );
+			delay( 10u );
 			keyPortState = Keyboard_PortRead();
-		} while ( keyDebounce != keyPortState );
+		} while ( keyDebounce != keyPortState );	//	==时	松开按键后才能响应---缺点是不能进行组合按键
 
 		KeyDirect = keyDebounce;		//	保存扫描结果
 		

@@ -51,18 +51,24 @@ CHAR  const * const ExNameIdent2[] =
 
 CHAR  const * const EditionNum[] =
 {
-  "KB6120E V1.06",	//	内部版本
+  "KB6120E V1.07",	//	内部版本
  __DATE__" V1.00",	//	显示版本
 };
 
-static	void	ShowEdition_NoName( void )
+static	void	ShowEdition_NoName1( void )
+{
+	cls();
+//   Lputs( 0x0000u, szNameIdent[Configure.InstrumentName] );
+	Lputs( 0x0200u, EditionNum[1] );
+	Lputs( 0x0500u, "编号:" );	ShowFP32( 0x0507u, Configure.ExNum, 0x0700u, NULL );
+}
+static	void	ShowEdition_NoName2( void )
 {
 	cls();
   Lputs( 0x0000u, szNameIdent[Configure.InstrumentName] );
 	Lputs( 0x0300u, EditionNum[1] );
 	Lputs( 0x0600u, "编号:" );	ShowFP32( 0x0607u, Configure.ExNum, 0x0700u, NULL );
 }
-
 static	void	ShowEdition_HasName( void )
 {
   cls();
@@ -76,8 +82,11 @@ void	ShowEdition( void )
 {
   switch( Configure.ExName )
   {
-  case 0: 
-    ShowEdition_NoName(); 
+  case 0:
+		if( Configure.InstrumentName == 0 )	
+			ShowEdition_NoName1(); 
+		else
+			ShowEdition_NoName2(); 
     break;
   default: 
     ShowEdition_HasName(); 
@@ -116,6 +125,7 @@ CHAR  const * const szTypeIdent[] =
 
 CHAR  const * const szNameIdent[] =
 {
+	" /* 无 名 称 */ ",
 	" 智能综合采样器 ",
 	" 综合大气采样器 ",
 	"智能中流量采样器",
@@ -228,7 +238,53 @@ void	ConfigureLoad_KB6120AD2( void )
 }
 
 
-
+void menu_ExName( void )
+{
+	static  struct  uMenu  const  menu[] = 
+	{
+		{ 0x0101u, "配置厂家名称" },
+		{ 0x0200u, "名称" },
+	};
+	uint8_t item = 1u;
+	BOOL	changed = FALSE;
+	BOOL	need_draw = TRUE;
+	do {
+		if( need_draw )
+		{
+			cls();
+			Menu_Redraw( menu );	
+			need_draw = FALSE;
+		}			
+		Lputs( 0x0400u, ExNameIdent1[Configure.ExName] );
+		Lputs( 0x0600u, ExNameIdent2[Configure.ExName] );
+		item = Menu_Select( menu, item );
+		switch ( item )
+		{
+		case 1:
+			need_draw = TRUE;
+			++ Configure.ExName;
+			if ( Configure.ExName >= Name_Max )
+			{
+				Configure.ExName = 0u;
+			}
+			changed = TRUE;
+			break;
+		default:
+			break;
+		}
+	} while ( enumSelectESC != item );
+	
+	if ( changed )
+	{
+		if( vbYes == MsgBox( "保存配置?",vbYesNo ) )
+		{
+			ConfigureSave();
+		}
+		else
+			ConfigureLoad();
+	}
+	
+}
 /********************************** 功能说明 ***********************************
 *	扩展配置 -> 选择泵、流量、仪器名称
 *******************************************************************************/
@@ -270,7 +326,6 @@ void	Configure_InstrumentName( void )
 	{
 		if( vbYes == MsgBox( "保存配置?",vbYesNo ) )
 		{
-			ConfigureLoadDefault();
 			ConfigureSave();
 		}
 		else
@@ -322,6 +377,31 @@ void	Configure_InstrumentType( void )
 	}
 	
 }
+void	menu_NameConfig( void )
+{
+	static  struct  uMenu  const  menu[] = 
+	{
+		{ 0x0201u, "名称配置" },
+		{ 0x0300u, "仪器名称" },
+		{ 0x0600u, "厂家名称" },
+	};
+	uint8_t item = 1u;
+	do{	
+		cls();
+		Menu_Redraw( menu );	
+		item = Menu_Select( menu, item );
+		switch ( item )
+		{
+		case 1:
+			Configure_InstrumentName();
+			break;
+		case 2:
+			menu_ExName();
+			break;
+		}
+	} while ( enumSelectESC != item );
+}
+
 
 void	ConfigureLoadDefault( void )
 {

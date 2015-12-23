@@ -601,7 +601,6 @@ void	ShowHEX16( uint16_t yx, uint16_t hex16 )
 //		}
 //	#endif
 
-	
 ///////////////////////////////////////////////////////////////////
 BOOL	EditI32U( uint16_t yx, uint32_t * pNUM, uint16_t fmt )
 {

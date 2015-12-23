@@ -586,6 +586,7 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 			{
 				changed_Delay = TRUE;
 				changed = TRUE;
+				SampleSetSave();
 			}
 			
 			++item;

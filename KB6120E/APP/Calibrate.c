@@ -1269,15 +1269,15 @@ BOOL	CalibrateFLOW_4_Point_Debug( enum enumPumpSelect PumpSelect, uint16_t FlowK
 			{
 				changed = TRUE;
 				Flown = ( FP32 ) Flow32;
-				if( slope != 0 )
-					Flow  = Flow / ( slope *0.001);
-				else
-					Flow = Flown / 1000;
-				if( Flow != 0 )				
-					slope =(uint16_t) ( Flown / Flow ) ; 
+				if( slope >= 100 )
+				{
+					if( Flow != 0)
+						slope =(uint16_t) ( ( Flown / ((FP32)Configure.SetFlow[PumpSelect] / slope) ) / 100 );	//( (Flown) / ((Configure.SetFlow[SamplerSelect] * 0.1) / (* p_FlowK * 0.001)) );
+				}	
 				else
 					slope = 1000;
 			}
+			cls();
 			break;
 
 		case K_ESC:
@@ -1425,13 +1425,12 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t * con
 				if ( EditI32U( 0x0205u, &Flow32, 0x0501u ) )
 				{
 					changed = TRUE;
-					Flown = ( FP32 ) Flow32 * 0.100;
-					if( * p_FlowK != 0 )
-						Flow  = Flow / ( * p_FlowK * 0.001 );
-					else
-						Flow = Flown;
-					if(Flow != 0)
-						* p_FlowK =(uint16_t) ( Flown * 1000 / Flow ) ;
+					Flown = ( FP32 ) Flow32;
+					if( * p_FlowK >= 100 )
+					{
+						if(Flow != 0)
+							* p_FlowK =(uint16_t) ( ( Flown / ((FP32)Configure.SetFlow[PumpSelect] / (* p_FlowK)) ) );	//( (Flown * 1000) / ((Configure.SetFlow[SamplerSelect] ) / (* p_FlowK * 0.001)) );
+					}
 					else
 						* p_FlowK = 1000;
 				}
@@ -1442,13 +1441,12 @@ BOOL	CalibrateFlow_1_Point_DEBUG( enum enumPumpSelect PumpSelect, uint16_t * con
 				if ( EditI32U( 0x0305u, &Flow32, 0x0503u ) )
 				{
 					changed = TRUE;
-					Flown = ( FP32 ) Flow32 * 0.001;
-					if( * p_FlowK != 0 )
-						Flow  = Flow / ( * p_FlowK * 0.001 );
-					else
-						Flow = Flown;
-					if(Flow != 0)
-						* p_FlowK =(uint16_t) ( Flown * 1000 / Flow ) ;
+					Flown = ( FP32 ) Flow32;
+					if( * p_FlowK >= 100 )
+					{
+						if( Flow != 0)
+							* p_FlowK =(uint16_t) ( ( Flown / ((FP32)Configure.SetFlow[PumpSelect] / (* p_FlowK)) ) / 100 );	//( (Flown) / ((Configure.SetFlow[SamplerSelect] * 0.1) / (* p_FlowK * 0.001)) );
+					}	
 					else
 						* p_FlowK = 1000;
 				}
@@ -1792,41 +1790,45 @@ void	menu_Calibrate_Orifice_KB100( enum enumPumpSelect PumpSelect )
 
 static	void	menu_Select_Calc_Pbv( void )
 {
-    static	struct  uMenu  const   menu[] =
-    {
-        { 0x0201u, "计算饱和水汽压" },
-        { 0x0303u, "[不 计 算]" },
-        { 0x0503u, "[参与计算]" },
-    };
+	static	struct  uMenu  const   menu[] =
+	{
+			{ 0x0201u, "计算饱和水汽压" },
+			{ 0x0303u, "[不 计 算]" },
+			{ 0x0503u, "[参与计算]" },
+	};
 
-    uint8_t	item;
+	uint8_t	item;
 
-    cls();
-    Menu_Redraw( menu );
+	cls();
+	Menu_Redraw( menu );
 
-    if ( Configure .shouldCalcPbv == 0 )
-    {
-        Lputs( 0x0300u, " ->" );
-        item = 1u;
+	if ( Configure .shouldCalcPbv == 0 )
+	{
+		Lputs( 0x0300u, " ->" );
+		item = 1u;
 	}
 	else
 	{
-        Lputs( 0x0500u, " ->" );
-        item = 2u;
+			Lputs( 0x0500u, " ->" );
+			item = 2u;
 	}
 
-    item = Menu_Select( menu, item );
+	item = Menu_Select( menu, item );
 
-    switch( item )
-    {
-    case 1:
+	switch( item )
+	{
+	case 1:
+		Configure.shouldCalcPbv = 0u;
+		 break;
 	case 2:
-		Configure .shouldCalcPbv = ! Configure .shouldCalcPbv ;
-		ConfigureSave();
-        break;
-    default:
-        break;
-    }
+		Configure.shouldCalcPbv = 1u;
+    break;
+	case enumSelectXCH:
+		break;
+	default:
+		break;
+	}
+	ConfigureSave();
 }
 
 void	menu_Calibrate_Orifice_KB4( enum enumPumpSelect PumpSelect )

@@ -512,8 +512,8 @@ static	void	menu_SelectDelayMode( void )
     static	struct  uMenu  const   menu[] =
     {
         { 0x0201u, "选择采样开始方式" },
-        { 0x0303u, "[定时启动]" },
-        { 0x0503u, "[延时启动]" },
+        { 0x0303u, "[延时启动]" },
+        { 0x0503u, "[定时启动]" },
     };
 
     uint8_t	item;
@@ -526,11 +526,11 @@ static	void	menu_SelectDelayMode( void )
         Lputs( 0x0300u, " >>" );
         item = 1u;
         break;
-    case enumByAccurate:
+    case enumByDelay:
         Lputs( 0x0300u, " ->" );
         item = 1u;
         break;
-    case enumByDelay:
+    case enumByAccurate:
         Lputs( 0x0500u, " ->" );
         item = 2u;
         break;
@@ -541,18 +541,18 @@ static	void	menu_SelectDelayMode( void )
     switch( item )
     {
     case 1:
-        if ( Configure.Mothed_Delay != enumByAccurate )
-        {
-            Configure.Mothed_Delay = enumByAccurate;
-            ConfigureSave();
-        }
-        break;
-    case 2:
         if ( Configure.Mothed_Delay != enumByDelay )
         {
             SampleSet[Q_TSP].delay1 = 1u;
             SampleSetSave();
             Configure.Mothed_Delay = enumByDelay;
+            ConfigureSave();
+        }
+        break;
+    case 2:
+        if ( Configure.Mothed_Delay != enumByAccurate )
+        {
+            Configure.Mothed_Delay = enumByAccurate;
             ConfigureSave();
         }
         break;
@@ -568,7 +568,7 @@ static	void	menu_SelectTimeMode( void )
 {
     static	struct uMenu  const	menu[] =
     {
-        { 0x0201u, "选择采样计时方式" },
+        { 0x0201u, "选择停电计时方式" },
         { 0x0303u, "[停电扣除]" },
         { 0x0503u, "[停电补齐]" },
     };
@@ -616,7 +616,7 @@ static	void	menu_ConfigureTime( void )
     {
         { 0x0201u, "选择时间控制方式" },
         { 0x0301u, "开机延时方式" },
-        { 0x0501u, "采样定时方式" },
+        { 0x0501u, "停电计时方式" },
     };
 
     uint8_t item = 1;
@@ -1099,50 +1099,19 @@ void	menu_SelectTstd( void )
 }
 void menu_ChangePassword( void )
 {
- uint32_t  passwordi,passwordii;
- BOOL Done = FALSE;
+  BOOL Done = FALSE;
+ 
  do{
 		cls();
-		passwordi = passwordii =0u;
 		Lputs( 0x0202u, "请输入新密码:" );
-		if ( ! EditI32U( 0x0405u, &passwordi, 0x0600u ))
-		{
-			 Done = TRUE;
+		if ( EditI32U( 0x0405u, &Configure.Password, 0x0600u ))
+		{			 
+			 MsgBox( "密码修改成功!", vbOKOnly );
+			 ConfigureSave();
 		}
-		if ( Done == FALSE )
-		{
-			Lputs( 0x0202u, "请确认新密码:" );
-			if ( ! EditI32U( 0x0405u, &passwordii, 0x0600u ))
-			{
-				Done = TRUE;
-			}
-		}
-		if( ( passwordi == passwordii ) && ( Done == FALSE ))
-		{
-			cls();
-			switch( MsgBox( "是否保存新密码?", vbYesNoCancel | vbDefaultButton3 ) )
-			{
-			case	vbYes:
-				Configure.Password = passwordii;
-				ConfigureSave();
-				Done = TRUE;
-				break;
-			case	vbNo:
-				Done = TRUE;
-				break;
-			case	vbCancel:
-				break;
-			}		
-		}
-		else	if( Done == FALSE )
-		{
-			cls();
-			MsgBox( "密码不一致!", vbOKOnly );
-			if( vbYes != MsgBox( "是否继续修改?", vbYesNo ) )
-				Done = TRUE;
-		}
-			
+		Done = TRUE;
  }while( !Done );
+ 
 }
 void	menu_MoreSet( void )
 {
@@ -1274,10 +1243,9 @@ static	void	menu_Configure( void )
 /********************************** 功能说明 ***********************************
 *	主菜单 -> 维护菜单
 *******************************************************************************/
+extern	void	menu_ConfigureEx( void );
 void	menu_Maintenance( void )
 {
-    extern	void	menu_ConfigureEx( void );
-
     static	struct uMenu  const  menu[] =
     {
         { 0x0202u, "维护" },
