@@ -4,14 +4,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "Pin.H"
+#include "BSP.H"
 #include "time.h"
 #include "file_sys.h"
 #include "CH376INC.h"
-#ifndef	__bool_true_false_are_defined
-	#include <stdbool.h>
-	typedef	bool	BOOL;
-
-#endif
 
 //¸ùÄ¿Â¼²Ù×÷
 void Byte_CREAT_CON_DIR ( const char * BUF_Name );

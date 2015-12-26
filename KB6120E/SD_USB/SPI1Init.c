@@ -2,10 +2,6 @@
 #include "SPI1Init.h"
 #include "BSP.H"
 #include "ch376inc.h"
-#ifndef	__bool_true_false_are_defined
-	#include <stdbool.h>
-	typedef	bool	BOOL;
-#endif
 
 extern void	delay_us ( uint32_t us );
 uint8_t  CH376_Flag=0;

@@ -6,6 +6,8 @@
 //lint	-e524	Loss of precision (Context) (Type to Type)
 //lint  -e714 -e765 -e737 -e835
 //lint	+d__svc_indirect=_to_brackets
+#ifndef	__BSP_H
+#define	__BSP_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -157,4 +159,5 @@ extern	void	DisplaySetGrayVolt( FP32 SetGrayVolt );
 extern	void	DisplaySetLight( uint8_t SetLight );
 extern	void	DisplaySetTimeout( uint8_t SetTimeout );
 
+#endif
 /********  (C) COPYRIGHT 2014 青岛金仕达电子科技有限公司  **** End Of File ****/
