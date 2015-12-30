@@ -84,142 +84,238 @@ static	uint8_t	dayOfmonth( uint16_t year, uint8_t month )
 
 BOOL	EditClockDate( uint16_t yx, uClock * pClock )
 {
-    CHAR  	sbuffer[20];
-    struct tm t_tm;
-    uint16_t	year;
-    uint8_t 	month;
-    uint8_t 	day_m;
-    uint8_t 	option = 1u;
-		uint16_t gray  = Configure.DisplayGray;
-		BOOL graychanged = FALSE;	
+	CHAR  	sbuffer[20];
+	struct tm t_tm;
+	uint16_t	year;
+	uint8_t 	month;
+	uint8_t 	day_m;
+	uint8_t 	option = 1u;
+	uint16_t gray  = Configure.DisplayGray;
+	BOOL graychanged = FALSE;	
 
-    _localtime_r( pClock, &t_tm );
-    year  = t_tm.tm_year + 1900;
-    month = t_tm.tm_mon  + 1;
-    day_m = t_tm.tm_mday;
+	_localtime_r( pClock, &t_tm );
+	year  = t_tm.tm_year + 1900;
+	month = t_tm.tm_mon  + 1;
+	day_m = t_tm.tm_mday;
 
-    for(;;)
-    {
-        sprintf( sbuffer, "%04u-%02u-%02u", year, month, day_m );
-        Lputs( yx, sbuffer );
+  for(;;)
+	{
+		sprintf( sbuffer, "%02u:%02u:%02u", t_tm.tm_hour, t_tm.tm_min, t_tm.tm_sec );
+		Lputs( yx, sbuffer );
 
-        switch( option )
-        {
-        case 1:
-            LcmMask( yx  , 4 );
-            break;	// year
-        case 2:
-            LcmMask( yx+5, 2 );
-            break;	// month
-        case 3:
-            LcmMask( yx+8, 2 );
-            break;	// day_m
-        default:
-            break;
-        }
-        switch( getKey() )
-        {
-        case K_INC:
-            switch( option )
-            {
-            case 1:
-                if ( ++year > 2099u )
-                {
-                    year = 2000u;
-                }
-                break;
-            case 2:
-                if ( ++month > 12u )
-                {
-                    month = 1u;
-                }
-                break;
-            case 3:
-                if ( ++day_m > dayOfmonth( year, month ))
-                {
-                    day_m = 1u;
-                }
-                break;
-            default:
-                break;
-            }
-            break;
-
-        case K_DEC:
-            switch(  option )
-            {
-            case 1:
-                if ( --year < 2000u )
-                {
-                    year = 2099u;
-                }
-                break;
-            case 2:
-                if ( --month < 1u )
-                {
-                    month = 12u;
-                }
-                break;
-            case 3:
-                if ( --day_m < 1u )
-                {
-                    day_m = dayOfmonth( year, month );
-                }
-                break;
-            default:
-                break;
-            }
-            break;
-
-        case K_RIGHT:
-            if ( ++option > 3u )
-            {
-                option = 1u;
-            }
-            break;
-
-        case K_LEFT:
-            if ( --option < 1u )
-            {
-                option = 3u;
-            }
-            break;
-
-        case K_OK:
-            t_tm.tm_year = year  - 1900;
-            t_tm.tm_mon  = month - 1;
-            t_tm.tm_mday = day_m;
-            * pClock = mktime( &t_tm );
-            return	TRUE;
-
-        case K_ESC:
-            return	FALSE;
-						
-				case K_OK_RIGHT:
-					if ( gray < ( 2000u - 50u ))
-					{ 
-						gray += 100u;
-					}
-					graychanged = true;
-					break;
-				case K_OK_LEFT:	
-					if ( gray > ( 200 + 20u ))
+		switch( option )
+		{
+		case 1:
+			LcmMask( yx  , 4 );
+			break;	// year
+		case 2:
+			LcmMask( yx+5, 2 );
+			break;	// month
+		case 3:
+			LcmMask( yx+8, 2 );
+			break;	// day_m
+		default:
+			break;
+		}
+		switch( getKey() )
+		{
+		case K_INC:
+			switch( option )
+			{
+			case 1:
+				if( ! releaseKey( K_INC, 60 ) )
+					while( ! releaseKey( K_INC, 15 ) )
 					{
-						gray -= 20u;
+						if ( ++year > 2099u )
+						{
+							year = 2000u;
+						}
+						sprintf( sbuffer, "%04u-%02u-%02u", year, month, day_m );
+						Lputs( yx, sbuffer );
 					}
-					graychanged = true;
-					break;
-				default:
-					break;
-				}
-				if( graychanged == true )
+				else
+				if ( ++year > 2099u )
 				{
+					year = 2000u;
+				}
+				break;
+			case 2:
+				if( ! releaseKey( K_INC, 60 ) )
+					while( ! releaseKey( K_INC, 15 ) )
+					{
+						if ( ++month > 12u )
+						{
+							month = 1u;
+						}
+						sprintf( sbuffer, "%04u-%02u-%02u", year, month, day_m );
+						Lputs( yx, sbuffer );
+					}
+				else
+				if ( ++month > 12u )
+				{
+					month = 1u;
+				}
+				break;
+			case 3:
+				if( ! releaseKey( K_INC, 60 ) )
+					while( ! releaseKey( K_INC, 15 ) )
+					{
+						if ( ++day_m > dayOfmonth( year, month ))
+						{
+							day_m = 1u;
+						}
+						sprintf( sbuffer, "%04u-%02u-%02u", year, month, day_m );
+						Lputs( yx, sbuffer );
+					}
+				else
+				if ( ++month > 12u )
+				{
+					month = 1u;
+				}
+				break;
+			default:
+				break;
+			}
+			break;
+
+		case K_DEC:
+			switch( option )
+			{
+			case 1:
+				if( ! releaseKey( K_DEC, 60 ) )
+					while( ! releaseKey( K_DEC, 15 ) )
+					{
+						if ( --year < 2000u )
+						{
+							year = 2099u;
+						}
+						sprintf( sbuffer, "%04u-%02u-%02u", year, month, day_m );
+						Lputs( yx, sbuffer );
+					}
+				else
+				if ( --year < 2000u )
+				{
+					year = 2099u;
+				}
+				break;
+			case 2:
+				if( ! releaseKey( K_DEC, 60 ) )
+					while( ! releaseKey( K_DEC, 15 ) )
+					{
+						if ( --month < 1u )
+						{
+							month = 12u;
+						}
+						sprintf( sbuffer, "%04u-%02u-%02u", year, month, day_m );
+						Lputs( yx, sbuffer );
+					}
+				else
+				if ( --month < 1u )
+				{
+					month = 12u;
+				}
+				break;
+			case 3:
+				if( ! releaseKey( K_DEC, 60 ) )
+					while( ! releaseKey( K_DEC, 15 ) )
+					{
+						if ( --day_m < 1u )
+						{
+							day_m = dayOfmonth( year, month );
+						}
+						sprintf( sbuffer, "%04u-%02u-%02u", year, month, day_m );
+						Lputs( yx, sbuffer );
+					}
+				else
+				if ( --day_m < 1u )
+				{
+					day_m = dayOfmonth( year, month );
+				}
+				break;
+			default:
+				break;
+			}
+			break;
+
+		case K_RIGHT:
+			if ( ++option > 3u )
+			{
+				option = 1u;
+			}
+			break;
+
+		case K_LEFT:
+			if ( --option < 1u )
+			{
+				option = 3u;
+			}
+			break;
+
+		case K_OK:
+			t_tm.tm_year = year  - 1900;
+			t_tm.tm_mon  = month - 1;
+			t_tm.tm_mday = day_m;
+			* pClock = mktime( &t_tm );
+			return	TRUE;
+
+		case K_ESC:
+			return	FALSE;
+		case K_SHIFT: 	break;
+		case K_OK_UP:	
+			if ( gray < 2050u )
+			{
+				++gray;
+			}
+			if( ! releaseKey( K_OK_UP,100 ))
+			{
+				while( ! releaseKey( K_OK_UP, 3 ))
+				{
+					++gray;
 					DisplaySetGrayVolt( gray * 0.01f );
-					Configure.DisplayGray = gray;
-					ConfigureSave();
-					graychanged = FALSE;
-				}	
-    }
+				}
+			}
+			graychanged = true;
+			break;
+		case K_OK_DOWN:
+			if ( gray >  200u )
+			{
+				--gray;
+			}
+			if( ! releaseKey( K_OK_DOWN,100 ))
+			{
+				while( ! releaseKey( K_OK_DOWN, 1 ))
+				{
+					--gray;
+					DisplaySetGrayVolt( gray * 0.01f );
+				}
+			}
+			graychanged = true;
+			break;				
+		case K_OK_RIGHT:
+			if ( gray < ( 2000u - 50u ))
+			{ 
+				gray += 100u;
+			}
+			graychanged = true;
+			break;
+		case K_OK_LEFT:	
+			if ( gray > ( 200 + 20u ))
+			{
+				gray -= 20u;
+			}
+			graychanged = true;
+			break;
+		default:
+			break;
+		}
+		if( graychanged == true )
+		{
+			DisplaySetGrayVolt( gray * 0.01f );
+			Configure.DisplayGray = gray;
+			ConfigureSave();
+			graychanged = FALSE;
+		}	
+}
 }
 
 
@@ -235,104 +331,182 @@ BOOL	EditClockTime( uint16_t yx, uClock * pClock )
 
     for(;;)
     {
-        sprintf( sbuffer, "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
-        Lputs( yx, sbuffer );
+		sprintf( sbuffer, "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
+		Lputs( yx, sbuffer );
 
-        switch( option )
-        {
-        case 1:
-            LcmMask( yx  , 2 );
-            break;  // hour
-        case 2:
-            LcmMask( yx+3, 2 );
-            break;  // minute
-        case 3:
-            LcmMask( yx+6, 2 );
-            break;  // second
-        default:
-            break;
-        }
-        switch( getKey() )
-        {
-        case K_INC:
-            switch( option )
-            {
-            case 1:
-                t.tm_hour = ( t.tm_hour +  1u ) % 24u;
-                break;
-            case 2:
-                t.tm_min  = ( t.tm_min  +  1u ) % 60u;
-                break;
-            case 3:
-                t.tm_sec  = ( t.tm_sec  +  1u ) % 60u;
-                break;
-            default:
-                break;
-            }
-            break;
-
-        case K_DEC:
-            switch( option )
-            {
-            case 1:
-                t.tm_hour = ( t.tm_hour + 23u ) % 24u;
-                break;
-            case 2:
-                t.tm_min  = ( t.tm_min  + 59u ) % 60u;
-                break;
-            case 3:
-                t.tm_sec  = ( t.tm_sec  + 59u ) % 60u;
-                break;
-            default:
-                break;
-            }
-            break;
-
-        case K_RIGHT:
-            if ( ++option > 3u )
-            {
-                option = 1;
-            }
-            break;
-
-        case K_LEFT:
-            if ( --option < 1u )
-            {
-                option = 3u;
-            }
-            break;
-
-        case K_OK:
-            * pClock = mktime( &t );
-            return	TRUE;
-
-        case K_ESC:
-            return	FALSE;
-
-				case K_OK_RIGHT:
-					if ( gray < ( 2000u - 50u ))
-					{ 
-						gray += 100u;
-					}
-					graychanged = true;
-					break;
-				case K_OK_LEFT:	
-					if ( gray > ( 200 + 20u ))
+		switch( option )
+		{
+		case 1:
+			LcmMask( yx  , 2 );
+			break;  // hour
+		case 2:
+			LcmMask( yx+3, 2 );
+			break;  // minute
+		case 3:
+			LcmMask( yx+6, 2 );
+			break;  // second
+		default:
+			break;
+		}
+		switch( getKey() )
+		{
+		case K_INC:
+			switch( option )
+			{
+			case 1:
+				if( ! releaseKey( K_INC, 60 ) )
+					while( ! releaseKey( K_INC, 15 ) )
 					{
-						gray -= 20u;
+						t.tm_hour = ( t.tm_hour +  1u ) % 24u;
+						sprintf( sbuffer, "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
+						Lputs( yx, sbuffer );
 					}
-					graychanged = true;
-					break;
-				default:
-					break;
-				}
-				if( graychanged == true )
+				else
+					t.tm_hour = ( t.tm_hour +  1u ) % 24u;
+				break;
+			case 2:
+				if( ! releaseKey( K_INC, 60 ) )
+					while( ! releaseKey( K_INC, 15 ) )
+					{
+						t.tm_min  = ( t.tm_min  +  1u ) % 60u;
+						sprintf( sbuffer, "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
+						Lputs( yx, sbuffer );
+					}
+				else
+					t.tm_min  = ( t.tm_min  +  1u ) % 60u;
+				break;
+			case 3:
+				if( ! releaseKey( K_INC, 60 ) )
+					while( ! releaseKey( K_INC, 15 ) )
+					{
+						t.tm_sec  = ( t.tm_sec  +  1u ) % 60u;
+						sprintf( sbuffer, "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
+						Lputs( yx, sbuffer );
+					}
+				else
+					t.tm_sec  = ( t.tm_sec  +  1u ) % 60u;
+				break;
+			default:
+				break;
+			}
+			break;
+
+		case K_DEC:
+			switch( option )
+			{
+			case 1:
+				if( ! releaseKey( K_DEC, 60 ) )
+					while( ! releaseKey( K_DEC, 15 ) )
+					{
+						t.tm_hour = ( t.tm_hour + 23u ) % 24u;
+						sprintf( sbuffer, "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
+						Lputs( yx, sbuffer );
+					}
+				else
+					t.tm_hour = ( t.tm_hour + 23u ) % 24u;
+			break;
+			case 2:
+				if( ! releaseKey( K_DEC, 60 ) )
+					while( ! releaseKey( K_DEC, 15 ) )
+					{
+						t.tm_min  = ( t.tm_min  + 59u ) % 60u;
+						sprintf( sbuffer, "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
+						Lputs( yx, sbuffer );
+					}
+				else
+					t.tm_min  = ( t.tm_min  + 59u ) % 60u;	
+				break;
+			case 3:
+				if( ! releaseKey( K_DEC, 60 ) )
+					while( ! releaseKey( K_DEC, 15 ) )
+					{
+						t.tm_sec  = ( t.tm_sec  + 59u ) % 60u;
+						sprintf( sbuffer, "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
+						Lputs( yx, sbuffer );
+					}
+				else
+					t.tm_sec  = ( t.tm_sec  + 59u ) % 60u;	
+				break;
+			default:
+				break;
+			}
+			break;
+		case K_OK_UP:	
+			if ( gray < 2050u )
+			{
+				++gray;
+			}
+			if( ! releaseKey( K_OK_UP,100 ))
+			{
+				while( ! releaseKey( K_OK_UP, 3 ))
 				{
+					++gray;
 					DisplaySetGrayVolt( gray * 0.01f );
-					Configure.DisplayGray = gray;
-					ConfigureSave();
-					graychanged = FALSE;
-				}	
+				}
+			}
+			graychanged = true;
+			break;
+		case K_OK_DOWN:
+			if ( gray >  200u )
+			{
+				--gray;
+			}
+			if( ! releaseKey( K_OK_DOWN,100 ))
+			{
+				while( ! releaseKey( K_OK_DOWN, 1 ))
+				{
+					--gray;
+					DisplaySetGrayVolt( gray * 0.01f );
+				}
+			}
+			graychanged = true;
+			break;
+		case K_RIGHT:
+			if ( ++option > 3u )
+			{
+				option = 1;
+			}
+			break;
+
+		case K_LEFT:
+			if ( --option < 1u )
+			{
+				option = 3u;
+			}
+			break;
+
+		case K_OK:
+			* pClock = mktime( &t );
+		return	TRUE;
+
+		case K_ESC:
+			return	FALSE;
+		case K_SHIFT: 	break;
+
+		case K_OK_RIGHT:
+			if ( gray < ( 2000u - 50u ))
+			{ 
+				gray += 100u;
+			}
+			graychanged = true;
+			break;
+		case K_OK_LEFT:	
+			if ( gray > ( 200 + 20u ))
+			{
+				gray -= 20u;
+			}
+			graychanged = true;
+			break;
+		default:
+			break;
+		}
+		if( graychanged == true )
+		{
+			DisplaySetGrayVolt( gray * 0.01f );
+			Configure.DisplayGray = gray;
+			ConfigureSave();
+			graychanged = FALSE;
+		}	
     }
 }
 
