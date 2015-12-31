@@ -100,7 +100,7 @@ BOOL	EditClockDate( uint16_t yx, uClock * pClock )
 
   for(;;)
 	{
-		sprintf( sbuffer, "%02u:%02u:%02u", t_tm.tm_hour, t_tm.tm_min, t_tm.tm_sec );
+		sprintf( sbuffer, "%04u-%02u-%02u", year, month, day_m );
 		Lputs( yx, sbuffer );
 
 		switch( option )
