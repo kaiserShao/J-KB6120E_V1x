@@ -204,9 +204,10 @@ static	uint16_t	err_count = 0u;
 #define	BITN(_b_buf, _n)	(_b_buf[(_n)/8] & ( 1 << (( _n ) % 8 )))
 
 __task	void	_task_ModbusRead( void const * p_arg )
-{
+{uint32_t	SaveTick = 0u;
+	static	uint32_t	Ek = 0u;
 	(void)p_arg;
-
+	
 	eMBMInit( MB_RTU, 9600u, MB_PAR_EVEN );
 	{
 		uint8_t DI_Buf[(40+7)/8];
@@ -274,6 +275,9 @@ __task	void	_task_ModbusRead( void const * p_arg )
 		}
 		delay( 200u );
 
+		Ek = osKernelSysTick() - SaveTick;
+		Ek = Ek / osKernelSysTickMicroSec( 1000u );
+		SaveTick = osKernelSysTick();
 //		{
 //			static	uint8_t	DI_Buf[(40+7)/8];
 //			eMBErrorCode eStatus = eMBMRead( SubSlave, DI_Base, 40u, DI_Buf );

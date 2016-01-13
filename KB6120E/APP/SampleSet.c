@@ -190,145 +190,145 @@ void	SetupFlow_SHI( void )
 #define	LOBYTE(__w)		((uint8_t)((__w)&0x0FF))
 #define	HIBYTE(__w)		((uint8_t)(((__w)>>8)&0x0FF))
 
-static	uint8_t	Menu_Select_Start_R24 ( const struct uMenu * menu, uint8_t item )
-{
-	uint8_t	mlen, mlen_row, mlen_col;
-	uint16_t gray  = Configure.DisplayGray;
-	BOOL graychanged = FALSE;	
-	mlen_row = HIBYTE ( menu[0].yx );
-	mlen_col = LOBYTE ( menu[0].yx );
+// static	uint8_t	Menu_Select_Start_R24 ( const struct uMenu * menu, uint8_t item )
+// {
+// 	uint8_t	mlen, mlen_row, mlen_col;
+// 	uint16_t gray  = Configure.DisplayGray;
+// 	BOOL graychanged = FALSE;	
+// 	mlen_row = HIBYTE ( menu[0].yx );
+// 	mlen_col = LOBYTE ( menu[0].yx );
 
-	if ( 0u == mlen_row )
-	{
-		mlen = mlen_col;
-	}
-	else
-	{
-		mlen = mlen_row * mlen_col;
-	}
+// 	if ( 0u == mlen_row )
+// 	{
+// 		mlen = mlen_col;
+// 	}
+// 	else
+// 	{
+// 		mlen = mlen_row * mlen_col;
+// 	}
 
-	if ( ( item < 1u ) || ( item > mlen ) )
-	{
-		item = 1u;
-	}
+// 	if ( ( item < 1u ) || ( item > mlen ) )
+// 	{
+// 		item = 1u;
+// 	}
 
-	for ( ; ; )
-	{
-		LcmMask ( menu[item].yx, strlen ( menu[item].sz ) );
-		do
-		{
-//			if ( NULL != pHook )
-//			{
-//				pHook();
-//			}
-		}
-		while ( ! hitKey ( 50u ) );
+// 	for ( ; ; )
+// 	{
+// 		LcmMask ( menu[item].yx, strlen ( menu[item].sz ) );
+// 		do
+// 		{
+// //			if ( NULL != pHook )
+// //			{
+// //				pHook();
+// //			}
+// 		}
+// 		while ( ! hitKey ( 50u ) );
 
-		Lputs ( menu[item].yx, menu[item].sz );
+// 		Lputs ( menu[item].yx, menu[item].sz );
 
-		switch ( getKey() )
-		{
-		case K_RIGHT:
-			switch ( item )
-			{
-			case 1: item = 2;	break;
-			case 2:	item = 3;	break;
-			case 3:	item = 3;	break;
-			}
-			break;
+// 		switch ( getKey() )
+// 		{
+// 		case K_RIGHT:
+// 			switch ( item )
+// 			{
+// 			case 1: item = 2;	break;
+// 			case 2:	item = 3;	break;
+// 			case 3:	item = 3;	break;
+// 			}
+// 			break;
 
-		case K_LEFT:
-			switch ( item )
-			{
-			case 1: item = 1;	break;
-			case 2:	item = 1;	break;
-			case 3:	item = 2;	break;
-			}
-			break;
+// 		case K_LEFT:
+// 			switch ( item )
+// 			{
+// 			case 1: item = 1;	break;
+// 			case 2:	item = 1;	break;
+// 			case 3:	item = 2;	break;
+// 			}
+// 			break;
 
-		case K_DOWN:
-			switch ( item )
-			{
-			case 1: item = 2;	break;
-			case 2:	item = 3;	break;
-			case 3:	item = 3;	break;
-			}
-			break;
+// 		case K_DOWN:
+// 			switch ( item )
+// 			{
+// 			case 1: item = 2;	break;
+// 			case 2:	item = 3;	break;
+// 			case 3:	item = 3;	break;
+// 			}
+// 			break;
 
-		case K_UP:
-			switch ( item )
-			{
-			case 1: item = 1;	break;
-			case 2:	item = 1;	break;
-			case 3:	item = 1;	break;
-			}
-			break;
+// 		case K_UP:
+// 			switch ( item )
+// 			{
+// 			case 1: item = 1;	break;
+// 			case 2:	item = 1;	break;
+// 			case 3:	item = 1;	break;
+// 			}
+// 			break;
 
-		case K_OK:
-			return	item;
+// 		case K_OK:
+// 			return	item;
 
-		case K_ESC:
-			return	enumSelectESC;
+// 		case K_ESC:
+// 			return	enumSelectESC;
 
-		case K_SHIFT:		
-			return	enumSelectXCH;
-		
-		case K_OK_UP:	
-			if ( gray < 2050u )
-			{
-				++gray;
-			}
-			if( ! releaseKey( K_OK_UP,100 ))
-			{
-				while( ! releaseKey( K_OK_UP, 3 ))
-				{
-					++gray;
-					DisplaySetGrayVolt( gray * 0.01f );
-				}
-			}
-			graychanged = true;
-			break;
-		case K_OK_DOWN:
-			if ( gray >  200u )
-			{
-				--gray;
-			}
-			if( ! releaseKey( K_OK_DOWN,100 ))
-			{
-				while( ! releaseKey( K_OK_DOWN, 1 ))
-				{
-					--gray;
-					DisplaySetGrayVolt( gray * 0.01f );
-				}
-			}
-			graychanged = true;
-			break;
-		case K_OK_RIGHT:
-			if ( gray < ( 2000u - 50u ))
-			{ 
-				gray += 100u;
-			}
-			graychanged = true;
-			break;
-		case K_OK_LEFT:	
-			if ( gray > ( 200 + 20u ))
-			{
-				gray -= 20u;
-			}
-			graychanged = true;
-			break;
-		default:
-			break;
-		}
-		if( graychanged == true )
-		{
-			DisplaySetGrayVolt( gray * 0.01f );
-			Configure.DisplayGray = gray;
-			ConfigureSave();
-			graychanged = FALSE;
-		}
-	}
-}
+// 		case K_SHIFT:		
+// 			return	enumSelectXCH;
+// 		
+// 		case K_OK_UP:	
+// 			if ( gray < 2050u )
+// 			{
+// 				++gray;
+// 			}
+// 			if( ! releaseKey( K_OK_UP,100 ))
+// 			{
+// 				while( ! releaseKey( K_OK_UP, 3 ))
+// 				{
+// 					++gray;
+// 					DisplaySetGrayVolt( gray * 0.01f );
+// 				}
+// 			}
+// 			graychanged = true;
+// 			break;
+// 		case K_OK_DOWN:
+// 			if ( gray >  200u )
+// 			{
+// 				--gray;
+// 			}
+// 			if( ! releaseKey( K_OK_DOWN,100 ))
+// 			{
+// 				while( ! releaseKey( K_OK_DOWN, 1 ))
+// 				{
+// 					--gray;
+// 					DisplaySetGrayVolt( gray * 0.01f );
+// 				}
+// 			}
+// 			graychanged = true;
+// 			break;
+// 		case K_OK_RIGHT:
+// 			if ( gray < ( 2000u - 50u ))
+// 			{ 
+// 				gray += 100u;
+// 			}
+// 			graychanged = true;
+// 			break;
+// 		case K_OK_LEFT:	
+// 			if ( gray > ( 200 + 20u ))
+// 			{
+// 				gray -= 20u;
+// 			}
+// 			graychanged = true;
+// 			break;
+// 		default:
+// 			break;
+// 		}
+// 		if( graychanged == true )
+// 		{
+// 			DisplaySetGrayVolt( gray * 0.01f );
+// 			Configure.DisplayGray = gray;
+// 			ConfigureSave();
+// 			graychanged = FALSE;
+// 		}
+// 	}
+// }
 
 
 static	BOOL	setup_R24_SHI( struct uMenu  const  menu[], const CHAR * szPrompt )
@@ -570,14 +570,14 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 		} while ( ! hitKey( 100u ));
 		Menu_Item_Mask( menu, item );
 
-		if ( needZero )
-		{
-			item = Menu_Select_Start_R24( menu, item );
-		}
-		else
-		{
-		item = Menu_Select2( menu, item ,TRUE);
-		}
+// 		if ( needZero )
+// 		{
+// 			item = Menu_Select_Start_R24( menu, item );
+// 		}
+// 		else
+// 		{
+		item = Menu_Select2( menu, item, TRUE );
+// 		}
 
 		switch( item )
 		{

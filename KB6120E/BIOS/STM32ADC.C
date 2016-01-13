@@ -53,25 +53,25 @@ static	void	STM32_ADC_Init ( void )
 
     // ...............  填入相应采样时间 ...........................................................
 	ADC1->SMPR2 =	( ( ADC1_SMP_239p5_C ) << ( ADC1_SMPR_WIDTH * (  0 - ADC1_SMPR2_BASE ) ) )	//	通道0
-				|	( ( ADC1_SMP_239p5_C ) << ( ADC1_SMPR_WIDTH * (  1 - ADC1_SMPR2_BASE ) ) )	//	通道1
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  2 - ADC1_SMPR2_BASE ) ) )	//	通道2
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  3 - ADC1_SMPR2_BASE ) ) )	//	通道3
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  4 - ADC1_SMPR2_BASE ) ) )	//	通道4
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  5 - ADC1_SMPR2_BASE ) ) )	//	通道5
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  6 - ADC1_SMPR2_BASE ) ) )	//	通道6
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  7 - ADC1_SMPR2_BASE ) ) )	//	通道7
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  8 - ADC1_SMPR2_BASE ) ) )	//	通道8
-				|	( ( ADC1_SMP_239p5_C ) << ( ADC1_SMPR_WIDTH * (  9 - ADC1_SMPR2_BASE ) ) )	//	通道9
+							|	( ( ADC1_SMP_239p5_C ) << ( ADC1_SMPR_WIDTH * (  1 - ADC1_SMPR2_BASE ) ) )	//	通道1
+							|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  2 - ADC1_SMPR2_BASE ) ) )	//	通道2
+							|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  3 - ADC1_SMPR2_BASE ) ) )	//	通道3
+							|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  4 - ADC1_SMPR2_BASE ) ) )	//	通道4
+							|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  5 - ADC1_SMPR2_BASE ) ) )	//	通道5
+							|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  6 - ADC1_SMPR2_BASE ) ) )	//	通道6
+							|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  7 - ADC1_SMPR2_BASE ) ) )	//	通道7
+							|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  8 - ADC1_SMPR2_BASE ) ) )	//	通道8
+							|	( ( ADC1_SMP_239p5_C ) << ( ADC1_SMPR_WIDTH * (  9 - ADC1_SMPR2_BASE ) ) )	//	通道9
                 ;
 	ADC1->SMPR1 =	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 10 - ADC1_SMPR1_BASE ) ) )	//	通道10
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 11 - ADC1_SMPR1_BASE ) ) )	//	通道11
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 12 - ADC1_SMPR1_BASE ) ) )	//	通道12
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 13 - ADC1_SMPR1_BASE ) ) )	//	通道13
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 14 - ADC1_SMPR1_BASE ) ) )	//	通道14
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 15 - ADC1_SMPR1_BASE ) ) )	//	通道15
-				|	( ( ADC1_SMP_41p5_C  ) << ( ADC1_SMPR_WIDTH * ( 16 - ADC1_SMPR1_BASE ) ) )	//	通道16(内部温度)
-				|	( ( ADC1_SMP_41p5_C  ) << ( ADC1_SMPR_WIDTH * ( 17 - ADC1_SMPR1_BASE ) ) )	//	通道17(内部基准)
-				;
+							|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 11 - ADC1_SMPR1_BASE ) ) )	//	通道11
+							|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 12 - ADC1_SMPR1_BASE ) ) )	//	通道12
+							|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 13 - ADC1_SMPR1_BASE ) ) )	//	通道13
+							|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 14 - ADC1_SMPR1_BASE ) ) )	//	通道14
+							|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 15 - ADC1_SMPR1_BASE ) ) )	//	通道15
+							|	( ( ADC1_SMP_41p5_C  ) << ( ADC1_SMPR_WIDTH * ( 16 - ADC1_SMPR1_BASE ) ) )	//	通道16(内部温度)
+							|	( ( ADC1_SMP_41p5_C  ) << ( ADC1_SMPR_WIDTH * ( 17 - ADC1_SMPR1_BASE ) ) )	//	通道17(内部基准)
+							;
 
 	//	配置规则转换序列（序列编号从1开始）
 	#define	ADC1_SQR1_BASE		13	// R1 起始编号
@@ -81,24 +81,24 @@ static	void	STM32_ADC_Init ( void )
 
     // ............设置通道号，最后一行设置序列长度.................................................
 	ADC1->SQR3  =	( ( 16 ) << ( ADC1_SQR_WIDTH * (  1 - ADC1_SQR3_BASE ) ) )	//	序列1
-				|	( ( 17 ) << ( ADC1_SQR_WIDTH * (  2 - ADC1_SQR3_BASE ) ) )	//	序列2
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * (  3 - ADC1_SQR3_BASE ) ) )	//	序列3
-				|	( ( 1  ) << ( ADC1_SQR_WIDTH * (  4 - ADC1_SQR3_BASE ) ) )	//	序列4
-				|	( ( 9  ) << ( ADC1_SQR_WIDTH * (  5 - ADC1_SQR3_BASE ) ) )	//	序列5
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * (  6 - ADC1_SQR3_BASE ) ) )	//	序列6
-				;
+							|	( ( 17 ) << ( ADC1_SQR_WIDTH * (  2 - ADC1_SQR3_BASE ) ) )	//	序列2
+							|	( ( 0  ) << ( ADC1_SQR_WIDTH * (  3 - ADC1_SQR3_BASE ) ) )	//	序列3
+							|	( ( 1  ) << ( ADC1_SQR_WIDTH * (  4 - ADC1_SQR3_BASE ) ) )	//	序列4
+							|	( ( 9  ) << ( ADC1_SQR_WIDTH * (  5 - ADC1_SQR3_BASE ) ) )	//	序列5
+							|	( ( 0  ) << ( ADC1_SQR_WIDTH * (  6 - ADC1_SQR3_BASE ) ) )	//	序列6
+							;
 	ADC1->SQR2  =	( ( 0  ) << ( ADC1_SQR_WIDTH * (  7 - ADC1_SQR2_BASE ) ) )	//	序列7
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * (  8 - ADC1_SQR2_BASE ) ) )	//	序列8
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * (  9 - ADC1_SQR2_BASE ) ) )	//	序列9
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 10 - ADC1_SQR2_BASE ) ) )	//	序列10
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 11 - ADC1_SQR2_BASE ) ) )	//	序列11
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 12 - ADC1_SQR2_BASE ) ) )	//	序列12
-				;
+							|	( ( 0  ) << ( ADC1_SQR_WIDTH * (  8 - ADC1_SQR2_BASE ) ) )	//	序列8
+							|	( ( 0  ) << ( ADC1_SQR_WIDTH * (  9 - ADC1_SQR2_BASE ) ) )	//	序列9
+							|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 10 - ADC1_SQR2_BASE ) ) )	//	序列10
+							|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 11 - ADC1_SQR2_BASE ) ) )	//	序列11
+							|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 12 - ADC1_SQR2_BASE ) ) )	//	序列12
+							;
 	ADC1->SQR1  =	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 13 - ADC1_SQR1_BASE ) ) )	//	序列13
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 14 - ADC1_SQR1_BASE ) ) )	//	序列14
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 15 - ADC1_SQR1_BASE ) ) )	//	序列15
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 16 - ADC1_SQR1_BASE ) ) )	//	序列16
-				|( ( 5 - 1 ) << ( ADC1_SQR_WIDTH * ( 17 - ADC1_SQR1_BASE ) ) )	//	长度(0表示1次)
+							|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 14 - ADC1_SQR1_BASE ) ) )	//	序列14
+							|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 15 - ADC1_SQR1_BASE ) ) )	//	序列15
+							|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 16 - ADC1_SQR1_BASE ) ) )	//	序列16
+							|( ( 5 - 1 ) << ( ADC1_SQR_WIDTH * ( 17 - ADC1_SQR1_BASE ) ) )	//	长度(0表示1次)
                 ;
 
 	__NOP();	//	delay_us ( 1u );

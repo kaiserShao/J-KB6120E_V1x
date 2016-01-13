@@ -68,22 +68,22 @@ void Sampler_R( enum enumSamplerSelect	SamplerSelect )
 	static struct uMenu menu_TSP[] =
 	{
 		{ 0x0102u, " 恢复粉尘采样?" },
-		{ 0x0402u, "是" }, { 0x0409u, "否" },
+		{ 0x0402u, "是" }, { 0x040Au, "否" },
  	};
 	static	struct uMenu menu_R24[] =
 	{
 		{ 0x0102u, " 恢复日均采样?" },
-		{ 0x0402u, "是" }, { 0x0409u, "否" },
+		{ 0x0402u, "是" }, { 0x040Au, "否" },
  	};
 	static	struct uMenu menu_SHI[] =
 	{
 		{ 0x0102u, " 恢复时均采样?" },
-		{ 0x0402u, "是" }, { 0x0409u, "否" },
+		{ 0x0402u, "是" }, { 0x040Au, "否" },
  	};
 	static	struct uMenu menu_AIR[] =
 	{
 		{ 0x0102u, " 恢复大气采样?" },
-		{ 0x0402u, "是" }, { 0x0409u, "否" },
+		{ 0x0402u, "是" }, { 0x040Au, "否" },
  	};
 	static	struct	uMenu	* menux[SamplerNum_Max] =
 	{
