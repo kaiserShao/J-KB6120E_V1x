@@ -447,9 +447,9 @@
               <FilePath>..\BIOS\EE24.C</FilePath>
             </File>
             <File>
-              <FileName>CPS120.C</FileName>
+              <FileName>CPS12X.C</FileName>
               <FileType>1</FileType>
-              <FilePath>..\BIOS\CPS120.C</FilePath>
+              <FilePath>..\BIOS\CPS12X.C</FilePath>
             </File>
             <File>
               <FileName>BKPData.c</FileName>

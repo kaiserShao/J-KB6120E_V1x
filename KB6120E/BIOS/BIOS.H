@@ -13,6 +13,7 @@ extern	void	bus_SPI1xPortInit( void );
 //	BIOS.C - I2C
 #define	_SLAVE_24C512	0xA0u
 #define	_SLAVE_CPS120	0x50u
+#define	_SLAVE_CPS121	0xD8u
 
 enum	I2C_DirectSet { I2C_Write, I2C_Read };
 enum	I2C_AcknowlegeSet { I2C_ACK, I2C_NoACK };

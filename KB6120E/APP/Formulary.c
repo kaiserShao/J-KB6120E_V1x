@@ -19,10 +19,18 @@ __PURE	FP32	_CV_CPS120_Ba( uint16_t InValue )
 {
 	return	(( InValue * ( 90.0f / 16384.0f )) + ( 30.0f ));
 }
+__PURE	FP32	_CV_CPS121_Ba( uint32_t InValue )	
+{
+	return	(InValue / 64000.0f );
+}
 
 __PURE	FP32	_CV_CPS120_Temp( uint16_t InValue )
 {
 	return	(( InValue * ( 165.0f / 16384.0f )) - ( 40.0f ));
+}
+__PURE	FP32	_CV_CPS121_Temp( uint16_t InValue )
+{
+	return	( InValue / 256.0f - 40.0f );
 }
 
 __PURE	FP32	_CV_DS18B20_Temp( int16_t InValue )

@@ -49,4 +49,66 @@ BOOL	CPS120_Read ( uint16_t * pBa, uint16_t * pTemp )
 	return	state;
 }
 
+
+
+
+
+BOOL	CPS121_Load ( uint8_t IO_Buf[5] )
+{
+	if ( ! bus_i2c_start( _SLAVE_CPS121, I2C_Write ))
+	{
+		bus_i2c_stop();
+		return	FALSE;
+	}
+	
+	if ( ! bus_i2c_shout( 0x06 ))
+	{
+		bus_i2c_stop();
+		return	FALSE;
+	}
+
+	if ( ! bus_i2c_start( _SLAVE_CPS121, I2C_Read ))
+	{
+		bus_i2c_stop();
+		return	FALSE;
+	}
+	
+	IO_Buf[0] = bus_i2c_shin( I2C_ACK );	// Receive and send ACK
+	IO_Buf[1] = bus_i2c_shin( I2C_ACK );	// Receive and send ACK
+	IO_Buf[2] = bus_i2c_shin( I2C_ACK );	// Receive and send ACK
+	IO_Buf[3] = bus_i2c_shin( I2C_ACK );	// Receive and send ACK
+	IO_Buf[4] = bus_i2c_shin( I2C_NoACK );	// Receive and send NoACK
+	bus_i2c_stop();
+
+	//	启动转换以备下次读取
+	(void)bus_i2c_start( _SLAVE_CPS121, I2C_Write );
+	(void)bus_i2c_shout( 0x30 );
+	(void)bus_i2c_shout( 0x0A );
+	bus_i2c_stop();
+
+	return	TRUE;
+}
+
+BOOL	CPS121_Read ( uint32_t * pBa, uint16_t  * pTemp )
+{
+	uint8_t	CPS121_Buf[5];
+	BOOL	state = FALSE;
+	
+	bus_i2c_mutex_apply();
+
+	state = CPS121_Load( CPS121_Buf );
+
+	if ( state )
+	{
+		uint32_t	PressureCode = ( CPS121_Buf[0] * 65536L ) + ( CPS121_Buf[1] * 256 ) + CPS121_Buf[2];
+		uint16_t	TemperatureCode = ( CPS121_Buf[3] * 256 ) + CPS121_Buf[4]	+ 40 * 256;
+
+		* pBa = PressureCode;
+		* pTemp = TemperatureCode;
+	}
+	bus_i2c_mutex_release();
+
+	return	state;
+}
+
 /********  (C) COPYRIGHT 2014 青岛金仕达电子科技有限公司  **** End Of File ****/

@@ -100,14 +100,20 @@ static	BOOL	setup_TSP_AIR( struct uMenu const menu[] )
 			changed =TRUE;
 			need_redraw = TRUE;
 			break;
-		case enumSelectXCH:		SamplerTypeSwitch();	return	FALSE;	//	返回到上级菜单，切换到其他采样器
+		case enumSelectXCH:		
+		
+		SamplerTypeSwitch();	return	FALSE;	//	返回到上级菜单，切换到其他采样器
+		}
+		if ( changed )
+		{
+			SampleSetSave();
 		}
 	} while ( enumSelectESC != item );
 
-	if ( changed )
-	{
-		SampleSetSave();
-	}
+// 	if ( changed )
+// 	{
+// 		SampleSetSave();
+// 	}
 	return	TRUE;
 }
 
@@ -415,12 +421,16 @@ static	BOOL	setup_R24_SHI( struct uMenu  const  menu[], const CHAR * szPrompt )
 			SamplerTypeSwitch();
 			return	FALSE;
 		}
+		if ( changed )
+		{
+			SampleSetSave();
+		}
 	} while ( enumSelectESC != item );
 
-	if ( changed )
-	{
-		SampleSetSave();
-	}
+// 	if ( changed )
+// 	{
+// 		SampleSetSave();
+// 	}
 	return	TRUE;
 }
 
@@ -586,7 +596,6 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 			{
 				changed_Delay = TRUE;
 				changed = TRUE;
-				SampleSetSave();
 			}
 			
 			++item;
@@ -616,7 +625,7 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 
 			return	FALSE;	//	返回显示采样状态
 
-		case enumSelectXCH:
+		case enumSelectXCH:		
 			SamplerTypeSwitch();
 			return	FALSE;
 		case	enumSelectESC:
@@ -627,8 +636,15 @@ static	BOOL	SampleStart( enum enumSamplerSelect SamplerSelect )
 // 			}
 			break;
 		}
+		if ( changed )
+		{
+			SampleSetSave();
+		}
 	} while ( enumSelectESC != item );
-	
+// 	if ( changed )
+// 	{
+// 		SampleSetSave();
+// 	}
 	return	TRUE;	//	返回，显示上级菜单
 }
 

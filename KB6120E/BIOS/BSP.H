@@ -131,7 +131,7 @@ extern	void	bus_i2c_mutex_release( void );
 extern	void	bus_SPI_mutex_apply( void );
 extern	void	bus_SPI_mutex_release( void );
 extern	BOOL	CPS120_Read ( uint16_t * pBa, uint16_t * pTemp );
-
+extern	BOOL	CPS121_Read ( uint32_t * pBa, uint16_t * pTemp );
 extern	BOOL	EE24C512_Save( uint16_t address, uint8_t const * ram, uint8_t count );
 extern	BOOL	EE24C512_Load( uint16_t address, uint8_t       * ram, uint8_t count );
 

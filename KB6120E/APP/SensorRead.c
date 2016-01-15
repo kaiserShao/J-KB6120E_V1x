@@ -94,23 +94,30 @@ struct	uSensorRemote		SensorRemote;	//	远程传感器
 *	方案2：读取，不转换，对流量滤波
 *	方案3：读取，转换，对全部需要的信号滤波
 *******************************************************************************/
+
 __task  void	_task_SensorRead( void const * p_arg )
 {
+	BOOL CPS12[2] = {0};
 	( void )p_arg;
-
+	
 	ADC12_Init();
 	SensorLocal.CPU_IntTemp = ADC12_Readout( ADC_Cx_IntTemp );
 	SensorLocal.CPU_IntVolt = ADC12_Readout( ADC_Cx_IntVolt );
 	SensorLocal.LCD_Voltage = ADC12_Readout( ADC_Cx_LCDVolt );
 	SensorLocal.Bat_Current = ADC12_Readout( ADC_Cx_BatCurr );
 	SensorLocal.Bat_Voltage = ADC12_Readout( ADC_Cx_BatVolt );
-	CPS120_Read( &SensorLocal.CPS120_Ba, &SensorLocal.CPS120_Temp );
 
+	if(	CPS121_Read( &SensorLocal.CPS121_Ba, &SensorLocal.CPS121_Temp ) )
+		CPS12[1] = TRUE;
+	if( CPS120_Read( &SensorLocal.CPS120_Ba, &SensorLocal.CPS120_Temp ) )
+		CPS12[0] = TRUE;
+	
 	for(;;)
 	{
 		uint32_t	sum[5];
-		uint_fast8_t i;
 
+		uint_fast8_t i;
+		
 		//	液晶电压控制
 		LCD_Volt_Adjust();
 
@@ -140,8 +147,15 @@ __task  void	_task_SensorRead( void const * p_arg )
 		SensorLocal.Bat_Current = sum[3] / 8u;		
 		SensorLocal.Bat_Voltage = sum[4] / 8u;
 
-		CPS120_Read( &SensorLocal.CPS120_Ba, &SensorLocal.CPS120_Temp );
+		if( CPS12[1] )
+			if( !CPS121_Read( &SensorLocal.CPS121_Ba, &SensorLocal.CPS121_Temp ) )
+				SensorLocal.CPS121_Ba = SensorLocal.CPS121_Temp = 0;
+		if( CPS12[0] )
+			if( !CPS120_Read( &SensorLocal.CPS120_Ba, &SensorLocal.CPS120_Temp ) )
+				SensorLocal.CPS120_Ba = SensorLocal.CPS120_Temp = 0;
 	}
+
+	
 }
 
 /********************************** 功能说明 ***********************************

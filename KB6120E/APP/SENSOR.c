@@ -42,7 +42,15 @@ FP32	_get_CPS120_Ba( void )
 
 	return	((( Ba + 80.0f ) - origin ) * slope );
 }
+FP32	_get_CPS121_Ba( void )
+{
+	uint32_t	Value  = SensorLocal.CPS121_Ba;
+	FP32		Ba     = _CV_CPS121_Ba( Value );
+	FP32		slope  = CalibrateLocal.slope_Ba * 0.001f;
+	FP32		origin = CalibrateLocal.origin_Ba * 0.01f;
 
+	return	((( Ba + 80.0f ) - origin ) * slope );
+}
 #ifdef	_use_cps120_temp
 FP32	_get_CSP120_Temp( void )
 {	//	使用 CPS120的温度作为环境温度
@@ -132,7 +140,19 @@ FP32	get_Ba( void )		//	大气压力（环境压力）
 	{
 	default:
 	case enumUserInput:		return	Configure.set_Ba * 0.01f;
-	case enumMeasureBa:		return	_get_CPS120_Ba();
+	case enumMeasureBa:		
+		{
+		FP32	CP120_Ba = _get_CPS120_Ba();
+		FP32	CP121_Ba = _get_CPS121_Ba();	
+
+		if( CP121_Ba > 30.0f )
+			return	CP121_Ba;
+		else	
+		if( CP120_Ba > 30.0f )
+			return	CP120_Ba;
+		else
+			return	0.0f;
+		}
 	}
 }
 
