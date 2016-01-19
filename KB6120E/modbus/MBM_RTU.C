@@ -4,8 +4,8 @@
 * 描  述  : MODBUS 主机 RTU 模式
 * 最后修改: 2013年12月28日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "MBM_BSP.H"
 #include "MBM.H"
@@ -59,16 +59,18 @@ uint16_t	usMBCRC16 ( const uint8_t * puchMsg, uint16_t usDataLen )
 		0x48, 0x49, 0x89, 0x4B, 0x8B, 0x8A, 0x4A, 0x4E, 0x8E, 0x8F, 0x4F, 0x8D, 0x4D, 0x4C, 0x8C,
 		0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46, 0x86, 0x82, 0x42, 0x43, 0x83, 0x41, 0x81, 0x80,
 		0x40
-	};	
+	};
 	uint8_t uchCRCHi = 0xFFu;	/* high byte of CRC initialized */
 	uint8_t uchCRCLo = 0xFFu;	/* low byte of CRC initialized */
 	uint8_t	uIndex; 			/* will index into CRC lookup table */
+
 	while ( usDataLen-- ) 		/* pass through message buffer */
 	{
 		uIndex = uchCRCLo ^ *puchMsg++ ;	/* calculate the CRC */
 		uchCRCLo = uchCRCHi ^ auchCRCHi[uIndex] ;
 		uchCRCHi = auchCRCLo[uIndex] ;
 	}
+
 	return (uchCRCHi << 8 | uchCRCLo) ;
 }
 
@@ -83,7 +85,7 @@ static	volatile	uint16_t	usSndBufferCount;
 void	vMBM_RTU_Send_Init( void )
 {
 	pucSndBufferCur = ucSerialPDU;
-	vMBM_SerialPut_Cmd( TRUE );			//	允许发送		
+	vMBM_SerialPut_Cmd( TRUE );			//	允许发送
 }
 
 //	RTU 事件处理：发送一字节
@@ -105,20 +107,20 @@ void 	vMBM_RTU_Send_ISR( void )
 //	装配RTU命令
 eMBErrorCode	eMBM_RTU_Assemble( uint8_t ucSlaveAddress, uint16_t usLen )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
-    uint16_t		usCRC16;
+	eMBErrorCode    eStatus = MB_ENOERR;
+	uint16_t		usCRC16;
 
 	//	设定接收地址
 	ucSerialPDU[MB_SER_PDU_ADDR_OFF] = ucSlaveAddress;
 	++usLen;
 	//	生成检验 CRC
-	usCRC16 = usMBCRC16( ucSerialPDU, usLen );		
+	usCRC16 = usMBCRC16( ucSerialPDU, usLen );
 	ucSerialPDU[usLen++] = LOBYTE( usCRC16 );
 	ucSerialPDU[usLen++] = HIBYTE( usCRC16 );
 
 	usSndBufferCount = usLen;
-	
-    return eStatus;
+
+	return eStatus;
 }
 
 
@@ -166,7 +168,7 @@ void	vMBM_RTU_Receive_ISR( void )
 //	解析RTU应答
 eMBErrorCode	eMBM_RTU_Analyze( uint8_t * pucRcvAddress, uint16_t * pusLen )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
+	eMBErrorCode    eStatus = MB_ENOERR;
 
 	if ( eRcvErrorOccured )
 	{
@@ -181,14 +183,15 @@ eMBErrorCode	eMBM_RTU_Analyze( uint8_t * pucRcvAddress, uint16_t * pusLen )
 		eStatus = MB_EIO;	//	CRC 检验失败
 	}
 	else
-	{	//	成功
+	{
+		//	成功
 		uint16_t	usLen = usRcvBufferCount - MB_SER_PDU_SIZE_CRC;
 		uint8_t		ucRcvAddress = ucSerialPDU[MB_SER_PDU_ADDR_OFF];
 		* pucRcvAddress = ucRcvAddress;
 		* pusLen = usLen - 1u;
 	}
 
-    return eStatus;
+	return eStatus;
 }
 
 
@@ -199,7 +202,7 @@ void	vMBM_RTU_T35_ISR( void )
 {
 	vMBM_SerialGet_Cmd( FALSE );	//	禁止串口继续接收
 	vMBM_EventGet_Post();			//	发送接收完成信号
-    vMBM_Timers_Cmd( FALSE );		//	关闭定时器
+	vMBM_Timers_Cmd( FALSE );		//	关闭定时器
 }
 
 /********  (C) COPYRIGHT 2013 青岛金仕达电子科技有限公司  **** End Of File ****/

@@ -4,8 +4,8 @@
 * 描  述  : MODBUS 主节点移植
 * 最后修改: 2014年5月7日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "BSP.H"
 #include "Pin.H"
@@ -49,7 +49,7 @@ __irq	void	TIM4_IRQHandler( void )
 __irq	void	USART3_IRQHandler( void )
 {
 	USART_TypeDef * USARTx = USART3;
-	
+
 	if ( READ_BIT( USARTx->CR1, USART_CR1_RXNEIE ))
 	{
 		if ( READ_BIT( USARTx->SR, USART_SR_RXNE ))
@@ -60,13 +60,13 @@ __irq	void	USART3_IRQHandler( void )
 	}
 
 	if ( READ_BIT( USARTx->CR1, USART_CR1_TCIE ))
- 	{
- 		if ( READ_BIT( USARTx->SR, USART_SR_TC ))
- 		{
- 			//	发送数据处理
+	{
+		if ( READ_BIT( USARTx->SR, USART_SR_TC ))
+		{
+			//	发送数据处理
 			vMBM_RTU_Send_ISR( );
- 		}
- 	}
+		}
+	}
 }
 
 /********************************** 功能说明 ***********************************
@@ -88,8 +88,9 @@ void	vMBusLogQuery( eMBErrorCode * peStatus )
 *  MBus工具－内存复制，计数以16位字为单位进行。
 *******************************************************************************/
 void	vMBus_Memory_Put( uint8_t * pucMBusPDU, const uint16_t * pRegistersVal, uint8_t usRegCount )
-{		
+{
 	uint8_t i;
+
 	for ( i = 0u; i < usRegCount; ++i )
 	{
 		*pucMBusPDU++ = HIBYTE( pRegistersVal[i] );
@@ -144,21 +145,23 @@ BOOL	xMBM_SerialGetByte( uint8_t * pucByte )
 
 void	vMBM_SerialGet_Cmd( BOOL xRxEnable )
 {
-    /* If xRxEnable enable serial receive interrupts.  */
+	/* If xRxEnable enable serial receive interrupts.  */
 	if ( xRxEnable )
 	{
 		RS485_Direct_Receive();
 	}
+
 	USART3_RX_Cmd( xRxEnable );
 }
 
 void	vMBM_SerialPut_Cmd( BOOL xTxEnable )
 {
-    /* If xTxENable enable transmitter empty interrupts. */
+	/* If xTxENable enable transmitter empty interrupts. */
 	if ( xTxEnable )
 	{
 		RS485_Direct_Transmit();
 	}
+
 	USART3_TX_Cmd( xTxEnable );
 }
 
@@ -171,22 +174,26 @@ static	osSemaphoreId  semaphore_TX;
 static	osSemaphoreId  semaphore_RX;
 
 void	vMBM_EventPut_Post( void )
-{	//	设置发送完成标志
+{
+	//	设置发送完成标志
 	osSemaphoreRelease( semaphore_TX );
 }
 
 BOOL	xMBM_EventPut_Poll( void )
-{	//	等待发送完成标志
+{
+	//	等待发送完成标志
 	return	( osSemaphoreWait( semaphore_TX, 300u ) > 0 );
 }
 
 void	vMBM_EventGet_Post( void )
-{	//	设置接收完成标志
+{
+	//	设置接收完成标志
 	osSemaphoreRelease( semaphore_RX );
 }
 
 BOOL	xMBM_EventGet_Poll( void )
-{	//	等待接收完成标志
+{
+	//	等待接收完成标志
 	return	( osSemaphoreWait( semaphore_RX, 500u ) > 0 );
 }
 

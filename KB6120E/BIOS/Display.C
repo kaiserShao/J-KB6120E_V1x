@@ -21,7 +21,8 @@ static	enum	enumDisplayModelType
 *	液晶(TM12864)的背光、灰度控制
 *******************************************************************************/
 static	void	TM12864_SetLight( uint8_t setLight )
-{	//	调整电流调整背光亮度
+{
+	//	调整电流调整背光亮度
 	PWM1_SetOutput( setLight * PWM_Output_Max / 100u );
 }
 
@@ -36,9 +37,13 @@ void	Backlight_ON( void )
 {
 	switch ( DisplayModelType )
 	{
-	default:
-	case enumOLED9704:	OLED9704_SetLight( savLight );	break;
-	case  enumTM12864:	 TM12864_SetLight( savLight );	break;
+		default:
+		case enumOLED9704:
+			OLED9704_SetLight( savLight );
+			break;
+		case  enumTM12864:
+			TM12864_SetLight( savLight );
+			break;
 	}
 }
 
@@ -46,29 +51,36 @@ void	Backlight_OFF( void )
 {
 	switch ( DisplayModelType )
 	{
-	default:
-	case enumOLED9704:	OLED9704_SetLight( 0u );	break;
-	case  enumTM12864:	 TM12864_SetLight( 0u );	break;
+		default:
+		case enumOLED9704:
+			OLED9704_SetLight( 0u );
+			break;
+		case  enumTM12864:
+			TM12864_SetLight( 0u );
+			break;
 	}
 }
 
 void	DisplaySetLight( uint8_t ValueOfBrightness )
-{	//	背光亮度
+{
+	//	背光亮度
 	savLight = ValueOfBrightness;
 
 	Backlight_ON();
 }
 
 void	DisplaySetGrayVolt( FP32 SetGrayVolt )
-{	//	灰度  或 对比度
+{
+	//	灰度  或 对比度
 
 	switch ( DisplayModelType )
 	{
-	default:
-	case  enumOLED9704:	break;
-	case  enumTM12864:	
-		LCDSetGrayVolt = SetGrayVolt;
-		break;
+		default:
+		case  enumOLED9704:
+			break;
+		case  enumTM12864:
+			LCDSetGrayVolt = SetGrayVolt;
+			break;
 	}
 }
 
@@ -79,9 +91,13 @@ void	cls ( void )
 {
 	switch ( DisplayModelType )
 	{
-	case enumTM12864:	 TM12864_cls();	break;
-	default:
-	case enumOLED9704:	OLED9704_cls();	break;
+		case enumTM12864:
+			TM12864_cls();
+			break;
+		default:
+		case enumOLED9704:
+			OLED9704_cls();
+			break;
 	}
 }
 
@@ -89,9 +105,13 @@ void	Lputs( uint16_t yx, const CHAR * sz )
 {
 	switch ( DisplayModelType )
 	{
-	case enumTM12864:	 TM12864_puts ( yx, sz );	break;
-	default:
-	case enumOLED9704:	OLED9704_puts ( yx, sz );	break;
+		case enumTM12864:
+			TM12864_puts ( yx, sz );
+			break;
+		default:
+		case enumOLED9704:
+			OLED9704_puts ( yx, sz );
+			break;
 	}
 }
 
@@ -99,9 +119,13 @@ void	LcmMask( uint16_t yx, uint8_t xlen )
 {
 	switch ( DisplayModelType )
 	{
-	case enumTM12864:	 TM12864_mask ( yx, xlen );	break;
-	default:
-	case enumOLED9704:	OLED9704_mask ( yx, xlen );	break;
+		case enumTM12864:
+			TM12864_mask ( yx, xlen );
+			break;
+		default:
+		case enumOLED9704:
+			OLED9704_mask ( yx, xlen );
+			break;
 	}
 }
 
@@ -116,7 +140,7 @@ void	Display_Init( void )
 		DisplayModelType = enumTM12864;
 		TM12864_Init();
 	}
-	else 
+	else
 	{
 		DisplayModelType = enumOLED9704;
 		OLED9704_Init();

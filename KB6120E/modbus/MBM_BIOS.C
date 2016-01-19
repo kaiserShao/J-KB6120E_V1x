@@ -4,8 +4,8 @@
 * 描  述  : KB6120E 芯片端口访问(MODBUS部分)
 * 最后修改: 2014年5月7日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "BSP.H"
 #include "Pin.H"
@@ -84,7 +84,7 @@ void	TIM4_Cmd( BOOL NewState )
 void	USART3_Init( uint32_t ulBaudRate )
 {
 	USART_TypeDef * USARTx = USART3;
-	
+
 	SET_BIT( RCC->APB1ENR, RCC_APB1ENR_USART3EN );
 
 	USARTx->CR1 = 0u;
@@ -99,7 +99,7 @@ void	USART3_Init( uint32_t ulBaudRate )
 //		CLEAR_BIT( USARTx->CR1, USART_CR1_M );
 //		break;
 //	case 8:
-		SET_BIT( USARTx->CR1, USART_CR1_M );
+	SET_BIT( USARTx->CR1, USART_CR1_M );
 //		break;
 //	}
 
@@ -111,11 +111,11 @@ void	USART3_Init( uint32_t ulBaudRate )
 //	case MB_PAR_ODD:    	/*!< Odd parity. */
 //		SET_BIT( USARTx->CR1, USART_CR1_PS );
 //		SET_BIT( USARTx->CR1, USART_CR1_PCE );
-//		break;		
+//		break;
 //	case MB_PAR_EVEN:   	/*!< Even parity. */
-		CLEAR_BIT( USARTx->CR1, USART_CR1_PS );
-		SET_BIT( USARTx->CR1, USART_CR1_PCE );
-//		break;		
+	CLEAR_BIT( USARTx->CR1, USART_CR1_PS );
+	SET_BIT( USARTx->CR1, USART_CR1_PCE );
+//		break;
 //	}
 
 	SET_BIT( USARTx->CR1, USART_CR1_UE );		// Enable USARTx
@@ -145,7 +145,7 @@ uint8_t	USART3_GetByte( void )
 void	USART3_PortInit ( void )
 {
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
-	CLEAR_BIT( AFIO->MAPR, AFIO_MAPR_USART3_REMAP | AFIO_MAPR_SWJ_CFG ); 
+	CLEAR_BIT( AFIO->MAPR, AFIO_MAPR_USART3_REMAP | AFIO_MAPR_SWJ_CFG );
 	SET_BIT( AFIO->MAPR, AFIO_MAPR_USART3_REMAP_PARTIALREMAP );
 	SET_BIT( AFIO->MAPR, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
 //	GPIO_PinRemapConfig( GPIO_PartialRemap_USART3, ENABLE );
@@ -153,7 +153,7 @@ void	USART3_PortInit ( void )
 	//	PC.11 USART3 Rx, 4：(0100B)浮空输入模式(复位后的状态)
 	//	PC.10 USART3 Tx, F：(1111B)复用功能开漏输出模式50MHz
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
- 	MODIFY_REG( GPIOC->CRH, 0x0000FF00u, 0x00004F00u );
+	MODIFY_REG( GPIOC->CRH, 0x0000FF00u, 0x00004F00u );
 }
 
 void	USART3_RX_Cmd( BOOL NewState )

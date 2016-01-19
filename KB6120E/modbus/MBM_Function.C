@@ -4,8 +4,8 @@
 * 描  述  : MODBUS 主机程序
 * 最后修改: 2013年12月13日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "MBM_BSP.H"
 #include "MBM.H"
@@ -20,7 +20,7 @@ eMBErrorCode	eMBMReadCoils( uint8_t SlaveAddress, uint16_t usRegAddress, uint16_
 	eMBErrorCode	eStatus = MB_ENOERR;
 	uint16_t		usLen = 0u;
 
-    assert(( usCoilCount >= 1u ) && ( usCoilCount <= MB_PDU_FUNC_READ_COILCNT_MAX ));
+	assert(( usCoilCount >= 1u ) && ( usCoilCount <= MB_PDU_FUNC_READ_COILCNT_MAX ));
 	//	等待总线空闲
 	vMBus_apply();
 	//	装配请求
@@ -31,6 +31,7 @@ eMBErrorCode	eMBMReadCoils( uint8_t SlaveAddress, uint16_t usRegAddress, uint16_
 	ucModbusPDU[usLen++] = LOBYTE( usCoilCount );
 	//	总线通讯
 	eStatus = eMBM_IO( SlaveAddress, &usLen );
+
 	//	解析应答
 	if ( MB_ENOERR == eStatus )
 	{
@@ -43,17 +44,21 @@ eMBErrorCode	eMBMReadCoils( uint8_t SlaveAddress, uint16_t usRegAddress, uint16_
 			eStatus = MB_EX_Response_IllegalByteCnt;
 		}
 		else
-		{	//	成功
+		{
+			//	成功
 			memcpy( pCoils, &ucModbusPDU[MB_PDU_RESPONSE_READ_VALUES_OFF], ucNBytes );
-		} 
+		}
 	}
+
 	//	释放总线
 	vMBus_release();
+
 	//	记录最后出现的错误
 	if ( MB_ENOERR != eStatus )
 	{
 		vMBusLogError( eStatus );
 	}
+
 	return	eStatus;
 }
 
@@ -77,6 +82,7 @@ eMBErrorCode	eMBMReadDiscretes( uint8_t SlaveAddress, uint16_t usRegAddress, uin
 	ucModbusPDU[usLen++] = LOBYTE( usDiscreteCnt );
 	//	总线通讯
 	eStatus = eMBM_IO( SlaveAddress, &usLen );
+
 	//	解析应答
 	if ( MB_ENOERR == eStatus )
 	{
@@ -89,17 +95,21 @@ eMBErrorCode	eMBMReadDiscretes( uint8_t SlaveAddress, uint16_t usRegAddress, uin
 			eStatus = MB_EX_Response_IllegalByteCnt;
 		}
 		else
-		{	//	成功
+		{
+			//	成功
 			memcpy( pDiscretes, &ucModbusPDU[MB_PDU_RESPONSE_READ_VALUES_OFF], ucNBytes );
 		}
 	}
-	//	释放总线	
+
+	//	释放总线
 	vMBus_release();
+
 	//	记录最后出现的错误
 	if ( MB_ENOERR != eStatus )
 	{
 		vMBusLogError( eStatus );
 	}
+
 	return	eStatus;
 }
 
@@ -123,6 +133,7 @@ eMBErrorCode	eMBMReadHoldingRegisters( uint8_t SlaveAddress, uint16_t usRegAddre
 	ucModbusPDU[usLen++] = LOBYTE( usRegCount );
 	//	总线通讯
 	eStatus = eMBM_IO( SlaveAddress, &usLen );
+
 	//	解析应答
 	if ( MB_ENOERR == eStatus )
 	{
@@ -135,17 +146,21 @@ eMBErrorCode	eMBMReadHoldingRegisters( uint8_t SlaveAddress, uint16_t usRegAddre
 			eStatus = MB_EX_Response_IllegalByteCnt;
 		}
 		else
-		{	//	成功
+		{
+			//	成功
 			vMBus_Memory_Get( pHoldingRegisters, &ucModbusPDU[MB_PDU_RESPONSE_READ_VALUES_OFF], usRegCount );
 		}
 	}
-	//	释放总线	
+
+	//	释放总线
 	vMBus_release();
+
 	//	记录最后出现的错误
 	if ( MB_ENOERR != eStatus )
 	{
 		vMBusLogError( eStatus );
 	}
+
 	return	eStatus;
 }
 
@@ -169,6 +184,7 @@ eMBErrorCode	eMBMReadInputRegisters( uint8_t SlaveAddress, uint16_t usRegAddress
 	ucModbusPDU[usLen++] = LOBYTE( usRegCount );
 	//	总线通讯
 	eStatus = eMBM_IO( SlaveAddress, &usLen );
+
 	//	解析应答
 	if ( MB_ENOERR == eStatus )
 	{
@@ -181,17 +197,21 @@ eMBErrorCode	eMBMReadInputRegisters( uint8_t SlaveAddress, uint16_t usRegAddress
 			eStatus = MB_EX_Response_IllegalByteCnt;
 		}
 		else
-		{	//	成功
+		{
+			//	成功
 			vMBus_Memory_Get( pInputRegisters, &ucModbusPDU[MB_PDU_RESPONSE_READ_VALUES_OFF], usRegCount );
 		}
 	}
+
 	//	释放总线
 	vMBus_release();
-	//	记录最后出现的错误	
+
+	//	记录最后出现的错误
 	if ( MB_ENOERR != eStatus )
 	{
 		vMBusLogError( eStatus );
 	}
+
 	return	eStatus;
 }
 
@@ -214,6 +234,7 @@ eMBErrorCode	eMBMWriteSingleCoil( uint8_t SlaveAddress, uint16_t usRegAddress, B
 	ucModbusPDU[usLen++] = LOBYTE( CoilRegVal );
 	//	总线通讯
 	eStatus = eMBM_IO( SlaveAddress, &usLen );
+
 	//	解析应答
 	if ( MB_ENOERR == eStatus )
 	{
@@ -230,17 +251,21 @@ eMBErrorCode	eMBMWriteSingleCoil( uint8_t SlaveAddress, uint16_t usRegAddress, B
 			eStatus = MB_EX_Response_IllegalValue;
 		}
 		else
-		{	//	成功
+		{
+			//	成功
 			;
 		}
-	}	
+	}
+
 	//	释放总线
 	vMBus_release();
-	//	记录最后出现的错误	
+
+	//	记录最后出现的错误
 	if ( MB_ENOERR != eStatus )
 	{
 		vMBusLogError( eStatus );
 	}
+
 	return	eStatus;
 }
 
@@ -262,6 +287,7 @@ eMBErrorCode	eMBMWriteSingleRegister( uint8_t SlaveAddress, uint16_t usRegAddres
 	ucModbusPDU[usLen++] = LOBYTE( RegisterVal );
 	//	总线通讯
 	eStatus = eMBM_IO( SlaveAddress, &usLen );
+
 	//	解析应答
 	if ( MB_ENOERR == eStatus )
 	{
@@ -277,18 +303,22 @@ eMBErrorCode	eMBMWriteSingleRegister( uint8_t SlaveAddress, uint16_t usRegAddres
 		{
 			eStatus = MB_EX_Response_IllegalValue;
 		}
-		else 
-		{	//	成功
+		else
+		{
+			//	成功
 			;
 		}
 	}
+
 	//	释放总线
 	vMBus_release();
+
 	//	记录最后出现的错误
 	if ( MB_ENOERR != eStatus )
 	{
 		vMBusLogError( eStatus );
 	}
+
 	return	eStatus;
 }
 
@@ -309,7 +339,8 @@ eMBErrorCode	eMBMWriteMultipleCoils( uint8_t SlaveAddress, uint16_t usRegAddress
 	ucModbusPDU[usLen++] = LOBYTE( usRegAddress );
 	ucModbusPDU[usLen++] = HIBYTE( usCoilCount );
 	ucModbusPDU[usLen++] = LOBYTE( usCoilCount );
-	{	//	复制输出内容到PDU
+	{
+		//	复制输出内容到PDU
 		const uint8_t	ucNBytes = HowBytes( usCoilCount );	//	请求发送数据的字节数
 		ucModbusPDU[usLen++] = ucNBytes;
 		memcpy( ucModbusPDU + usLen, pCoilsVal, ucNBytes );
@@ -317,6 +348,7 @@ eMBErrorCode	eMBMWriteMultipleCoils( uint8_t SlaveAddress, uint16_t usRegAddress
 	}
 	//	总线通讯
 	eStatus = eMBM_IO( SlaveAddress, &usLen );
+
 	//	解析应答
 	if ( MB_ENOERR == eStatus )
 	{
@@ -333,17 +365,21 @@ eMBErrorCode	eMBMWriteMultipleCoils( uint8_t SlaveAddress, uint16_t usRegAddress
 			eStatus = MB_EX_Response_IllegalCount;
 		}
 		else
-		{	//	成功
+		{
+			//	成功
 			;
 		}
 	}
+
 	//	释放总线
 	vMBus_release();
+
 	//	记录最后出现的错误
 	if ( MB_ENOERR != eStatus )
 	{
 		vMBusLogError( eStatus );
 	}
+
 	return	eStatus;
 }
 
@@ -364,7 +400,8 @@ eMBErrorCode	eMBMWriteMultipleRegisters( uint8_t SlaveAddress, uint16_t usRegAdd
 	ucModbusPDU[usLen++] = LOBYTE( usRegAddress );
 	ucModbusPDU[usLen++] = HIBYTE( usRegCount );
 	ucModbusPDU[usLen++] = LOBYTE( usRegCount );
-	{	//	复制输出内容到PDU
+	{
+		//	复制输出内容到PDU
 		const uint8_t	ucNBytes = usRegCount * 2u;	//	请求发送数据的字节数
 		ucModbusPDU[usLen++] = ucNBytes;
 		vMBus_Memory_Put( ucModbusPDU + usLen, pRegistersVal, usRegCount );
@@ -372,6 +409,7 @@ eMBErrorCode	eMBMWriteMultipleRegisters( uint8_t SlaveAddress, uint16_t usRegAdd
 	}
 	//	总线通讯
 	eStatus = eMBM_IO( SlaveAddress, &usLen );
+
 	//	解析应答
 	if ( MB_ENOERR == eStatus )
 	{
@@ -388,17 +426,21 @@ eMBErrorCode	eMBMWriteMultipleRegisters( uint8_t SlaveAddress, uint16_t usRegAdd
 			eStatus = MB_EX_Response_IllegalCount;
 		}
 		else
-		{	//	成功
+		{
+			//	成功
 			;
 		}
 	}
+
 	//	释放总线
 	vMBus_release();
+
 	//	记录最后出现的错误
 	if ( MB_ENOERR != eStatus )
 	{
 		vMBusLogError( eStatus );
 	}
+
 	return	eStatus;
 }
 
@@ -416,19 +458,30 @@ eMBErrorCode	eMBMRead( uint8_t SlaveAddress, uint16_t Register, uint16_t Count, 
 	uint8_t			RegArea;
 
 	assert( (( Register >=     1u ) && ( Register <=  9999u )) ||
-			(( Register >= 10001u ) && ( Register <= 19999u )) ||
-			(( Register >= 40001u ) && ( Register <= 49999u )) ||
-			(( Register >= 30001u ) && ( Register <= 39999u )) );
+	        (( Register >= 10001u ) && ( Register <= 19999u )) ||
+	        (( Register >= 40001u ) && ( Register <= 49999u )) ||
+	        (( Register >= 30001u ) && ( Register <= 39999u )) );
 
 	RegArea    = (uint8_t)( Register / 10000u );
 	RegAddress = (( Register % 10000u ) - 1u );
+
 	switch ( RegArea )
 	{
-	case 0:		eStatus = eMBMReadCoils           ( SlaveAddress, RegAddress, Count, ( uint8_t * )pBuf );	break;	//	FC1
-	case 1:		eStatus = eMBMReadDiscretes       ( SlaveAddress, RegAddress, Count, ( uint8_t * )pBuf );	break;	//	FC2
-	case 4:		eStatus = eMBMReadHoldingRegisters( SlaveAddress, RegAddress, Count, ( uint16_t *)pBuf );	break;	//	FC3
-	case 3:		eStatus = eMBMReadInputRegisters  ( SlaveAddress, RegAddress, Count, ( uint16_t *)pBuf );	break;	//	FC4
-	default:	eStatus = MB_EINVAL;	break;
+		case 0:
+			eStatus = eMBMReadCoils           ( SlaveAddress, RegAddress, Count, ( uint8_t * )pBuf );
+			break;	//	FC1
+		case 1:
+			eStatus = eMBMReadDiscretes       ( SlaveAddress, RegAddress, Count, ( uint8_t * )pBuf );
+			break;	//	FC2
+		case 4:
+			eStatus = eMBMReadHoldingRegisters( SlaveAddress, RegAddress, Count, ( uint16_t *)pBuf );
+			break;	//	FC3
+		case 3:
+			eStatus = eMBMReadInputRegisters  ( SlaveAddress, RegAddress, Count, ( uint16_t *)pBuf );
+			break;	//	FC4
+		default:
+			eStatus = MB_EINVAL;
+			break;
 	}
 
 	//	记录最后出现的错误
@@ -436,6 +489,7 @@ eMBErrorCode	eMBMRead( uint8_t SlaveAddress, uint16_t Register, uint16_t Count, 
 	{
 		vMBusLogError( eStatus );
 	}
+
 	return	eStatus;
 }
 
@@ -446,15 +500,22 @@ eMBErrorCode	eMBMWrite( uint8_t SlaveAddress, uint16_t Register, uint16_t Count,
 	uint8_t			RegArea;
 
 	assert((( Register >=     1u ) && ( Register <=  9999u )) ||
-		   (( Register >= 40001u ) && ( Register <= 49999u )) );
+	       (( Register >= 40001u ) && ( Register <= 49999u )) );
 
 	RegArea    = (uint8_t)( Register / 10000u );
 	RegAddress = (( Register % 10000u ) - 1u );
+
 	switch ( RegArea )
 	{
-	case 0:		eStatus = eMBMWriteMultipleCoils    ( SlaveAddress, RegAddress, Count, ( uint8_t  *)pBuf );	break;	// FC15	
-	case 4:		eStatus = eMBMWriteMultipleRegisters( SlaveAddress, RegAddress, Count, ( uint16_t *)pBuf );	break;	// FC16
-	default:	eStatus = MB_EINVAL;	break;
+		case 0:
+			eStatus = eMBMWriteMultipleCoils    ( SlaveAddress, RegAddress, Count, ( uint8_t  *)pBuf );
+			break;	// FC15
+		case 4:
+			eStatus = eMBMWriteMultipleRegisters( SlaveAddress, RegAddress, Count, ( uint16_t *)pBuf );
+			break;	// FC16
+		default:
+			eStatus = MB_EINVAL;
+			break;
 	}
 
 	//	记录最后出现的错误
@@ -462,8 +523,9 @@ eMBErrorCode	eMBMWrite( uint8_t SlaveAddress, uint16_t Register, uint16_t Count,
 	{
 		vMBusLogError( eStatus );
 	}
+
 	return	eStatus;
-} 
+}
 
 /********************************** 功能说明 ***********************************
 *  MBM 初始化
@@ -471,9 +533,9 @@ eMBErrorCode	eMBMWrite( uint8_t SlaveAddress, uint16_t Register, uint16_t Count,
 eMBErrorCode	eMBMInit( eMBMode eMode, uint32_t ulBaudrate, eMBParity eParity )
 {
 	eMBErrorCode	eStatus = MB_ENOERR;
-	
+
 	eStatus = eMBM_IO_Init( eMode, ulBaudrate, eParity );
-	
+
 	if ( MB_ENOERR == eStatus )
 	{
 		vMBus_Mutex_Init();

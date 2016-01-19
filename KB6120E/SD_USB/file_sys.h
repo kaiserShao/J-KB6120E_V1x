@@ -16,7 +16,7 @@
 
 #ifndef	__CH376_FS_H__
 #define __CH376_FS_H__
-// #define  DEF_IC_V43_U   
+// #define  DEF_IC_V43_U
 // #define  EN_DIR_CREATE
 // #define  EN_DISK_QUERY
 #define  EN_SECTOR_ACCESS

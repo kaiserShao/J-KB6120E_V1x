@@ -5,31 +5,39 @@
 extern void	delay_us ( uint32_t us );
 void	mDelay0_5uS( void )  /* 至少延时0.5uS,根据单片机主频调整 */
 {
-	__NOP(); __NOP(); __NOP(); __NOP(); __NOP();
-	__NOP(); __NOP(); __NOP(); __NOP(); __NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
+	__NOP();
 }
 
 void	CH376_PORT_INIT( void )  /* 由于使用SPI读写时序,所以进行初始化 */
 {
 	INT_IRQ_Enable();
 	SPI3_GPIO_Config();
-/* 如果是硬件SPI接口,那么可使用mode3(CPOL=1&CPHA=1)或mode0(CPOL=0&CPHA=0),CH376在时钟上升沿采样输入,下降沿输出,数据位是高位在前 */
+	/* 如果是硬件SPI接口,那么可使用mode3(CPOL=1&CPHA=1)或mode0(CPOL=0&CPHA=0),CH376在时钟上升沿采样输入,下降沿输出,数据位是高位在前 */
 	CH376_END_CMD();/* 禁止SPI片选 */
 }
 
 UINT8	Spi376Exchange( UINT8 d )  /* 硬件SPI输出且输入8个位数据 */
-{  
+{
 	return SPI3_RW( d );
 }
 
-void	xEndCH376Cmd( )	
-{ 
-	CH376_END_CMD(); 
+void	xEndCH376Cmd( )
+{
+	CH376_END_CMD();
 }  /* SPI片选无效,结束CH376命令,仅用于SPI接口方式 */
 
 void	xWriteCH376Cmd( UINT8 mCmd )  /* 向CH376写命令 */
 {
-	WriteCH376Cmd( mCmd );	
+	WriteCH376Cmd( mCmd );
 	mDelay0_5uS( );
 	mDelay0_5uS( );
 	mDelay0_5uS( );
@@ -76,7 +84,9 @@ UINT8	mInitCH376Host( UINT8 USBSelect )  /* 初始化CH376 */
 	xWriteCH376Data( 0xaa );
 	res = xReadCH376Data( );
 	xEndCH376Cmd( );
+
 	if ( res != 0x55 ) return( ERR_USB_UNKNOWN );  /* 通讯接口不正常,可能原因有:接口连接异常,其它设备影响(片选不唯一),串口波特率,一直在复位,晶振不工作 */
+
 	xWriteCH376Cmd( CMD11_SET_USB_MODE );  /* 设备USB工作模式 */
 	xWriteCH376Data( USBSelect );  ///06  U盘 03 SD卡
 	mDelayuS( 20 );
@@ -90,6 +100,7 @@ UINT8	mInitCH376Host( UINT8 USBSelect )  /* 初始化CH376 */
 	xEndCH376Cmd( );
 #endif
 #endif
+
 	if ( res == CMD_RET_SUCCESS ) return( USB_INT_SUCCESS );
 	else return( ERR_USB_UNKNOWN );  /* 设置模式错误 */
 }

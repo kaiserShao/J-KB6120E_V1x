@@ -1,12 +1,12 @@
 /**************** (C) COPYRIGHT 2008 青岛金仕达电子科技有限公司 ****************
 * 文 件 名: RS232.C
-* 创 建 者: 
-* 描  述  : 
-*         : 
-* 最后修改: 
+* 创 建 者:
+* 描  述  :
+*         :
+* 最后修改:
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 
 #include "BSP.H"
@@ -120,41 +120,49 @@ static	BOOL	PrinterPutHalf( CHAR const * sz, size_t slen, uint8_t WhichHalf )
 	for ( i = 0u; i < slen; )
 	{
 		sDat = *sz++;
+
 		if ( 0U == ((uint8_t)sDat & 0x80U) )
 		{
 			// DBC 半角英文
 			pDot = DotSeekDBC( sDat );
+
 			if ( WhichHalf )
 			{
 				pDot += 8U;
 			}
+
 			if ( ! PrinterSend_DotImage( pDot, 8U ))
 			{
 				return	FALSE;
 			}
+
 			i += 1U;
 		}
 		else
 		{
 			// SBC 全角汉字
 			pDot = DotSeekSBC( sDat, *sz++ );
+
 			if ( WhichHalf )
 			{
 				pDot += 16U;
 			}
+
 			if ( ! PrinterSend_DotImage( pDot, 16U ))
 			{
 				return  FALSE;
 			}
+
 			i += 2U;
 		}
 	}
+
 	return	TRUE;
 }
 
 
 /*******************************************************************************
-* 函数名称: 
+* 函数名称:
 * 功能说明: 打印通讯接口
 * 输入参数: None
 * 输出参数: None
@@ -166,19 +174,23 @@ void	PrinterPutString( const CHAR * sz )
 	size_t	slen;
 
 	if ( UserBreakPrint )
-	{	//	用户中止打印，再次初始化前，不再执行打印
+	{
+		//	用户中止打印，再次初始化前，不再执行打印
 		return;
 	}
 
 	if ( NULL == sz )
-	{	//	输入空指针，打印空行
+	{
+		//	输入空指针，打印空行
 		slen = 0;
 	}
 	else
 	{
 		slen = strlen( sz );
+
 		if ( slen > 30U )
-		{	//	所用微打为240列，可以打印30个半角字符
+		{
+			//	所用微打为240列，可以打印30个半角字符
 			slen = 30U;
 		}
 	}
@@ -195,18 +207,34 @@ void	PrinterPutString( const CHAR * sz )
 
 	// 上半行
 	if ( 0u != slen )
-	{	
-		if ( ! PrinterSend_Command ( Command, 7u )){  return; }
-		if ( ! PrinterPutHalf( sz, slen, 0u )){  return; }
+	{
+		if ( ! PrinterSend_Command ( Command, 7u ))
+		{
+			return;
+		}
+
+		if ( ! PrinterPutHalf( sz, slen, 0u ))
+		{
+			return;
+		}
 	}
+
 	PrinterSend_Command ( "\r\n", 2u );
-	
+
 	// 下半行
 	if ( 0u != slen )
 	{
-		if ( ! PrinterSend_Command ( Command, 7u )){  return; }
-		if ( ! PrinterPutHalf( sz, slen, 1u )){  return; }		
+		if ( ! PrinterSend_Command ( Command, 7u ))
+		{
+			return;
+		}
+
+		if ( ! PrinterPutHalf( sz, slen, 1u ))
+		{
+			return;
+		}
 	}
+
 	PrinterSend_Command ( "\r\n", 2u );
 }
 
@@ -214,14 +242,14 @@ BOOL	PrinterInit( BOOL (*CB_UserTerminate)( void ))
 {
 	UserBreakPrint = FALSE;
 	UserBreakPrint_CB = CB_UserTerminate;
-	
+
 	UART1_Init();
 	return	isPrinterReady();
 }
 
 void	PrinterTestString( const CHAR * sz )
 {
-	while( *sz ) UART1_Send( *sz++ );	
+	while( *sz ) UART1_Send( *sz++ );
 }
 
 /********  (C) COPYRIGHT 2008 青岛金仕达电子科技有限公司  **** End Of File ****/

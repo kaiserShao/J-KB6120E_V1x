@@ -4,8 +4,8 @@
 * 描  述  : KB6120E 芯片端口访问
 * 最后修改: 2014年1月14日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "BSP.H"
 #include "Pin.H"
@@ -27,19 +27,19 @@
 //	4：(0100B)浮空输入模式(复位后的状态)
 //	8：(1000B)上拉/下拉输入模式
 //	C：(1100B)保留
-//	
+//
 //	1：(0001B)通用推挽输出模式10MHz
 //	2：(0010B)通用推挽输出模式2MHz
 //	3：(0011B)通用推挽输出模式50MHz
-//	
+//
 //	5：(0101B)通用开漏输出模式10MHz
 //	6：(0110B)通用开漏输出模式2MHz
 //	7：(0111B)通用开漏输出模式50MHz
-//	
+//
 //	9：(1001B)复用功能推挽输出模式10MHz
 //	A：(1010B)复用功能推挽输出模式2MHz
 //	B：(1011B)复用功能推挽输出模式50MHz
-//	
+//
 //	D：(1101B)复用功能开漏输出模式10MHz
 //	E：(1110B)复用功能开漏输出模式2MHz
 //	F：(1111B)复用功能开漏输出模式50MHz
@@ -53,10 +53,26 @@ void	delay_us ( uint32_t us )
 {
 	while ( us-- )
 	{
-		__NOP(); __NOP(); __NOP(); __NOP(); __NOP();
-		__NOP(); __NOP(); __NOP(); __NOP(); __NOP();
-		__NOP(); __NOP(); __NOP(); __NOP(); __NOP();
-		__NOP(); __NOP(); __NOP(); __NOP(); __NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
+		__NOP();
 	}
 }
 #pragma	pop
@@ -82,7 +98,7 @@ static	uint8_t	P8P_PortRead( void )
 static	void	P8P_PortWrite( uint8_t OutByte )
 {
 	GPIOB->BSRR = ( 0xFF00uL << 16 )
-              | ( 0xFF00uL & ((uint32_t)OutByte << 8 ));
+	              | ( 0xFF00uL & ((uint32_t)OutByte << 8 ));
 }
 
 /********************************** 功能说明 ***********************************
@@ -107,7 +123,7 @@ void	Keyboard_PortInit( void )
 	GPIOB->BSRR = 0x0003u;
 	MODIFY_REG( GPIOA->CRL, 0xFFFFFF00u, 0x88888800u );
 //	MODIFY_REG( GPIOB->CRL, 0x000000FFu, 0x00000088u );
-	MODIFY_REG( GPIOB->CRL, 0x0000000Fu, 0x00000008u );	
+	MODIFY_REG( GPIOB->CRL, 0x0000000Fu, 0x00000008u );
 }
 
 /********************************** 功能说明 ***********************************
@@ -118,15 +134,15 @@ void	Keyboard_IRQ_Enable( void )
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
 
 	AFIO->EXTICR[0] = AFIO_EXTICR1_EXTI0_PB
-          //				| AFIO_EXTICR1_EXTI1_PB
-                  | AFIO_EXTICR1_EXTI2_PA
-                  | AFIO_EXTICR1_EXTI3_PA
-                  ;
+	                  //				| AFIO_EXTICR1_EXTI1_PB
+	                  | AFIO_EXTICR1_EXTI2_PA
+	                  | AFIO_EXTICR1_EXTI3_PA
+	                  ;
 	AFIO->EXTICR[1] = AFIO_EXTICR2_EXTI4_PA
-                  | AFIO_EXTICR2_EXTI5_PA
-                  | AFIO_EXTICR2_EXTI6_PA
-                  | AFIO_EXTICR2_EXTI7_PA
-                  ;
+	                  | AFIO_EXTICR2_EXTI5_PA
+	                  | AFIO_EXTICR2_EXTI6_PA
+	                  | AFIO_EXTICR2_EXTI7_PA
+	                  ;
 	CLEAR_BIT( EXTI->EMR,  0x03FFu );	// no event
 	CLEAR_BIT( EXTI->IMR,  0x0300u );	// 禁止中断 8#,9#
 	SET_BIT(   EXTI->RTSR, 0x00FFu );	// rising edge trigger
@@ -161,7 +177,8 @@ uint8_t	OLED9704_ReadState( void  )
 
 	Pin_OLED9704_CS = 0;
 	Pin_OLED9704_RD = 0;
-	delay_us( 1 );	state = P8P_PortRead();
+	delay_us( 1 );
+	state = P8P_PortRead();
 	Pin_OLED9704_RD = 1;
 	Pin_OLED9704_CS = 1;
 	P8P_ModeOutput();
@@ -171,7 +188,7 @@ uint8_t	OLED9704_ReadState( void  )
 
 uint8_t	OLED9704_ReadData( void )
 {
-  uint8_t InData;
+	uint8_t InData;
 
 	P8P_ModeInput();
 	Pin_OLED9704_DC = 1;
@@ -182,11 +199,12 @@ uint8_t	OLED9704_ReadData( void )
 	Pin_OLED9704_RD = 1;
 	delay_us( 1 );
 	Pin_OLED9704_RD = 0;
-	delay_us( 1 );	InData = P8P_PortRead();
+	delay_us( 1 );
+	InData = P8P_PortRead();
 	Pin_OLED9704_RD = 1;
 	Pin_OLED9704_CS = 1;
-	
-  return InData;
+
+	return InData;
 }
 
 void  OLED9704_WriteData( uint8_t OutData )
@@ -213,7 +231,7 @@ void  OLED9704_WriteReg( uint8_t OutCommand )
 	delay_us( 1 );
 	Pin_OLED9704_WR = 1;
 	Pin_OLED9704_CS = 1;
-}	
+}
 
 void	OLED9704_DisplayDisable( void )
 {
@@ -233,12 +251,12 @@ void	OLED9704_PortInit( void )
 
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
 	GPIOC->BSRR = 0x007Fu;
- 	MODIFY_REG( GPIOC->CRL, 0x0FFFFFFFu, 0x03333333u );
+	MODIFY_REG( GPIOC->CRL, 0x0FFFFFFFu, 0x03333333u );
 
- 	delay_us( 10u );
- 	Pin_OLED9704_RES = 0;
- 	delay_us( 10u );
- 	Pin_OLED9704_RES = 1;
+	delay_us( 10u );
+	Pin_OLED9704_RES = 0;
+	delay_us( 10u );
+	Pin_OLED9704_RES = 1;
 }
 
 /********************************** 功能说明 ***********************************
@@ -254,12 +272,13 @@ void	OLED9704_PortInit( void )
 uint8_t	TM12864_ReadState( void )
 {
 	uint8_t	state;
-	
+
 	P8P_ModeInput();
 	Pin_TM12864_DI = 0;				// 从数据口读数据
 	Pin_TM12864_RW = 1;
 	Pin_TM12864_EN = 1;
-	delay_us( 1 );	state = P8P_PortRead();
+	delay_us( 1 );
+	state = P8P_PortRead();
 	Pin_TM12864_EN = 0;
 
 	return	state;
@@ -270,12 +289,14 @@ static	BOOL	TM12864_isReady( void )
 	uint8_t i;
 
 	for ( i = 200U; i != 0U; --i )
-	{	// waitting for Ready
+	{
+		// waitting for Ready
 		if ( ! ( TM12864_ReadState() & 0x80U ))
 		{
 			return TRUE;
 		}
 	}
+
 	return FALSE;
 }
 
@@ -283,7 +304,10 @@ uint8_t	TM12864_ReadData( void )
 {
 	uint8_t	InData;
 
-	if ( !TM12864_isReady()){	return	0U;	}
+	if ( !TM12864_isReady())
+	{
+		return	0U;
+	}
 
 	P8P_ModeInput();
 	Pin_TM12864_DI = 1;				// 数据操作
@@ -293,15 +317,20 @@ uint8_t	TM12864_ReadData( void )
 	Pin_TM12864_EN = 0;				// 从数据口读数据，虚读
 	delay_us( 10 );
 	Pin_TM12864_EN = 1;
-	delay_us( 10 );	InData = P8P_PortRead();
+	delay_us( 10 );
+	InData = P8P_PortRead();
 	Pin_TM12864_EN = 0;				// 从数据口读数据，实读
 
 	return InData;
 }
 
 void	TM12864_WriteCommand( uint8_t OutCommand )
-{   // 命令输出
-	if ( !TM12864_isReady()){	return;	}
+{
+	// 命令输出
+	if ( !TM12864_isReady())
+	{
+		return;
+	}
 
 	P8P_PortWrite( OutCommand );	// 数据输出到数据口
 	P8P_ModeOutput();
@@ -315,7 +344,10 @@ void	TM12864_WriteCommand( uint8_t OutCommand )
 
 void	TM12864_WriteData( uint8_t OutData )
 {
-	if ( !TM12864_isReady()){	return;	}
+	if ( !TM12864_isReady())
+	{
+		return;
+	}
 
 	P8P_PortWrite( OutData );		// 数据输出到数据口
 	P8P_ModeOutput();
@@ -348,7 +380,7 @@ void	TM12864_PortInit( void )
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
 	GPIOC->BSRR = 0x003Fu;
 	Pin_TM12864_EN  = 0;
- 	MODIFY_REG( GPIOC->CRL, 0x00FFFFFFu, 0x00333333u );
+	MODIFY_REG( GPIOC->CRL, 0x00FFFFFFu, 0x00333333u );
 
 	delay_us( 10u );
 	Pin_TM12864_RST = 0;
@@ -377,7 +409,7 @@ void	TM12864_GrayInit( void )
 BOOL	OW_0_Init( void )
 {
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
- 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
+	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
 
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
 	MODIFY_REG( GPIOA->CRH, 0xF0000000u, 0x70000000u );
@@ -394,7 +426,7 @@ static	BOOL	_OW_0_Reset( void )
 	delay_us( 1 );						// 延时G(0us)
 	_OW_Pin_0_Output(0);				// 把总线拉为低电平
 	delay_us( 480U );					// 延时H(480us)
-	_OW_Pin_0_Output(1);				// 释放总线		
+	_OW_Pin_0_Output(1);				// 释放总线
 	delay_us( 70U );					// 延时I(70us)
 	acknowledge = ! _OW_Pin_0_Input();	// 主机对总线采样, 0 表示总线上有应答, 1 表示无应答；
 	// 	EINT();
@@ -440,7 +472,7 @@ static	BOOL	_OW_1_Reset( void )
 	delay_us( 1 );						// 延时G(0us)
 	_OW_Pin_1_Output(0);				// 把总线拉为低电平
 	delay_us( 480U );					// 延时H(480us)
-	_OW_Pin_1_Output(1);				// 释放总线		
+	_OW_Pin_1_Output(1);				// 释放总线
 	delay_us( 70U );					// 延时I(70us)	70
 	acknowledge = ! _OW_Pin_1_Input();	// 主机对总线采样, 0 表示总线上有应答, 1 表示无应答；
 	//	EINT();
@@ -501,14 +533,22 @@ BOOL	OW_1_Slot( BOOL bitOut )
 BOOL	bus_i2c_start ( uint8_t Address8Bit, enum I2C_DirectSet DirectSet )
 {
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
- 	MODIFY_REG( GPIOB->CRL, 0xFF000000u, 0x77000000u );
+	MODIFY_REG( GPIOB->CRL, 0xFF000000u, 0x77000000u );
 
 	//	Verify bus available.
 	Pin_I2C_SDA_Out = 1;
 	Pin_I2C_SCL_Out = 1;
 	delay_us( 10 );
-	if( ! Pin_I2C_SDA_In ){	 return  FALSE; }
-	if( ! Pin_I2C_SCL_In ){	 return  FALSE; }
+
+	if( ! Pin_I2C_SDA_In )
+	{
+		return  FALSE;
+	}
+
+	if( ! Pin_I2C_SCL_In )
+	{
+		return  FALSE;
+	}
 
 	Pin_I2C_SDA_Out = 0;
 	delay_us( 1 );
@@ -549,6 +589,7 @@ BOOL	bus_i2c_shout ( uint8_t cOutByte )
 		{
 			Pin_I2C_SDA_Out = 0;
 		}
+
 		cOutByte <<= 1;
 
 		delay_us( 1 );
@@ -557,12 +598,12 @@ BOOL	bus_i2c_shout ( uint8_t cOutByte )
 		delay_us( 1 );
 		Pin_I2C_SCL_Out = 0;
 	}
-	
+
 	Pin_I2C_SDA_Out = 1;
 	delay_us( 1 );
 	Pin_I2C_SCL_Out = 1;
 	delay_us( 1 );
- 	AcknowlegeState	= Pin_I2C_SDA_In;
+	AcknowlegeState	= Pin_I2C_SDA_In;
 	Pin_I2C_SCL_Out = 0;
 
 	if ( I2C_ACK != AcknowlegeState )
@@ -581,6 +622,7 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 	uint8_t		i;
 
 	Pin_I2C_SDA_Out = 1;		// make SDA an input
+
 	for( i = 8U; i != 0U; --i )
 	{
 		delay_us( 1 );
@@ -588,11 +630,12 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 
 		delay_us( 1 );
 		cInByte <<= 1;
+
 		if ( Pin_I2C_SDA_In )
 		{
 			cInByte |= 0x01u;
 		}
-		else 
+		else
 		{
 			cInByte &= 0xFEu;
 		}
@@ -608,6 +651,7 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 	{
 		Pin_I2C_SDA_Out = 1;
 	}
+
 	delay_us( 1 );
 	Pin_I2C_SCL_Out = 1;
 	delay_us( 1 );
@@ -628,7 +672,7 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 // uint8_t bus_SPIxShift( uint8_t OutByte )
 // {
 // 	uint8_t i;
-// 	
+//
 // 	for ( i = 8u; i != 0u; --i )
 // 	{
 // 		delay_us( 1 );
@@ -659,7 +703,7 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 // 		delay_us( 1 );
 // 		Pin_SPIxSCK = 1;
 // 	}
-// 	
+//
 // 	return	OutByte;
 // }
 
@@ -703,9 +747,9 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 // 				;
 // 	SPIx->CR2   = 0;
 // 	SET_BIT( SPIx->CR1, SPI_CR1_SPE );
-// 	
+//
 // 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
-// 	CLEAR_BIT(  AFIO->MAPR, AFIO_MAPR_SWJ_CFG ); 
+// 	CLEAR_BIT(  AFIO->MAPR, AFIO_MAPR_SWJ_CFG );
 // 	SET_BIT(    AFIO->MAPR, AFIO_MAPR_SPI1_REMAP );
 // 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
 // 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
@@ -725,17 +769,18 @@ void	UART1_Send( uint8_t OutByte )
 	{
 		;
 	}
+
 	USARTx->DR = OutByte;
 }
 
 void	UART1_Init ( void )
 {
 	USART_TypeDef * USARTx = USART1;
-	
+
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_USART1EN );
 
 	// USART1 configured as follow:
-	// 	- BaudRate = 9600 baud  
+	// 	- BaudRate = 9600 baud
 	// 	- Word Length = 8 Bits
 	// 	- One Stop Bit
 	// 	- No parity
@@ -782,14 +827,14 @@ static	void	TIM1_Init( void )
 
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_TIM1EN );
 
-	TIMx->SMCR	= TIM_SMCR_ETP 
-              | TIM_SMCR_ETF_3
-              | TIM_SMCR_ETPS_0
-              ;
-        
+	TIMx->SMCR	= TIM_SMCR_ETP
+	              | TIM_SMCR_ETF_3
+	              | TIM_SMCR_ETPS_0
+	              ;
+
 	/* Enable the TIM Counter */
 	SET_BIT( TIMx->SMCR, TIM_SMCR_ECE );
- 	SET_BIT( TIMx->CR1, TIM_CR1_CEN );
+	SET_BIT( TIMx->CR1, TIM_CR1_CEN );
 
 	// 	//	使用 TI2
 	//  	CLEAR_BIT( TIMx->CCER,  TIM_CCER_CC2E );
@@ -821,7 +866,7 @@ void	TIM2_Init( void )
 	//	配置过程中暂时全部关闭输出
 	TIMx->CCER = 0u;
 	TIMx->CCMR1 = TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1
-              | TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1;
+	              | TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1;
 	TIMx->CCMR2 = 0u;
 	TIMx->CCR1 = 0u;
 	TIMx->CCR2 = 0u;
@@ -879,9 +924,9 @@ static	void	TIM3_Init( void )
 	//	配置过程中暂时全部关闭输出
 	TIMx->CCER = 0u;
 	TIMx->CCMR1 = TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1
-              | TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1;
+	              | TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1;
 	TIMx->CCMR2 = TIM_CCMR2_OC3M_2 | TIM_CCMR2_OC3M_1
-              | TIM_CCMR2_OC4M_2 | TIM_CCMR2_OC4M_1;
+	              | TIM_CCMR2_OC4M_2 | TIM_CCMR2_OC4M_1;
 	TIMx->CCR1 = 0u;
 	TIMx->CCR2 = 0u;
 	TIMx->CCR3 = 0u;
@@ -894,7 +939,7 @@ static	void	TIM3_Init( void )
 
 	//	配置输出管脚
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
- 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_TIM3_REMAP, AFIO_MAPR_TIM3_REMAP_FULLREMAP );
+	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_TIM3_REMAP, AFIO_MAPR_TIM3_REMAP_FULLREMAP );
 //	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
 //	MODIFY_REG( GPIOC->CRL, 0x0F000000u, 0x0B000000u );		//	PC.6, T3CH1
 //	MODIFY_REG( GPIOC->CRL, 0xF0000000u, 0xB0000000u );		//	PC.7, T3CH2
@@ -905,28 +950,28 @@ static	void	TIM3_Init( void )
 void	PWM1_SetOutput( uint16_t OutValue )
 {
 	TIM_TypeDef * TIMx = TIM3;
-	
+
 	TIMx->CCR1 = _TIM3_PWM_Regular( OutValue );
 }
 
 void	PWM2_SetOutput( uint16_t OutValue )
 {
 	TIM_TypeDef * TIMx = TIM3;
-	
+
 	TIMx->CCR2 = _TIM3_PWM_Regular( OutValue );
 }
 
 void	PWM3_SetOutput( uint16_t OutValue )
 {
 	TIM_TypeDef * TIMx = TIM3;
-	
+
 	TIMx->CCR3 = _TIM3_PWM_Regular( OutValue );
 }
 
 void	PWM4_SetOutput( uint16_t OutValue )
 {
 	TIM_TypeDef * TIMx = TIM3;
-	
+
 	TIMx->CCR4 = _TIM3_PWM_Regular( OutValue );
 }
 
@@ -949,19 +994,21 @@ uint16_t	HCBoxFan_Circle_Read( void )
 }
 
 /********************************** 功能说明 ***********************************
-*	访问 GPIO  
+*	访问 GPIO
 *******************************************************************************/
 void	MeasureBattery_OutCmd( BOOL NewState )
-{	//	PC8 高电平有效
+{
+	//	PC8 高电平有效
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
 	GPIOC->BSRR = NewState ? GPIO_BSRR_BS8 : GPIO_BSRR_BR8;
- 	MODIFY_REG( GPIOC->CRH, 0x0000000Fu, 0x00000003u );
+	MODIFY_REG( GPIOC->CRH, 0x0000000Fu, 0x00000003u );
 }
 void	AIRLightOutCmd( BOOL NewState )
-{	//	PC9 高电平有效
+{
+	//	PC9 高电平有效
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
 	GPIOC->BSRR = NewState ? GPIO_BSRR_BS9 : GPIO_BSRR_BR9;
- 	MODIFY_REG( GPIOC->CRH, 0x000000F0u, 0x00000030u );
+	MODIFY_REG( GPIOC->CRH, 0x000000F0u, 0x00000030u );
 }
 // void	HCBoxHeat_OutCmd( BOOL NewState )
 // {	//	PA.8
@@ -985,10 +1032,11 @@ void	AIRLightOutCmd( BOOL NewState )
 // }
 
 void	Speaker_OutCmd( BOOL NewState )
-{	//	PB.2(BOOT1), 上电复位时外部下拉到GND.
+{
+	//	PB.2(BOOT1), 上电复位时外部下拉到GND.
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
 	GPIOB->BSRR = NewState ? GPIO_BSRR_BS2 : GPIO_BSRR_BR2;
- 	MODIFY_REG( GPIOB->CRL, 0x00000F00u, 0x00000300u );
+	MODIFY_REG( GPIOB->CRL, 0x00000F00u, 0x00000300u );
 }
 
 void	beep( void )
@@ -1022,7 +1070,7 @@ BOOL	UART1_RX_Pin_State( void )
 	//	PA.10 for USART1 RX.
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
 	MODIFY_REG( GPIOA->CRH, 0x00000F00u, 0x00000400u );
-	
+
 	return	READ_BIT( GPIOA->IDR, GPIO_IDR_IDR10 ) ? TRUE : FALSE;
 }
 
@@ -1050,16 +1098,20 @@ uint8_t	get_Jumper( void )
 	portState = 0u;
 	i = 0u;
 	prevState = portState;
-	do {
+
+	do
+	{
 		delay_us( 300u );
 		portState = READ_BIT( GPIOA->IDR, GPIO_IDR_IDR13 | GPIO_IDR_IDR14 );
+
 		if ( prevState != portState )
 		{
 			i = 0u;
 			prevState = portState;
 		}
-	} while ( ++i < iRetryMax );
-	
+	}
+	while ( ++i < iRetryMax );
+
 	JumperState = ((( portState >> 13 ) & 0x03u ) ^ 0x02u );	//	不插跳线结果为0，插跳线结果为1。
 
 	//	重新打开调试功能
@@ -1084,7 +1136,8 @@ void	NVIC_Sleep( void )
 *	NVIC 配置
 *******************************************************************************/
 void	NVIC_IRQ_Cmd( IRQn_Type IRQn, BOOL NewState )
-{	//	使用 SVC 访问 NVIC，实现中断的开关控制。
+{
+	//	使用 SVC 访问 NVIC，实现中断的开关控制。
 	__svc_indirect(0) void _SVC_Call( void (*)( IRQn_Type IRQn ), IRQn_Type IRQn );
 
 	if ( NewState )

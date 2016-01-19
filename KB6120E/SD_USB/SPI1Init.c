@@ -20,22 +20,22 @@ void SPI3_GPIO_Config(void)
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_SPI1EN );
 
 	SPIx->CR1	= SPI_CR1_MSTR
-				| SPI_CR1_CPHA
-				| SPI_CR1_CPOL
-				| SPI_CR1_SSM
-				| SPI_CR1_SSI
-				| SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0
-				;
+	            | SPI_CR1_CPHA
+	            | SPI_CR1_CPOL
+	            | SPI_CR1_SSM
+	            | SPI_CR1_SSI
+	            | SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0
+	            ;
 	SPIx->CR2   = 0;
 	SET_BIT( SPIx->CR1, SPI_CR1_SPE );
-	
+
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN | RCC_APB2ENR_IOPAEN );
-	CLEAR_BIT(  AFIO->MAPR, AFIO_MAPR_SWJ_CFG ); 
+	CLEAR_BIT(  AFIO->MAPR, AFIO_MAPR_SWJ_CFG );
 	SET_BIT(    AFIO->MAPR, AFIO_MAPR_SPI1_REMAP );
 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
- 	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00B4B000u );
- 	GPIOA->BSRR = ( 1 << 15 );
+	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00B4B000u );
+	GPIOA->BSRR = ( 1 << 15 );
 	MODIFY_REG( GPIOA->CRH, 0xF0000000u, 0x30000000u );	//	for CS, output
 }
 /*******************************************************************************
@@ -48,8 +48,10 @@ void SPI3_GPIO_Config(void)
 uint8_t bus_SPIxShift( uint8_t OutByte )
 {
 	SPI_TypeDef * SPIx = SPI1;
-	SPIx->DR = OutByte;	 
+	SPIx->DR = OutByte;
+
 	while ( ! ( SPIx->SR & SPI_SR_RXNE ));
+
 	OutByte = SPIx->DR;
 	return	OutByte;
 }
@@ -80,8 +82,8 @@ void	bus_SPIxNSS( BOOL NewOutLevel )
 * 返      回      : 无
 *******************************************************************************/
 void	CH376_END_CMD( void )
-{	
-	bus_SPIxNSS(1);  /* 禁止SPI片选 */	
+{
+	bus_SPIxNSS(1);  /* 禁止SPI片选 */
 }
 /*******************************************************************************
 * 函  数  名      : SPI3_RW
@@ -92,7 +94,7 @@ void	CH376_END_CMD( void )
 *******************************************************************************/
 uint8_t SPI3_RW( uint8_t byte )
 {
-	return  bus_SPIxShift( byte );	
+	return  bus_SPIxShift( byte );
 }
 /*******************************************************************************
 * 函  数  名      : CH376_Write
@@ -102,7 +104,7 @@ uint8_t SPI3_RW( uint8_t byte )
 * 返      回      : 无
 *******************************************************************************/
 void CH376_Write( uint8_t CMD_DAT )
-{	
+{
 	SPI3_RW( CMD_DAT );
 }
 /*******************************************************************************
@@ -117,7 +119,7 @@ void	WriteCH376Cmd( uint8_t mCmd )
 	bus_SPIxNSS(1);    /* 防止之前未通过xEndCH376Cmd禁止SPI片选 */
 	delay_us(5);
 	bus_SPIxNSS(0);      /* SPI片选有效 */
-	CH376_Write( mCmd );  /* 发出命令码 */	
+	CH376_Write( mCmd );  /* 发出命令码 */
 	delay_us( 2 );   /* 延时1.5uS确保读写周期大于1.5uS,或者用上面一行的状态查询代替 */
 }
 /*******************************************************************************
@@ -161,7 +163,7 @@ uint8_t CH376QueryInterrupt(void)
 	else
 	{
 		return 0;
-	}		
+	}
 }
 /*******************************************************************************
 * 函  数  名      : NVIC_Configuration
@@ -182,7 +184,7 @@ uint8_t CH376QueryInterrupt(void)
 // 	// 		5            [7:6]                 [5:0]
 // 	// 		6            [7:7]                 [6:0]
 // 	// 		7            无                    [7:0]（所有位）
-// 	
+//
 
 // }
 /*******************************************************************************
@@ -197,17 +199,17 @@ void	INT_IRQ_Enable( void )
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
 	AFIO->EXTICR[3] =  AFIO_EXTICR4_EXTI13_PC;
 	CLEAR_BIT( EXTI->EMR,  0x2000u );	// no event
-	CLEAR_BIT( EXTI->IMR,  0xDC00u );	// 禁止中断 
+	CLEAR_BIT( EXTI->IMR,  0xDC00u );	// 禁止中断
 	SET_BIT(   EXTI->RTSR, 0x0000u );	// rising edge trigger
 	SET_BIT(   EXTI->FTSR, 0x2000u );	// falling edge trigger
 	WRITE_REG( EXTI->PR,   0x2000u );	// 写1复位中断标志位
-	SET_BIT(   EXTI->IMR,  0x2000u );	// 
+	SET_BIT(   EXTI->IMR,  0x2000u );	//
 }
 /**/
 void EXTI15_10_IRQHandler(void)
 {
-	CH376_Flag=1; 	
-	EXTI->PR=1<<13; 	
+	CH376_Flag=1;
+	EXTI->PR=1<<13;
 }
 /**/
 

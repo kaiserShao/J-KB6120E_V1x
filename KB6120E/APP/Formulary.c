@@ -4,8 +4,8 @@
 * 描  述  : KB-6120E 流量公式汇总
 * 最后修改: 2014年2月25日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "AppDEF.H"
 #include <math.h>
@@ -15,11 +15,11 @@
 /********************************** 功能说明 ***********************************
 *	归一化转换，传感器（ADC）读数 -> 归一化量值
 *******************************************************************************/
-__PURE	FP32	_CV_CPS120_Ba( uint16_t InValue )	
+__PURE	FP32	_CV_CPS120_Ba( uint16_t InValue )
 {
 	return	(( InValue * ( 90.0f / 16384.0f )) + ( 30.0f ));
 }
-__PURE	FP32	_CV_CPS121_Ba( uint32_t InValue )	
+__PURE	FP32	_CV_CPS121_Ba( uint32_t InValue )
 {
 	return	(InValue / 64000.0f );
 }
@@ -65,7 +65,7 @@ __PURE	FP32	_CV_NTC10K( uint16_t ADx )
 #define	ADC_Max	4096.0f
 
 	FP32	Tx;
-	
+
 	if ( ADx <= 100u )
 	{
 		Tx = -50.0f;	//	-48.2
@@ -79,7 +79,7 @@ __PURE	FP32	_CV_NTC10K( uint16_t ADx )
 		FP32	RxDivR0 = (FP32)( 4096u - ADx ) / (FP32)( ADx );
 		Tx = B / ( logf( RxDivR0 ) + ( B / ( K + T0 ))) - K;
 	}
-	
+
 	return	Tx;
 }
 
@@ -98,6 +98,7 @@ __PURE	FP32	_CV_CPU_Volt( uint16_t ADx )
 	{
 		volt = ( 1.2f * 4096u ) / ADx;
 	}
+
 	return	volt;
 }
 
@@ -115,14 +116,14 @@ FP32	_CV_Bat_Voltage( uint16_t AD_Value )
 	{
 		volt = AD_Value * ( 3.3f / 4096u );
 	}
-	
+
 	return	Gain * volt;	//	返回电压，单位V。
 }
 
 __PURE	FP32	_CV_Bat_Current( uint16_t AD_Value )
 {
 	FP32	volt = AD_Value * ( 3.3f / 4096u );
-	
+
 	//	1. 取样电阻 0.33 两个并联，得 0.165
 	//	2. 同向放大器，放大21倍。
 	//	3. 分压电阻 51K:27K
@@ -141,13 +142,16 @@ static	const	FP32	Tr0	= 273.150f;
 static	const	FP32	Pr0	= 101.325f;
 
 static	FP32	get_Tstd( void )
-{ 
+{
 	switch ( Configure.SetTstd )
 	{
-	default:
-	case enum_273K:	return	Tr0 +  0.0f;
-	case enum_293K:	return	Tr0 + 20.0f;
-	case enum_298K:	return	Tr0 + 25.0f;
+		default:
+		case enum_273K:
+			return	Tr0 +  0.0f;
+		case enum_293K:
+			return	Tr0 + 20.0f;
+		case enum_298K:
+			return	Tr0 + 25.0f;
 	}
 }
 
@@ -189,18 +193,20 @@ __PURE	FP32	Calc_flow( FP32 fstd, FP32 Tx, FP32 Px, FP32 Ba, enum enumSamplerSel
 	FP32	Tstd;
 
 	FP32	flow;
+
 	switch( SamplerSelect )
 	{
-	case Q_TSP:
-	Tstd = Tr0;
-	break;
-	case Q_R24:
-	case Q_SHI:
-	case Q_AIR:
-	default:
-	Tstd = get_Tstd();
-	break;
+		case Q_TSP:
+			Tstd = Tr0;
+			break;
+		case Q_R24:
+		case Q_SHI:
+		case Q_AIR:
+		default:
+			Tstd = get_Tstd();
+			break;
 	}
+
 	if ( Ba < 0.001f )
 	{
 		flow = fstd;
@@ -208,10 +214,12 @@ __PURE	FP32	Calc_flow( FP32 fstd, FP32 Tx, FP32 Px, FP32 Ba, enum enumSamplerSel
 	else
 	{
 		Pbv = 0.0f;
+
 		if ( Configure.shouldCalcPbv )
 		{
 			Pbv = Calc_Pbv( Tx );
 		}
+
 		flow = (( fstd * (( Tr0 + Tx ) * Pr0 )) / ((( Ba + Px ) - Pbv ) * Tstd ));
 	}
 
@@ -235,7 +243,8 @@ __PURE	FP32	CorrectMulitPoint( FP32 inValue, uint16_t const SlopeList[], FP32 co
 	y2 = 0.0f;
 	x2 = 0.0f;
 
-	do {
+	do
+	{
 		FP32	slope = ((FP32)SlopeList[i] * 0.001f );
 
 		y1 = y2;
@@ -243,8 +252,9 @@ __PURE	FP32	CorrectMulitPoint( FP32 inValue, uint16_t const SlopeList[], FP32 co
 
 		y2 = PointList[i];
 		x2 = y2 / slope;
-		
-	} while (( x2 < inValue ) && ( ++i < PointCount ));
+
+	}
+	while (( x2 < inValue ) && ( ++i < PointCount ));
 
 	return	(( inValue - x1 ) * (( y2 - y1 ) / ( x2 - x1 )) + y1 );
 }
@@ -262,21 +272,23 @@ uint16_t	RMS( const uint16_t * pSrc, uint16_t iCount )
 	uint16_t	Result;
 	uint16_t	i = iCount;
 
-	do {
+	do
+	{
 		Xi = *pSrc++;
 
 		sumXi   += Xi;
 
 		sumXiXi += Xi * Xi;
 
-	} while( --i );
-	
+	}
+	while( --i );
+
 	Result = rint( sqrtf( sumXiXi - (((int64_t)sumXi * sumXi) / iCount )));
-	
+
 	return	Result;
 }
-/* 
-   饱和水汽压 
+/*
+   饱和水汽压
    水平面： Ln^ew = (10.286T-2148.4909)/(T-35.85)
     冰面 :  Ln^ew = 12.5633-2670.59/T
 */

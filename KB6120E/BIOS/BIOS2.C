@@ -4,8 +4,8 @@
 * 描  述  : KB6120E 芯片端口访问
 * 最后修改: 2013年8月7日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "BSP.H"
 #include "Pin.H"
@@ -22,19 +22,19 @@
 //	4：(0100B)浮空输入模式(复位后的状态)
 //	8：(1000B)上拉/下拉输入模式
 //	C：(1100B)保留
-//	
+//
 //	1：(0001B)通用推挽输出模式10MHz
 //	2：(0010B)通用推挽输出模式2MHz
 //	3：(0011B)通用推挽输出模式50MHz
-//	
+//
 //	5：(0101B)通用开漏输出模式10MHz
 //	6：(0110B)通用开漏输出模式2MHz
 //	7：(0111B)通用开漏输出模式50MHz
-//	
+//
 //	9：(1001B)复用功能推挽输出模式10MHz
 //	A：(1010B)复用功能推挽输出模式2MHz
 //	B：(1011B)复用功能推挽输出模式50MHz
-//	
+//
 //	D：(1101B)复用功能开漏输出模式10MHz
 //	E：(1110B)复用功能开漏输出模式2MHz
 //	F：(1111B)复用功能开漏输出模式50MHz
@@ -59,10 +59,26 @@ void	delay_us ( uint32_t us )
 {
 	while ( us-- )
 	{
-		__nop(); __nop(); __nop(); __nop(); __nop();
-		__nop(); __nop(); __nop(); __nop(); __nop();
-		__nop(); __nop(); __nop(); __nop(); __nop();
-		__nop(); __nop(); __nop(); __nop(); __nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
+		__nop();
 	}
 }
 
@@ -97,15 +113,15 @@ void	Keyboard_IRQ_Enable( void )
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
 
 	AFIO->EXTICR[0] = AFIO_EXTICR1_EXTI0_PB
-					| AFIO_EXTICR1_EXTI1_PB
-					| AFIO_EXTICR1_EXTI2_PA
-					| AFIO_EXTICR1_EXTI3_PA
-					;
+	                  | AFIO_EXTICR1_EXTI1_PB
+	                  | AFIO_EXTICR1_EXTI2_PA
+	                  | AFIO_EXTICR1_EXTI3_PA
+	                  ;
 	AFIO->EXTICR[1] = AFIO_EXTICR2_EXTI4_PA
-					| AFIO_EXTICR2_EXTI5_PA
-					| AFIO_EXTICR2_EXTI6_PA
-					| AFIO_EXTICR2_EXTI7_PA
-					;
+	                  | AFIO_EXTICR2_EXTI5_PA
+	                  | AFIO_EXTICR2_EXTI6_PA
+	                  | AFIO_EXTICR2_EXTI7_PA
+	                  ;
 	CLEAR_BIT( EXTI->EMR,  0x03FFu );	// no event
 	CLEAR_BIT( EXTI->IMR,  0x0300u );	// 禁止中断 8#,9#
 	SET_BIT(   EXTI->RTSR, 0x00FFu );	// rising edge trigger
@@ -169,7 +185,8 @@ uint8_t	OLED9704_ReadState( void  )
 
 	Pin_OLED9704_CS = 0;
 	Pin_OLED9704_RD = 0;
-	delay_us( 1 );	state = Port_P8P_Read();
+	delay_us( 1 );
+	state = Port_P8P_Read();
 	Pin_OLED9704_RD = 1;
 	Pin_OLED9704_CS = 1;
 	Port_P8P_Output();
@@ -179,7 +196,7 @@ uint8_t	OLED9704_ReadState( void  )
 
 uint8_t	OLED9704_ReadData( void  )
 {
-    uint8_t InData;
+	uint8_t InData;
 
 	Port_P8P_Input();
 	Pin_OLED9704_DC = 1;
@@ -190,11 +207,12 @@ uint8_t	OLED9704_ReadData( void  )
 	Pin_OLED9704_RD = 1;
 	delay_us( 1 );
 	Pin_OLED9704_RD = 0;
-	delay_us( 1 );	InData = Port_P8P_Read();
+	delay_us( 1 );
+	InData = Port_P8P_Read();
 	Pin_OLED9704_RD = 1;
 	Pin_OLED9704_CS = 1;
 
-    return InData;
+	return InData;
 }
 
 void  OLED9704_WriteData( uint8_t OutData )
@@ -221,7 +239,7 @@ void  OLED9704_WriteReg( uint8_t OutCommand )
 	delay_us( 1 );
 	Pin_OLED9704_WR = 1;
 	Pin_OLED9704_CS = 1;
-}	
+}
 
 void	OLED9704_DisplayDisable( void )
 {
@@ -241,12 +259,12 @@ void	OLED9704_PortInit( void )
 
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
 	GPIOC->BSRR = 0x007Fu;
- 	MODIFY_REG( GPIOB->CRL, 0x0FFFFFFFu, 0x03333333u );
+	MODIFY_REG( GPIOB->CRL, 0x0FFFFFFFu, 0x03333333u );
 
- 	delay_us( 10u );
- 	Pin_OLED9704_RES = 0;
- 	delay_us( 10u );
- 	Pin_OLED9704_RES = 1;
+	delay_us( 10u );
+	Pin_OLED9704_RES = 0;
+	delay_us( 10u );
+	Pin_OLED9704_RES = 1;
 }
 
 
@@ -263,12 +281,13 @@ void	OLED9704_PortInit( void )
 uint8_t	TM12864_ReadState( void )
 {
 	uint8_t	state;
-	
+
 	Port_P8P_Input();
 	Pin_TM12864_DI = 0;				// 从数据口读数据
 	Pin_TM12864_RW = 1;
 	Pin_TM12864_EN = 1;
-	delay_us( 1 );	state = Port_P8P_Read();
+	delay_us( 1 );
+	state = Port_P8P_Read();
 	Pin_TM12864_EN = 0;
 
 	return	state;
@@ -279,12 +298,14 @@ static	BOOL	TM12864_isReady( void )
 	uint8_t i;
 
 	for ( i = 200U; i != 0U; --i )
-	{	// waitting for Ready
+	{
+		// waitting for Ready
 		if ( ! ( TM12864_ReadState() & 0x80U ))
 		{
 			return TRUE;
 		}
 	}
+
 	return FALSE;
 }
 
@@ -292,7 +313,10 @@ uint8_t	TM12864_ReadData( void )
 {
 	uint8_t	InData;
 
-	if ( !TM12864_isReady()){	return	0U;	}
+	if ( !TM12864_isReady())
+	{
+		return	0U;
+	}
 
 	Port_P8P_Input();
 	Pin_TM12864_DI = 1;				// 数据操作
@@ -302,15 +326,20 @@ uint8_t	TM12864_ReadData( void )
 	Pin_TM12864_EN = 0;				// 从数据口读数据，虚读
 	delay_us( 1 );
 	Pin_TM12864_EN = 1;
-	delay_us( 1 );	InData = Port_P8P_Read();
+	delay_us( 1 );
+	InData = Port_P8P_Read();
 	Pin_TM12864_EN = 0;				// 从数据口读数据，实读
 
 	return InData;
 }
 
 void	TM12864_WriteCommand( uint8_t OutCommand )
-{   // 命令输出
-	if ( !TM12864_isReady()){	return;	}
+{
+	// 命令输出
+	if ( !TM12864_isReady())
+	{
+		return;
+	}
 
 	Port_P8P_Write( OutCommand );	// 数据输出到数据口
 	Port_P8P_Output();
@@ -324,7 +353,10 @@ void	TM12864_WriteCommand( uint8_t OutCommand )
 
 void	TM12864_WriteData( uint8_t OutData )
 {
-	if ( !TM12864_isReady()){	return;	}
+	if ( !TM12864_isReady())
+	{
+		return;
+	}
 
 	Port_P8P_Write( OutData );		// 数据输出到数据口
 	Port_P8P_Output();
@@ -357,7 +389,7 @@ void	TM12864_PortInit( void )
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
 	GPIOC->BSRR = 0x003Fu;
 	Pin_TM12864_EN  = 0;
- 	MODIFY_REG( GPIOC->CRL, 0x00FFFFFFu, 0x00333333u );
+	MODIFY_REG( GPIOC->CRL, 0x00FFFFFFu, 0x00333333u );
 
 	delay_us( 10 );
 	Pin_TM12864_RST = 0;
@@ -383,7 +415,7 @@ BOOL	OW_0_Init( void )
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
 	MODIFY_REG( GPIOA->CRH, 0xF0000000u, 0x70000000u );
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
- 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
+	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
 
 	Pin_DS18B20_0_Out = 1;
 	delay_us( 5 );
@@ -397,7 +429,7 @@ static	BOOL	_OW_0_Reset( void )
 	delay_us( 1 );						// 延时G(0us)
 	Pin_DS18B20_0_Out = 0;				// 把总线拉为低电平
 	delay_us( 480U );					// 延时H(480us)
-	Pin_DS18B20_0_Out = 1;				// 释放总线		
+	Pin_DS18B20_0_Out = 1;				// 释放总线
 	delay_us( 70U );					// 延时I(70us)
 	acknowledge = ! Pin_DS18B20_0_In;	// 主机对总线采样, 0 表示总线上有应答, 1 表示无应答；
 	// 	EINT();
@@ -449,7 +481,7 @@ static	BOOL	_OW_1_Reset( void )
 	delay_us( 1 );						// 延时G(0us)
 	Pin_DS18B20_1_Out = 0;				// 把总线拉为低电平
 	delay_us( 480U );					// 延时H(480us)
-	Pin_DS18B20_1_Out = 1;				// 释放总线		
+	Pin_DS18B20_1_Out = 1;				// 释放总线
 	delay_us( 70U );					// 延时I(70us)	70
 	acknowledge = ! Pin_DS18B20_1_In;	// 主机对总线采样, 0 表示总线上有应答, 1 表示无应答；
 	//	EINT();
@@ -497,14 +529,22 @@ BOOL	OW_1_Slot( BOOL bitOut )
 BOOL	bus_i2c_start ( uint8_t Address8Bit, enum I2C_DirectSet DirectSet )
 {
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
- 	MODIFY_REG( GPIOB->CRL, 0xFF000000u, 0x77000000u );
+	MODIFY_REG( GPIOB->CRL, 0xFF000000u, 0x77000000u );
 
 	//	Verify bus available.
 	Pin_I2C_SDA_Out = 1;
 	Pin_I2C_SCL_Out = 1;
 	delay_us( 10 );
-	if( ! Pin_I2C_SDA_In ){	return	FALSE;	}
-	if( ! Pin_I2C_SCL_In ){	return	FALSE;	}
+
+	if( ! Pin_I2C_SDA_In )
+	{
+		return	FALSE;
+	}
+
+	if( ! Pin_I2C_SCL_In )
+	{
+		return	FALSE;
+	}
 
 	Pin_I2C_SDA_Out = 0;
 	delay_us( 1 );
@@ -545,6 +585,7 @@ BOOL	bus_i2c_shout ( uint8_t cOutByte )
 		{
 			Pin_I2C_SDA_Out = 0;
 		}
+
 		cOutByte <<= 1;
 
 		delay_us( 1 );
@@ -553,12 +594,12 @@ BOOL	bus_i2c_shout ( uint8_t cOutByte )
 		delay_us( 1 );
 		Pin_I2C_SCL_Out = 0;
 	}
-	
+
 	Pin_I2C_SDA_Out = 1;
 	delay_us( 1 );
 	Pin_I2C_SCL_Out = 1;
 	delay_us( 1 );
- 	AcknowlegeState	= Pin_I2C_SDA_In;
+	AcknowlegeState	= Pin_I2C_SDA_In;
 	Pin_I2C_SCL_Out = 0;
 
 	if ( I2C_ACK != AcknowlegeState )
@@ -577,6 +618,7 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 	uint8_t		i;
 
 	Pin_I2C_SDA_Out = 1;		// make SDA an input
+
 	for( i = 8U; i != 0U; --i )
 	{
 		delay_us( 1 );
@@ -584,11 +626,12 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 
 		delay_us( 1 );
 		cInByte <<= 1;
+
 		if ( Pin_I2C_SDA_In )
 		{
 			cInByte |= 0x01u;
 		}
-		else 
+		else
 		{
 			cInByte &= 0xFEu;
 		}
@@ -604,6 +647,7 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 	{
 		Pin_I2C_SDA_Out = 1;
 	}
+
 	delay_us( 1 );
 	Pin_I2C_SCL_Out = 1;
 	delay_us( 1 );
@@ -634,7 +678,7 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 // 			{
 // 				Pin_SPI1_MOSI = 0;
 // 			}
-// 				
+//
 // 			delay_us( 1 );
 
 // 			Pin_SPI1_SCK = 1;
@@ -679,10 +723,11 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 uint8_t bus_SPI1xShift( uint8_t OutByte )
 {
 	uint8_t i;
-	
+
 	for ( i = 8u; i != 0u; --i )
 	{
 		delay_us( 1 );
+
 		if ( OutByte & 0x80u )
 		{
 			Pin_SPI1xMOSI = 1;
@@ -698,6 +743,7 @@ uint8_t bus_SPI1xShift( uint8_t OutByte )
 		delay_us( 1 );
 
 		OutByte <<= 1;
+
 		if ( Pin_SPI1xMISO )
 		{
 			OutByte |= 0x01u;
@@ -710,19 +756,19 @@ uint8_t bus_SPI1xShift( uint8_t OutByte )
 		delay_us( 1 );
 		Pin_SPI1xSCK = 1;
 	}
-	
+
 	return	OutByte;
 }
 
 
 void	bus_SPI1xPortInit( void )
 {
- 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
- 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
+	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
+	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
- 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
+	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
 
- 	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00343000u );
+	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00343000u );
 	Pin_SPI1xSCK = 1;
 }
 
@@ -758,26 +804,31 @@ BOOL	STM32_RTC_Init( void )
 	{
 		/* Reset Backup Domain */
 		SET_BIT( RCC->BDCR, RCC_BDCR_BDRST );
- 		RCC->BDCR = 0u;  									/* Reset LSEON bit */
+		RCC->BDCR = 0u;  									/* Reset LSEON bit */
 		RCC->BDCR = 0u;  									/* Reset LSEBYP bit */
 		RCC->BDCR = RCC_BDCR_LSEON;							/* Enable LSE */
+
 		while ( ! READ_BIT( RCC->BDCR, RCC_BDCR_LSERDY ));	/* Wait till LSE is ready */
+
 		SET_BIT( RCC->BDCR, RCC_BDCR_RTCSEL_LSE );			/* Select LSE as RTC Clock Source */
 		SET_BIT( RCC->BDCR, RCC_BDCR_RTCEN );				/* Enable RTC Clock */
 
 		/* Wait for RTC registers synchronization */
 		CLEAR_BIT( RTC->CRL, RTC_CRL_RSF );
+
 		while ( ! READ_BIT( RTC->CRL, RTC_CRL_RSF ));
 
 		while ( ! READ_BIT( RTC->CRL, RTC_CRL_RTOFF ));	//	RTC_WaitForLastTask();
+
 		RTC->CRH = 0u;									//	禁止RTC中断
 
 		/* Wait until last write operation on RTC registers has finished */
 		while ( ! READ_BIT( RTC->CRL, RTC_CRL_RTOFF ));	//	RTC_WaitForLastTask();
+
 		SET_BIT( RTC->CRL, RTC_CRL_CNF );				//  RTC_EnterConfigMode();
 		/* Set Alarm to 0 */
 		RTC->ALRH = 0x0000u;
-		RTC->ALRL = 0x0000u;		
+		RTC->ALRL = 0x0000u;
 		/* Set RTC prescaler: set RTC period to 1sec */
 		RTC->PRLH = 0x0000u;
 		RTC->PRLL = 0x7FFFu;
@@ -785,20 +836,24 @@ BOOL	STM32_RTC_Init( void )
 		RTC->CNTH = (uint16_t)( 1325376000u >> 16 );
 		RTC->CNTL = (uint16_t)( 1325376000u );
 		CLEAR_BIT( RTC->CRL, RTC_CRL_CNF ); 			//  RTC_ExitConfigMode();
+
 		while ( ! READ_BIT( RTC->CRL, RTC_CRL_RTOFF ));	//	RTC_WaitForLastTask();
 
 		BackupRegister_Write( BKP_DR10, 0x5AA5u );
 	}
+
 	return	TRUE;
 }
 
 void	STM32_RTC_Save( uint32_t timer )
 {
 	while ( ! READ_BIT( RTC->CRL, RTC_CRL_RTOFF ));	//	RTC_WaitForLastTask();
+
 	SET_BIT( RTC->CRL, RTC_CRL_CNF );				//  RTC_EnterConfigMode();
 	RTC->CNTH = (uint16_t)( timer >> 16 );
 	RTC->CNTL = (uint16_t)( timer );
 	CLEAR_BIT( RTC->CRL, RTC_CRL_CNF ); 			//  RTC_ExitConfigMode();
+
 	while ( ! READ_BIT( RTC->CRL, RTC_CRL_RTOFF ));	//	RTC_WaitForLastTask();
 }
 
@@ -819,18 +874,19 @@ void	UART1_Send( uint8_t OutByte )
 	{
 		;
 	}
+
 	USARTx->DR = OutByte;
 }
 
 void	UART1_Init ( void )
 {
 	USART_TypeDef * USARTx = USART1;
-	
+
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_USART1EN );
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
 
 	// USART1 configured as follow:
-	// 	- BaudRate = 9600 baud  
+	// 	- BaudRate = 9600 baud
 	// 	- Word Length = 8 Bits
 	// 	- One Stop Bit
 	// 	- No parity
@@ -874,75 +930,79 @@ static	void	STM32_ADC_Init ( void )
 	ADC1->CR2 = ADC_CR2_ADON | ADC_CR2_TSVREFE | ADC_CR2_CONT | ADC_CR2_DMA;
 
 	//	配置通道采样时间（通道编号从0开始）
-	#define	ADC1_SMP_1p5_C		0	// 1.5 cycles
-	#define	ADC1_SMP_7p5_C		1	// 7.5 cycles
-	#define	ADC1_SMP_13p5_C		2	// 13.5 cycles
-	#define	ADC1_SMP_28p5_C		3	// 28.5 cycles
-	#define	ADC1_SMP_41p5_C		4	// 41.5 cycles
-	#define	ADC1_SMP_55p5_C		5	// 55.5 cycles
-	#define	ADC1_SMP_71p5_C		6	// 71.5 cycles
-	#define	ADC1_SMP_239p5_C	7	// 239.5 cycles
+#define	ADC1_SMP_1p5_C		0	// 1.5 cycles
+#define	ADC1_SMP_7p5_C		1	// 7.5 cycles
+#define	ADC1_SMP_13p5_C		2	// 13.5 cycles
+#define	ADC1_SMP_28p5_C		3	// 28.5 cycles
+#define	ADC1_SMP_41p5_C		4	// 41.5 cycles
+#define	ADC1_SMP_55p5_C		5	// 55.5 cycles
+#define	ADC1_SMP_71p5_C		6	// 71.5 cycles
+#define	ADC1_SMP_239p5_C	7	// 239.5 cycles
 
-	#define	ADC1_SMPR1_BASE		10	// R1 起始编号
-	#define	ADC1_SMPR2_BASE		0	// R2 起始编号
-	#define	ADC1_SMPR_WIDTH		3	// 每组设置3位
+#define	ADC1_SMPR1_BASE		10	// R1 起始编号
+#define	ADC1_SMPR2_BASE		0	// R2 起始编号
+#define	ADC1_SMPR_WIDTH		3	// 每组设置3位
 
-    // ...............  填入相应采样时间 ...........................................................
+	// ...............  填入相应采样时间 ...........................................................
 	ADC1->SMPR2 =	( ( ADC1_SMP_239p5_C ) << ( ADC1_SMPR_WIDTH * (  0 - ADC1_SMPR2_BASE ) ) )	//	通道0
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  1 - ADC1_SMPR2_BASE ) ) )	//	通道1
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  2 - ADC1_SMPR2_BASE ) ) )	//	通道2
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  3 - ADC1_SMPR2_BASE ) ) )	//	通道3
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  4 - ADC1_SMPR2_BASE ) ) )	//	通道4
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  5 - ADC1_SMPR2_BASE ) ) )	//	通道5
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  6 - ADC1_SMPR2_BASE ) ) )	//	通道6
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  7 - ADC1_SMPR2_BASE ) ) )	//	通道7
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  8 - ADC1_SMPR2_BASE ) ) )	//	通道8
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  9 - ADC1_SMPR2_BASE ) ) )	//	通道9
-                ;
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  1 - ADC1_SMPR2_BASE ) ) )	//	通道1
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  2 - ADC1_SMPR2_BASE ) ) )	//	通道2
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  3 - ADC1_SMPR2_BASE ) ) )	//	通道3
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  4 - ADC1_SMPR2_BASE ) ) )	//	通道4
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  5 - ADC1_SMPR2_BASE ) ) )	//	通道5
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  6 - ADC1_SMPR2_BASE ) ) )	//	通道6
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  7 - ADC1_SMPR2_BASE ) ) )	//	通道7
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  8 - ADC1_SMPR2_BASE ) ) )	//	通道8
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * (  9 - ADC1_SMPR2_BASE ) ) )	//	通道9
+	              ;
 	ADC1->SMPR1 =	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 10 - ADC1_SMPR1_BASE ) ) )	//	通道10
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 11 - ADC1_SMPR1_BASE ) ) )	//	通道11
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 12 - ADC1_SMPR1_BASE ) ) )	//	通道12
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 13 - ADC1_SMPR1_BASE ) ) )	//	通道13
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 14 - ADC1_SMPR1_BASE ) ) )	//	通道14
-				|	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 15 - ADC1_SMPR1_BASE ) ) )	//	通道15
-				|	( ( ADC1_SMP_41p5_C  ) << ( ADC1_SMPR_WIDTH * ( 16 - ADC1_SMPR1_BASE ) ) )	//	通道16(内部温度)
-				|	( ( ADC1_SMP_41p5_C  ) << ( ADC1_SMPR_WIDTH * ( 17 - ADC1_SMPR1_BASE ) ) )	//	通道17(内部基准)
-				;
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 11 - ADC1_SMPR1_BASE ) ) )	//	通道11
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 12 - ADC1_SMPR1_BASE ) ) )	//	通道12
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 13 - ADC1_SMPR1_BASE ) ) )	//	通道13
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 14 - ADC1_SMPR1_BASE ) ) )	//	通道14
+	              |	( ( ADC1_SMP_1p5_C   ) << ( ADC1_SMPR_WIDTH * ( 15 - ADC1_SMPR1_BASE ) ) )	//	通道15
+	              |	( ( ADC1_SMP_41p5_C  ) << ( ADC1_SMPR_WIDTH * ( 16 - ADC1_SMPR1_BASE ) ) )	//	通道16(内部温度)
+	              |	( ( ADC1_SMP_41p5_C  ) << ( ADC1_SMPR_WIDTH * ( 17 - ADC1_SMPR1_BASE ) ) )	//	通道17(内部基准)
+	              ;
 
 	//	配置规则转换序列（序列编号从1开始）
-	#define	ADC1_SQR1_BASE		13	// R1 起始编号
-	#define	ADC1_SQR2_BASE		7	// R2 起始编号
-	#define	ADC1_SQR3_BASE		1	// R3 起始编号
-	#define	ADC1_SQR_WIDTH		5	// 每组设置5位
+#define	ADC1_SQR1_BASE		13	// R1 起始编号
+#define	ADC1_SQR2_BASE		7	// R2 起始编号
+#define	ADC1_SQR3_BASE		1	// R3 起始编号
+#define	ADC1_SQR_WIDTH		5	// 每组设置5位
 
-    // ............设置通道号，最后一行设置序列长度.................................................
+	// ............设置通道号，最后一行设置序列长度.................................................
 	ADC1->SQR3  =	( ( 16 ) << ( ADC1_SQR_WIDTH * (  1 - ADC1_SQR3_BASE ) ) )	//	序列1
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * (  2 - ADC1_SQR3_BASE ) ) )	//	序列2
-				|	( ( 17 ) << ( ADC1_SQR_WIDTH * (  3 - ADC1_SQR3_BASE ) ) )	//	序列3
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * (  4 - ADC1_SQR3_BASE ) ) )	//	序列4
-				|	( ( 16 ) << ( ADC1_SQR_WIDTH * (  5 - ADC1_SQR3_BASE ) ) )	//	序列5
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * (  6 - ADC1_SQR3_BASE ) ) )	//	序列6
-				;
+	              |	( ( 0  ) << ( ADC1_SQR_WIDTH * (  2 - ADC1_SQR3_BASE ) ) )	//	序列2
+	              |	( ( 17 ) << ( ADC1_SQR_WIDTH * (  3 - ADC1_SQR3_BASE ) ) )	//	序列3
+	              |	( ( 0  ) << ( ADC1_SQR_WIDTH * (  4 - ADC1_SQR3_BASE ) ) )	//	序列4
+	              |	( ( 16 ) << ( ADC1_SQR_WIDTH * (  5 - ADC1_SQR3_BASE ) ) )	//	序列5
+	              |	( ( 0  ) << ( ADC1_SQR_WIDTH * (  6 - ADC1_SQR3_BASE ) ) )	//	序列6
+	              ;
 	ADC1->SQR2  =	( ( 17 ) << ( ADC1_SQR_WIDTH * (  7 - ADC1_SQR2_BASE ) ) )	//	序列7
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * (  8 - ADC1_SQR2_BASE ) ) )	//	序列8
-				|	( ( 16 ) << ( ADC1_SQR_WIDTH * (  9 - ADC1_SQR2_BASE ) ) )	//	序列9
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 10 - ADC1_SQR2_BASE ) ) )	//	序列10
-				|	( ( 17 ) << ( ADC1_SQR_WIDTH * ( 11 - ADC1_SQR2_BASE ) ) )	//	序列11
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 12 - ADC1_SQR2_BASE ) ) )	//	序列12
-				;
+	              |	( ( 0  ) << ( ADC1_SQR_WIDTH * (  8 - ADC1_SQR2_BASE ) ) )	//	序列8
+	              |	( ( 16 ) << ( ADC1_SQR_WIDTH * (  9 - ADC1_SQR2_BASE ) ) )	//	序列9
+	              |	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 10 - ADC1_SQR2_BASE ) ) )	//	序列10
+	              |	( ( 17 ) << ( ADC1_SQR_WIDTH * ( 11 - ADC1_SQR2_BASE ) ) )	//	序列11
+	              |	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 12 - ADC1_SQR2_BASE ) ) )	//	序列12
+	              ;
 	ADC1->SQR1  =	( ( 16 ) << ( ADC1_SQR_WIDTH * ( 13 - ADC1_SQR1_BASE ) ) )	//	序列13
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 14 - ADC1_SQR1_BASE ) ) )	//	序列14
-				|	( ( 17 ) << ( ADC1_SQR_WIDTH * ( 15 - ADC1_SQR1_BASE ) ) )	//	序列15
-				|	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 16 - ADC1_SQR1_BASE ) ) )	//	序列16
-				|(( 16 - 1 ) << ( ADC1_SQR_WIDTH * ( 17 - ADC1_SQR1_BASE ) ) )	//	长度(0表示1次)
-                ;
+	              |	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 14 - ADC1_SQR1_BASE ) ) )	//	序列14
+	              |	( ( 17 ) << ( ADC1_SQR_WIDTH * ( 15 - ADC1_SQR1_BASE ) ) )	//	序列15
+	              |	( ( 0  ) << ( ADC1_SQR_WIDTH * ( 16 - ADC1_SQR1_BASE ) ) )	//	序列16
+	              |(( 16 - 1 ) << ( ADC1_SQR_WIDTH * ( 17 - ADC1_SQR1_BASE ) ) )	//	长度(0表示1次)
+	              ;
 
 	delay_us ( 1u );
 	SET_BIT ( ADC1->CR2, ADC_CR2_ADON );						//	Enable ADC1
 	SET_BIT ( ADC1->CR2, ADC_CR2_RSTCAL );						//	Reset calibration register
+
 	while ( READ_BIT ( ADC1->CR2, ADC_CR2_RSTCAL ) ) {}			//	Check the end of ADC1 reset calibration register
+
 	SET_BIT ( ADC1->CR2, ADC_CR2_CAL );							//	Start ADC1 calibration
+
 	while ( READ_BIT ( ADC1->CR2, ADC_CR2_CAL ) ) {}			//	Check the end of ADC1 calibration
+
 	SET_BIT ( ADC1->CR2, ADC_CR2_SWSTART | ADC_CR2_EXTTRIG );  	//	Start ADC1 Software Conversion
 
 	//	 配置相应的AD输入管脚为模拟输入状态
@@ -958,6 +1018,7 @@ uint16_t	STM32_ADC_fetch ( uint8_t Channel )
 	{
 		sum += ADCResultBuf[i][Channel];
 	}
+
 	return	( uint16_t ) ( sum / len );
 }
 
@@ -992,7 +1053,7 @@ static	void	TIM2_Init( void )
 	//	T2CH2 接可控硅触发驱动: TIM_OCMode_PWM1, TIM_OCPreload_Enable, TIM_OCClear_Enable
 	CLEAR_BIT( TIMx->CCER, TIM_CCER_CC2E );
 	MODIFY_REG( TIMx->CCMR1, TIM_CCMR1_CC2S | TIM_CCMR1_OC2M, TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1 );
-	SET_BIT( TIMx->CCMR1, TIM_CCMR1_OC2CE | TIM_CCMR1_OC2PE );	
+	SET_BIT( TIMx->CCMR1, TIM_CCMR1_OC2CE | TIM_CCMR1_OC2PE );
 	TIMx->CCR2 = 0u;
 //	SET_BIT( TIMx->CCER, TIM_CCER_CC2E );
 
@@ -1000,19 +1061,21 @@ static	void	TIM2_Init( void )
 }
 
 void	TRIAC_SetOutput( uint16_t OutValue )
-{	//	0~27648 转换成 10ms ~ 0ms 延时时间
+{
+	//	0~27648 转换成 10ms ~ 0ms 延时时间
 	TIM_TypeDef * TIMx = TIM2;
 	uint16_t	TriggerDelay;
-	
+
 	if ( OutValue >= 27648u )
 	{
 		OutValue = 27648u;
 	}
+
 	TriggerDelay = (uint16_t)(( OutValue * 10000uL ) / 27648u );
 
 	//	TIMx->CCR2 = 10000u - TriggerDelay;		//	向上计数
 	TIMx->CCR2 = TriggerDelay;				//	向下计数
-	
+
 	SET_BIT( TIMx->CCER, TIM_CCER_CC2E );
 }
 
@@ -1020,7 +1083,7 @@ void	TRIAC_OutCmd( BOOL NewState )
 {
 	if ( NewState )
 	{
-	//	TRIAC_Init();
+		//	TRIAC_Init();
 	}
 	else
 	{
@@ -1036,10 +1099,22 @@ void	TRIAC_OutCmd( BOOL NewState )
 *******************************************************************************/
 #define	_pwm_period 1000uL
 
-void	PWM1_SetOutput( uint16_t OutValue ){ TIM3->CCR1 = OutValue * _pwm_period / PWM_Output_Max; }
-void	PWM2_SetOutput( uint16_t OutValue ){ TIM3->CCR2 = OutValue * _pwm_period / PWM_Output_Max; }
-void	PWM3_SetOutput( uint16_t OutValue ){ TIM3->CCR3 = OutValue * _pwm_period / PWM_Output_Max; }
-void	PWM4_SetOutput( uint16_t OutValue ){ TIM3->CCR4 = OutValue * _pwm_period / PWM_Output_Max; }
+void	PWM1_SetOutput( uint16_t OutValue )
+{
+	TIM3->CCR1 = OutValue * _pwm_period / PWM_Output_Max;
+}
+void	PWM2_SetOutput( uint16_t OutValue )
+{
+	TIM3->CCR2 = OutValue * _pwm_period / PWM_Output_Max;
+}
+void	PWM3_SetOutput( uint16_t OutValue )
+{
+	TIM3->CCR3 = OutValue * _pwm_period / PWM_Output_Max;
+}
+void	PWM4_SetOutput( uint16_t OutValue )
+{
+	TIM3->CCR4 = OutValue * _pwm_period / PWM_Output_Max;
+}
 
 static	void	TIM3_Init( void )
 {
@@ -1072,10 +1147,10 @@ static	void	TIM3_Init( void )
 
 	//	配置输出管脚
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
- 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_TIM3_REMAP, AFIO_MAPR_TIM3_REMAP_FULLREMAP );
+	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_TIM3_REMAP, AFIO_MAPR_TIM3_REMAP_FULLREMAP );
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
 	MODIFY_REG( GPIOC->CRL, 0xF0000000u, 0xB0000000u );		//	PC.7, T3CH2
- 	MODIFY_REG( GPIOC->CRH, 0x000000F0u, 0x000000B0u );		//	PC.9, T3CH4
+	MODIFY_REG( GPIOC->CRH, 0x000000F0u, 0x000000B0u );		//	PC.9, T3CH4
 }
 
 
@@ -1093,22 +1168,25 @@ static	uint32_t	HCBoxFan_Circles;
 // 		idx = ( idx + 1 ) % 4u;
 // 		fc_filter[idx] = HCBoxFan_Circles;
 // 		fc_idx = idx;
-// 		
+//
 // 	}
 
 // 	//	uint16_t	HCBoxFan_Circles;
 
-	uint16_t	get_HCBoxFan_Circle( void ){ return	HCBoxFan_Circles; }
+uint16_t	get_HCBoxFan_Circle( void )
+{
+	return	HCBoxFan_Circles;
+}
 // 	{
 // 	//	return	HCBoxFan_Circles * 15u;	//	HCBoxFan_Circles;									// PA.3 Circle.
-// 		
+//
 // 		return	( fc_filter[fc_idx] );
 // 	}
 
 // 	uint16_t	get_HCBoxFanSpeed_RPM( void )
 // 	{
 // 		uint32_t	idx = fc_idx;
-// 		
+//
 // 		return	( fc_filter[idx] - fc_filter[ ( idx + 1 ) % 4 ] ) * 15u;
 // 	}
 
@@ -1165,17 +1243,44 @@ void	tick( void )
 	Pin_Buzzer = 0;
 }
 
-void	HCBoxFan_ON( void )   {  Pin_HCBoxDR_Fan  = HCBox_DR_ON;  }
-void	HCBoxFan_OFF( void )  {  Pin_HCBoxDR_Fan  = HCBox_DR_OFF; }
-void	HCBoxHeat_ON( void )  {  Pin_HCBoxDR_Heat = HCBox_DR_ON;  }
-void	HCBoxHeat_OFF( void ) {  Pin_HCBoxDR_Heat = HCBox_DR_OFF; }
-void	HCBoxCool_ON( void )  {  Pin_HCBoxDR_Cool = HCBox_DR_ON;  }
-void	HCBoxCool_OFF( void ) {  Pin_HCBoxDR_Cool = HCBox_DR_OFF; }
-void	PP_AIR_ON( void )		{  Pin_P_air_1_DR = 1; }
-void	PP_AIR_OFF( void )		{  Pin_P_air_1_DR = 0; }
+void	HCBoxFan_ON( void )
+{
+	Pin_HCBoxDR_Fan  = HCBox_DR_ON;
+}
+void	HCBoxFan_OFF( void )
+{
+	Pin_HCBoxDR_Fan  = HCBox_DR_OFF;
+}
+void	HCBoxHeat_ON( void )
+{
+	Pin_HCBoxDR_Heat = HCBox_DR_ON;
+}
+void	HCBoxHeat_OFF( void )
+{
+	Pin_HCBoxDR_Heat = HCBox_DR_OFF;
+}
+void	HCBoxCool_ON( void )
+{
+	Pin_HCBoxDR_Cool = HCBox_DR_ON;
+}
+void	HCBoxCool_OFF( void )
+{
+	Pin_HCBoxDR_Cool = HCBox_DR_OFF;
+}
+void	PP_AIR_ON( void )
+{
+	Pin_P_air_1_DR = 1;
+}
+void	PP_AIR_OFF( void )
+{
+	Pin_P_air_1_DR = 0;
+}
 
 
-BOOL	bus_SPI1xDRDY( void ){	return	( Pin_SPI1xDRDY ) ? TRUE : FALSE; }
+BOOL	bus_SPI1xDRDY( void )
+{
+	return	( Pin_SPI1xDRDY ) ? TRUE : FALSE;
+}
 BOOL	UART1_RX_Pin_State( void )
 {
 	if ( READ_BIT( GPIOA->IDR, GPIO_IDR_IDR10 ))
@@ -1189,8 +1294,14 @@ BOOL	UART1_RX_Pin_State( void )
 }
 
 #define	Pin_485_Direct		PinBB( GPIOC->ODR, 12u )
-void	MB_485_Direct_Transmit( void )	{  Pin_485_Direct = 1;  }
-void	MB_485_Direct_Receive( void )	{  Pin_485_Direct = 0;  }
+void	MB_485_Direct_Transmit( void )
+{
+	Pin_485_Direct = 1;
+}
+void	MB_485_Direct_Receive( void )
+{
+	Pin_485_Direct = 0;
+}
 
 void	GPIO_Init ( void )
 {
@@ -1199,14 +1310,14 @@ void	GPIO_Init ( void )
 
 	// PC.6 for Buzzer.
 	Pin_Buzzer = 0;
- 	MODIFY_REG( GPIOB->CRL, 0x0F00u, 0x0300u );
+	MODIFY_REG( GPIOB->CRL, 0x0F00u, 0x0300u );
 
 	// PA.2, PA.11, PA.12 for HCBox.
 	HCBoxFan_OFF();
 	HCBoxHeat_OFF();
 	HCBoxCool_OFF();
 	MODIFY_REG( GPIOA->CRL, 0x00000F00u, 0x00000300u );
- 	MODIFY_REG( GPIOA->CRH, 0x000FF000u, 0x00033000u );
+	MODIFY_REG( GPIOA->CRH, 0x000FF000u, 0x00033000u );
 
 	// PC.8 for Pump1
 	MODIFY_REG( GPIOC->CRH, 0x0000000Fu, 0x00000003u );
@@ -1221,10 +1332,10 @@ void	GPIO_Init ( void )
 *******************************************************************************/
 static	uint8_t	get_Jumper( void )
 {
- 	uint32_t	JumperState;
+	uint32_t	JumperState;
 	uint32_t	newState;
 	uint_fast8_t	i;
-	
+
 	//	PA.13 - JTMS/SWDIO, 默认内部上拉，但插跳线时与+3V相连
 	//	PA.14 - JTCK/SWCLK, 默认内部下拉，但插跳线时与GND相连
 
@@ -1234,8 +1345,8 @@ static	uint8_t	get_Jumper( void )
 	GPIOA->BSRR = GPIO_BSRR_BS14;	//	改为内部上拉
 	MODIFY_REG( GPIOA->CRH, 0x0FF00000u, 0x08800000u );
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
- 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_DISABLE );		/*!< JTAG-DP Disabled and SW-DP Disabled */
-	
+	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_DISABLE );		/*!< JTAG-DP Disabled and SW-DP Disabled */
+
 	//	读取跳线状态，持续10ms状态不变，才确认读取结果有效。
 	newState = ( GPIOA->IDR & ( GPIO_IDR_IDR13 | GPIO_IDR_IDR14 ));
 
@@ -1244,18 +1355,18 @@ static	uint8_t	get_Jumper( void )
 		JumperState = newState;
 		delay_us( 100u );
 		newState = ( GPIOA->IDR & ( GPIO_IDR_IDR13 | GPIO_IDR_IDR14 ));
-		
+
 		if ( JumperState != newState )
 		{
 			i = 0u;
 		}
 	}
-	
+
 	//	重新打开调试功能
 	GPIOA->BSRR = GPIO_BSRR_BS13;	//	改回默认上拉
 	GPIOA->BSRR = GPIO_BSRR_BR14;	//	改回默认下拉
 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );	/*!< JTAG-DP Disabled and SW-DP Enabled */
-	
+
 	return	( JumperState ^ 0x02u );	//	不插跳线结果为0，插跳线结果为1。
 }
 
@@ -1284,24 +1395,24 @@ void	NVIC_Init( void )
 	NVIC_EnableIRQ( EXTI3_IRQn );
 	NVIC_EnableIRQ( EXTI4_IRQn );
 	NVIC_EnableIRQ( EXTI9_5_IRQn );
-	
+
 //	__set_CONTROL( 0x03u );	//	使用 PSP, 并转入非特权模式
 }
 
 uint32_t	BIOS_Init( void )
 {
 	uint8_t	Jumper = get_Jumper();
-	
+
 	NVIC_Init();
 	GPIO_Init();
 //	TIM1_Init();	//	for HCBox Output
 	TIM2_Init();	//	中（大）流量电机调速
 	TIM3_Init();	//	for PWM.
-	
+
 //	EXIT3_Init();	//	for Fan Speed.
 //	STM32_RTC_Init();	推迟到显示初始化完成再进行
 	STM32_ADC_Init();
-	
+
 	return	Jumper;
 }
 
@@ -1326,10 +1437,10 @@ uint32_t	BIOS_Init( void )
 // 	// 	LDR		R1, [R0,#24] 			;// 从栈中读取PC的值
 // 	// 	LDRB	R0, [R1,#-2]			;// 从SVC指令中读取立即数放到R0
 // 		LDM     R0, { R0-R3, R12 }      ;// 从栈中取得入口参数
-// 		
+//
 // 		//	执行用户程序
 // 		PUSH	{ LR }
-// 		BLX     R12                     ; Call SVC Function 
+// 		BLX     R12                     ; Call SVC Function
 // 		POP		{ LR }
 
 // 		//	判断入口参数保存在哪个栈中，并回写返回值
@@ -1346,7 +1457,7 @@ uint32_t	BIOS_Init( void )
 *	使用 SVC 写 NVIC，实现中断的开关控制。
 *******************************************************************************/
 __svc_indirect(0)	void	_Sys_SVC_CALL( void ( *fun)( IRQn_Type IRQn ), uint8_t IRQn );
-	
+
 void	sys_IRQ_Cmd( uint8_t IRQn, BOOL NewState )
 {
 	if ( NewState )

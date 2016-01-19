@@ -108,13 +108,13 @@
 // 		// #define	Port_LCD_WR 	GPIOC
 // 		// #define	Port_LCD_RD 	GPIOC
 // 		// #define	Port_LCD_CE 	GPIOC
-// 		// //	
+// 		// //
 // 		// #define	 Pin_LCD_A0 	GPIO_Pin_0
 // 		// #define	 Pin_LCD_RST	GPIO_Pin_1
 // 		// #define	 Pin_LCD_WR 	GPIO_Pin_4
 // 		// #define	 Pin_LCD_RD 	GPIO_Pin_5
 // 		#define	 Pin_LCD_CE 	GPIO_Pin_12
-// 		//	
+// 		//
 // 		//	/* Keyboard */
 // 		//	#define	Port_Key_OUT	GPIOC
 // 		//	#define	 Pin_Key_OUT0	GPIO_Pin_0
@@ -131,7 +131,7 @@
 // 		//	#define	USART_SENSOR	USART2
 // 		//	#define	 Pin_SENSOR_TX	GPIO_Pin_2
 // 		//	#define	 Pin_SENSOR_RX	GPIO_Pin_3
-// 		//	
+// 		//
 // 		//	#define	USART_PRINTER	USART1
 // 		//	#define	 Pin_PRINTER_TX	GPIO_Pin_9
 // 		//	#define	 Pin_PRINTER_RX	GPIO_Pin_10
@@ -150,6 +150,6 @@
 // 		//	#define	PinSet( Port, Pin )	/*lint -save -e960 -e923 */ GPIO_SetBits((Port),(Pin))	/*lint	-restore */
 // 		//	#define	PinClr( Port, Pin )	/*lint -save -e960 -e923 */	GPIO_ResetBits((Port),(Pin))/*lint	-restore */
 // 		//	#define	PinTST( Port, Pin )	/*lint -save -e960 -e923 */	GPIO_ReadInputDataBit((Port),(Pin))/*lint	-restore */
-// 		//	
+// 		//
 
 /********  (C) COPYRIGHT 2014 青岛金仕达电子科技有限公司  **** End of File ****/

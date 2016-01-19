@@ -2,11 +2,11 @@
 * 文 件 名: TM12864.C
 * 创 建 者: Dean
 * 描  述  : 天马128*64液晶读写程序
-*         : 
+*         :
 * 最后修改: 2012年4月3日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "BSP.H"
 #include "BIOS.H"
@@ -65,37 +65,52 @@ static	void	moveto( uint8_t yy, uint8_t xx )
 //	清屏
 ///////////////////////////////////////////////////////////////////
 void	TM12864_cls( void )
-{	// 清屏
+{
+	// 清屏
 	uint8_t	row, col;
 
-	TM12864_SelectL(); TM12864_WriteCommand( DISPOFF );
-	TM12864_SelectR(); TM12864_WriteCommand( DISPOFF );	// 关闭显示屏
+	TM12864_SelectL();
+	TM12864_WriteCommand( DISPOFF );
+	TM12864_SelectR();
+	TM12864_WriteCommand( DISPOFF );	// 关闭显示屏
 
-	TM12864_SelectL(); TM12864_WriteCommand(DISPFIRST);
-	TM12864_SelectR(); TM12864_WriteCommand(DISPFIRST);	// 定义显示起始行为零
+	TM12864_SelectL();
+	TM12864_WriteCommand(DISPFIRST);
+	TM12864_SelectR();
+	TM12864_WriteCommand(DISPFIRST);	// 定义显示起始行为零
 
 	// 清空显示缓冲区 RAM
 	for( row = 0U; row < 8u; ++row )
 	{
 		// Left  part
 		moveto( row, 0U  );
+
 		for( col = 64U; col != 0U; --col )
-		{	TM12864_WriteData(0x00U);	}
+		{
+			TM12864_WriteData(0x00U);
+		}
+
 		// Right part
 		moveto( row, 64U );
+
 		for( col = 64U; col != 0U; --col )
-		{	TM12864_WriteData(0x00U);	}
+		{
+			TM12864_WriteData(0x00U);
+		}
 	}
 
-	TM12864_SelectL(); TM12864_WriteCommand( DISPON );
-	TM12864_SelectR(); TM12864_WriteCommand( DISPON );	// 打开显示屏
+	TM12864_SelectL();
+	TM12864_WriteCommand( DISPON );
+	TM12864_SelectR();
+	TM12864_WriteCommand( DISPON );	// 打开显示屏
 }
 
 ///////////////////////////////////////////////////////////////////
 //	反白
 ///////////////////////////////////////////////////////////////////
 void	TM12864_mask( uint16_t yx, uint8_t xlen )
-{	//	反白
+{
+	//	反白
 	uint8_t 	i, row, col, col_end;
 	uint8_t 	InDat;
 
@@ -107,30 +122,39 @@ void	TM12864_mask( uint16_t yx, uint8_t xlen )
 	assert( col < max_txt_col );
 
 	col_end = col + xlen;
+
 	if ( col_end > max_txt_col )
 	{
 		col_end = max_txt_col;
 	}
 
-	do {   
+	do
+	{
 		for( i = 0u; i < 8u; ++i )
 		{
-			moveto( row,      (uint8_t)( col * text_width ) + i );	InDat = TM12864_ReadData();
-			moveto( row,      (uint8_t)( col * text_width ) + i );	TM12864_WriteData((uint8_t) ~InDat );
+			moveto( row,      (uint8_t)( col * text_width ) + i );
+			InDat = TM12864_ReadData();
+			moveto( row,      (uint8_t)( col * text_width ) + i );
+			TM12864_WriteData((uint8_t) ~InDat );
 		}
+
 		for( i = 0u; i < 8u; ++i )
 		{
-			moveto( row + 1U, (uint8_t)( col * text_width ) + i );	InDat = TM12864_ReadData();
-			moveto( row + 1U, (uint8_t)( col * text_width ) + i );	TM12864_WriteData((uint8_t) ~InDat );
+			moveto( row + 1U, (uint8_t)( col * text_width ) + i );
+			InDat = TM12864_ReadData();
+			moveto( row + 1U, (uint8_t)( col * text_width ) + i );
+			TM12864_WriteData((uint8_t) ~InDat );
 		}
-	} while ( ++col < col_end );
+	}
+	while ( ++col < col_end );
 }
 
 ///////////////////////////////////////////////////////////////////
 //	输出字符串
 ///////////////////////////////////////////////////////////////////
 void	TM12864_puts( uint16_t yx, const CHAR * sz )
-{	//	输出字符串
+{
+	//	输出字符串
 	CGROM		pDot;
 	CHAR		sDat;
 	size_t		slen;
@@ -138,6 +162,7 @@ void	TM12864_puts( uint16_t yx, const CHAR * sz )
 
 	assert( sz );
 	slen = strlen( sz );
+
 	if ( slen > max_txt_col )
 	{
 		slen = max_txt_col;
@@ -149,50 +174,76 @@ void	TM12864_puts( uint16_t yx, const CHAR * sz )
 	assert( col < max_txt_col );
 
 	col_end = col + (uint8_t)slen;
+
 	if ( col_end > max_txt_col )
 	{
 		col_end = max_txt_col;
 	}
 
-	do {
+	do
+	{
 		sDat = *sz++;
 
 		if ( 0U == ((uint8_t)sDat & 0x80U ))
-		{	// DBC 半角字
+		{
+			// DBC 半角字
 			pDot = DotSeekDBC( sDat );
-			for ( i = 0; i < 8u; ++i ){	//	for( i = 8U; i != 0U; --i )	{
-			moveto( row, (uint8_t)( col * text_width )+i);
-			TM12864_WriteData(invert_byte(*pDot++));	}
-			for ( i = 0; i < 8u; ++i ){	//	for( i = 8U; i != 0U; --i ){
-			moveto( row + 1U, (uint8_t)( col * text_width )+i);
-			TM12864_WriteData(invert_byte(*pDot++));	}
+
+			for ( i = 0; i < 8u; ++i ) 	//	for( i = 8U; i != 0U; --i )	{
+			{
+				moveto( row, (uint8_t)( col * text_width )+i);
+				TM12864_WriteData(invert_byte(*pDot++));
+			}
+
+			for ( i = 0; i < 8u; ++i ) 	//	for( i = 8U; i != 0U; --i ){
+			{
+				moveto( row + 1U, (uint8_t)( col * text_width )+i);
+				TM12864_WriteData(invert_byte(*pDot++));
+			}
+
 			col += 1U;
 		}
 		else
-		{	// SBC 全角字
+		{
+			// SBC 全角字
 			pDot = DotSeekSBC( sDat, *sz++ );
-			for ( i = 0; i < 8u; ++i ){	//	for( i = 8U; i != 0U; --i ){
+
+			for ( i = 0; i < 8u; ++i ) 	//	for( i = 8U; i != 0U; --i ){
+			{
 				moveto( row, (uint8_t)( col * text_width )+i);
-			TM12864_WriteData(invert_byte(*pDot++));	}
-			for ( i = 0; i < 8u; ++i ){	//	for( i = 8U; i != 0U; --i ){
+				TM12864_WriteData(invert_byte(*pDot++));
+			}
+
+			for ( i = 0; i < 8u; ++i ) 	//	for( i = 8U; i != 0U; --i ){
+			{
 				moveto( row, (uint8_t)(( col + 1U ) * text_width )+i);
-			TM12864_WriteData(invert_byte(*pDot++));	}
-			for ( i = 0; i < 8u; ++i ){	//	for( i = 8U; i != 0U; --i ){
+				TM12864_WriteData(invert_byte(*pDot++));
+			}
+
+			for ( i = 0; i < 8u; ++i ) 	//	for( i = 8U; i != 0U; --i ){
+			{
 				moveto( row + 1U, (uint8_t)( col  * text_width )+i);
-			TM12864_WriteData(invert_byte(*pDot++));	}
-			for ( i = 0; i < 8u; ++i ){	//	for( i = 8U; i != 0U; --i ){
+				TM12864_WriteData(invert_byte(*pDot++));
+			}
+
+			for ( i = 0; i < 8u; ++i ) 	//	for( i = 8U; i != 0U; --i ){
+			{
 				moveto( row + 1U, (uint8_t)(( col + 1U ) * text_width )+i);
-			TM12864_WriteData(invert_byte(*pDot++));	}
+				TM12864_WriteData(invert_byte(*pDot++));
+			}
+
 			col += 2U;
 		}
-	}	while ( col < col_end  );
+	}
+	while ( col < col_end  );
 }
 
 /********************************** 功能说明 ***********************************
  *	显示模块初始化
 *******************************************************************************/
 void	TM12864_Init( void )
-{  //  显示模块初始化
+{
+	//  显示模块初始化
 	TM12864_PortInit();
 
 	TM12864_cls();                                 		// 清空显示缓冲区 RAM
@@ -207,22 +258,30 @@ BOOL	TM12864_Test( void )
 {
 	uint8_t state_off_L, state_on_L;
 	uint8_t state_off_R, state_on_R;
-	
+
 	TM12864_PortInit();
 
 	TM12864_cls();                                 		// 清空显示缓冲区 RAM
 
-	TM12864_SelectL(); TM12864_WriteCommand( DISPOFF );
-	TM12864_SelectR(); TM12864_WriteCommand( DISPOFF );	// 关闭显示屏
-	TM12864_SelectL(); state_off_L = 0x20 & TM12864_ReadState();
-	TM12864_SelectR(); state_off_R = 0x20 & TM12864_ReadState();
-	TM12864_SelectL(); TM12864_WriteCommand( DISPON );
-	TM12864_SelectR(); TM12864_WriteCommand( DISPON );	// 打开显示屏
-	TM12864_SelectL(); state_on_L  = 0x20 & TM12864_ReadState();
-	TM12864_SelectR(); state_on_R  = 0x20 & TM12864_ReadState();
+	TM12864_SelectL();
+	TM12864_WriteCommand( DISPOFF );
+	TM12864_SelectR();
+	TM12864_WriteCommand( DISPOFF );	// 关闭显示屏
+	TM12864_SelectL();
+	state_off_L = 0x20 & TM12864_ReadState();
+	TM12864_SelectR();
+	state_off_R = 0x20 & TM12864_ReadState();
+	TM12864_SelectL();
+	TM12864_WriteCommand( DISPON );
+	TM12864_SelectR();
+	TM12864_WriteCommand( DISPON );	// 打开显示屏
+	TM12864_SelectL();
+	state_on_L  = 0x20 & TM12864_ReadState();
+	TM12864_SelectR();
+	state_on_R  = 0x20 & TM12864_ReadState();
 
-	if (( state_off_L == 0x20u ) && ( state_on_L == 0x00 ) 
-	 && ( state_off_R == 0x20u ) && ( state_on_R == 0x00 ))
+	if (( state_off_L == 0x20u ) && ( state_on_L == 0x00 )
+	    && ( state_off_R == 0x20u ) && ( state_on_R == 0x00 ))
 	{
 		return	TRUE;
 	}

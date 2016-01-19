@@ -24,7 +24,7 @@ void SD_Init(void);
 BOOL ByteLoad( const char * B_Name , uint32_t Addr, uint8_t * bufread, uint32_t offset  );
 BOOL ByteSave( const char * BUF_Name ,  uint8_t * Content , uint32_t Addr,uint32_t offset );
 BOOL ByteFill( const char * BUF_Name , uint32_t Addr , uint16_t size);
- 										//		文件名称 			写起始地址					要写的数量
+//		文件名称 			写起始地址					要写的数量
 uint32_t ByteGetSize(const char * BUF_Name);
 
 //根目录操作
@@ -45,7 +45,7 @@ uint8_t USB_CHAK(void);
 BOOL SecLoad( const char * B_Name , uint32_t Addr, uint8_t * bufread, uint8_t offset  );
 BOOL SecSave( const char * BUF_Name ,  uint8_t * Content , uint32_t Addr,uint8_t offset );
 BOOL SecFill( const char * BUF_Name , uint32_t Addr , uint8_t size);
- 										//		文件名称 			写起始地址					要写的数量
+//		文件名称 			写起始地址					要写的数量
 uint32_t SecGetSize(const char * BUF_Name);
 #endif
 /**/

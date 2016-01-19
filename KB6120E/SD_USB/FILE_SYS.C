@@ -22,12 +22,17 @@ UINT8	CH376ReadBlock( PUINT8 buf )  /* ´Óµ±Ç°Ö÷»ú¶ËµãµÄ½ÓÊÕ»º³åÇø¶ÁÈ¡Êı¾İ¿é,·µ»Ø
 	UINT8	s, l;
 	xWriteCH376Cmd( CMD01_RD_USB_DATA0 );
 	s = l = xReadCH376Data( );  /* ³¤¶È */
-	if ( l ) {
-		do {
+
+	if ( l )
+	{
+		do
+		{
 			*buf = xReadCH376Data( );
 			buf ++;
-		} while ( -- l );
+		}
+		while ( -- l );
 	}
+
 	xEndCH376Cmd( );
 	return( s );
 }
@@ -37,12 +42,17 @@ UINT8	CH376WriteReqBlock( PUINT8 buf )  /* ÏòÄÚ²¿Ö¸¶¨»º³åÇøĞ´ÈëÇëÇóµÄÊı¾İ¿é,·µ»Ø
 	UINT8	s, l;
 	xWriteCH376Cmd( CMD01_WR_REQ_DATA );
 	s = l = xReadCH376Data( );  /* ³¤¶È */
-	if ( l ) {
-		do {
+
+	if ( l )
+	{
+		do
+		{
 			xWriteCH376Data( *buf );
 			buf ++;
-		} while ( -- l );
+		}
+		while ( -- l );
 	}
+
 	xEndCH376Cmd( );
 	return( s );
 }
@@ -51,12 +61,17 @@ void	CH376WriteHostBlock( PUINT8 buf, UINT8 len )  /* ÏòUSBÖ÷»ú¶ËµãµÄ·¢ËÍ»º³åÇøĞ
 {
 	xWriteCH376Cmd( CMD10_WR_HOST_DATA );
 	xWriteCH376Data( len );  /* ³¤¶È */
-	if ( len ) {
-		do {
+
+	if ( len )
+	{
+		do
+		{
 			xWriteCH376Data( *buf );
 			buf ++;
-		} while ( -- len );
+		}
+		while ( -- len );
 	}
+
 	xEndCH376Cmd( );
 }
 
@@ -65,30 +80,42 @@ void	CH376WriteOfsBlock( PUINT8 buf, UINT8 ofs, UINT8 len )  /* ÏòÄÚ²¿»º³åÇøÖ¸¶¨
 	xWriteCH376Cmd( CMD20_WR_OFS_DATA );
 	xWriteCH376Data( ofs );  /* Æ«ÒÆµØÖ· */
 	xWriteCH376Data( len );  /* ³¤¶È */
-	if ( len ) {
-		do {
+
+	if ( len )
+	{
+		do
+		{
 			xWriteCH376Data( *buf );
 			buf ++;
-		} while ( -- len );
+		}
+		while ( -- len );
 	}
+
 	xEndCH376Cmd( );
 }
 
 void	CH376SetFileName( PUINT8 name )  /* ÉèÖÃ½«Òª²Ù×÷µÄÎÄ¼şµÄÎÄ¼şÃû */
 {
-/*	UINT8	i;*/
+	/*	UINT8	i;*/
 	UINT8	c;
 #ifndef	DEF_IC_V43_U
 	UINT8	s;
 	xWriteCH376Cmd( CMD01_GET_IC_VER );
-	if ( xReadCH376Data( ) < 0x43 ) {
-		if ( CH376ReadVar8( VAR_DISK_STATUS ) < DEF_DISK_READY ) {
+
+	if ( xReadCH376Data( ) < 0x43 )
+	{
+		if ( CH376ReadVar8( VAR_DISK_STATUS ) < DEF_DISK_READY )
+		{
 			xWriteCH376Cmd( CMD10_SET_FILE_NAME );
 			xWriteCH376Data( 0 );
 			s = CH376SendCmdWaitInt( CMD0H_FILE_OPEN );
-			if ( s == USB_INT_SUCCESS ) {
+
+			if ( s == USB_INT_SUCCESS )
+			{
 				s = CH376ReadVar8( 0xCF );
-				if ( s ) {
+
+				if ( s )
+				{
 					CH376WriteVar32( 0x4C, CH376ReadVar32( 0x4C ) + ( (UINT16)s << 8 ) );
 					CH376WriteVar32( 0x50, CH376ReadVar32( 0x50 ) + ( (UINT16)s << 8 ) );
 					CH376WriteVar32( 0x70, 0 );
@@ -96,22 +123,28 @@ void	CH376SetFileName( PUINT8 name )  /* ÉèÖÃ½«Òª²Ù×÷µÄÎÄ¼şµÄÎÄ¼şÃû */
 			}
 		}
 	}
+
 #endif
 	xWriteCH376Cmd( CMD10_SET_FILE_NAME );
-/*	for ( i = MAX_FILE_NAME_LEN; i != 0; -- i ) {
-		c = *name;
-		xWriteCH376Data( c );
-		if ( c == 0 ) break;
-		name ++;
-	}*/
+	/*	for ( i = MAX_FILE_NAME_LEN; i != 0; -- i ) {
+			c = *name;
+			xWriteCH376Data( c );
+			if ( c == 0 ) break;
+			name ++;
+		}*/
 	c = *name;
 	xWriteCH376Data( c );
-	while ( c ) {
+
+	while ( c )
+	{
 		name ++;
 		c = *name;
+
 		if ( c == DEF_SEPAR_CHAR1 || c == DEF_SEPAR_CHAR2 ) c = 0;  /* Ç¿ĞĞ½«ÎÄ¼şÃû½ØÖ¹ */
+
 		xWriteCH376Data( c );
 	}
+
 	xEndCH376Cmd( );
 }
 
@@ -191,22 +224,32 @@ UINT8	Wait376Interrupt( void )  /* µÈ´ıCH376ÖĞ¶Ï(INT#µÍµçÆ½)£¬·µ»ØÖĞ¶Ï×´Ì¬Âë, ³¬
 {
 #ifdef	DEF_INT_TIMEOUT
 #if		DEF_INT_TIMEOUT < 1
+
 	while ( Query376Interrupt( ) == FALSE );  /* Ò»Ö±µÈÖĞ¶Ï */
+
 	return( CH376GetIntStatus( ) );  /* ¼ì²âµ½ÖĞ¶Ï */
 #else
 	UINT32	i;
-	for ( i = 0; i < DEF_INT_TIMEOUT; i ++ ) {  /* ¼ÆÊı·ÀÖ¹³¬Ê± */
+
+	for ( i = 0; i < DEF_INT_TIMEOUT; i ++ )    /* ¼ÆÊı·ÀÖ¹³¬Ê± */
+	{
 		if ( Query376Interrupt( ) ) return( CH376GetIntStatus( ) );  /* ¼ì²âµ½ÖĞ¶Ï */
-/* ÔÚµÈ´ıCH376ÖĞ¶ÏµÄ¹ı³ÌÖĞ,¿ÉÒÔ×öĞ©ĞèÒª¼°Ê±´¦ÀíµÄÆäËüÊÂÇé */
+
+		/* ÔÚµÈ´ıCH376ÖĞ¶ÏµÄ¹ı³ÌÖĞ,¿ÉÒÔ×öĞ©ĞèÒª¼°Ê±´¦ÀíµÄÆäËüÊÂÇé */
 	}
+
 	return( ERR_USB_UNKNOWN );  /* ²»Ó¦¸Ã·¢ÉúµÄÇé¿ö */
 #endif
 #else
 	UINT32	i;
-	for ( i = 0; i < 5000000; i ++ ) {  /* ¼ÆÊı·ÀÖ¹³¬Ê±,Ä¬ÈÏµÄ³¬Ê±Ê±¼ä,Óëµ¥Æ¬»úÖ÷ÆµÓĞ¹Ø */
+
+	for ( i = 0; i < 5000000; i ++ )    /* ¼ÆÊı·ÀÖ¹³¬Ê±,Ä¬ÈÏµÄ³¬Ê±Ê±¼ä,Óëµ¥Æ¬»úÖ÷ÆµÓĞ¹Ø */
+	{
 		if ( Query376Interrupt( ) ) return( CH376GetIntStatus( ) );  /* ¼ì²âµ½ÖĞ¶Ï */
-/* ÔÚµÈ´ıCH376ÖĞ¶ÏµÄ¹ı³ÌÖĞ,¿ÉÒÔ×öĞ©ĞèÒª¼°Ê±´¦ÀíµÄÆäËüÊÂÇé */
+
+		/* ÔÚµÈ´ıCH376ÖĞ¶ÏµÄ¹ı³ÌÖĞ,¿ÉÒÔ×öĞ©ĞèÒª¼°Ê±´¦ÀíµÄÆäËüÊÂÇé */
 	}
+
 	return( ERR_USB_UNKNOWN );  /* ²»Ó¦¸Ã·¢ÉúµÄÇé¿ö */
 #endif
 }
@@ -239,6 +282,7 @@ UINT8	CH376DiskReqSense( void )  /* ¼ì²éUSB´æ´¢Æ÷´íÎó */
 UINT8	CH376DiskConnect( void )  /* ¼ì²éUÅÌÊÇ·ñÁ¬½Ó,²»Ö§³ÖSD¿¨ */
 {
 	if ( Query376Interrupt( ) ) CH376GetIntStatus( );  /* ¼ì²âµ½ÖĞ¶Ï */
+
 	return( CH376SendCmdWaitInt( CMD0H_DISK_CONNECT ) );
 }
 
@@ -251,7 +295,9 @@ UINT8	CH376FileOpen( PUINT8 name )  /* ÔÚ¸ùÄ¿Â¼»òÕßµ±Ç°Ä¿Â¼ÏÂ´ò¿ªÎÄ¼ş»òÕßÄ¿Â¼(ÎÄ
 {
 	CH376SetFileName( name );  /* ÉèÖÃ½«Òª²Ù×÷µÄÎÄ¼şµÄÎÄ¼şÃû */
 #ifndef	DEF_IC_V43_U
+
 	if ( name[0] == DEF_SEPAR_CHAR1 || name[0] == DEF_SEPAR_CHAR2 ) CH376WriteVar32( VAR_CURRENT_CLUST, 0 );
+
 #endif
 	return( CH376SendCmdWaitInt( CMD0H_FILE_OPEN ) );
 }
@@ -259,6 +305,7 @@ UINT8	CH376FileOpen( PUINT8 name )  /* ÔÚ¸ùÄ¿Â¼»òÕßµ±Ç°Ä¿Â¼ÏÂ´ò¿ªÎÄ¼ş»òÕßÄ¿Â¼(ÎÄ
 UINT8	CH376FileCreate( PUINT8 name )  /* ÔÚ¸ùÄ¿Â¼»òÕßµ±Ç°Ä¿Â¼ÏÂĞÂ½¨ÎÄ¼ş,Èç¹ûÎÄ¼şÒÑ¾­´æÔÚÄÇÃ´ÏÈÉ¾³ı */
 {
 	if ( name ) CH376SetFileName( name );  /* ÉèÖÃ½«Òª²Ù×÷µÄÎÄ¼şµÄÎÄ¼şÃû */
+
 	return( CH376SendCmdWaitInt( CMD0H_FILE_CREATE ) );
 }
 
@@ -266,7 +313,9 @@ UINT8	CH376DirCreate( PUINT8 name )  /* ÔÚ¸ùÄ¿Â¼ÏÂĞÂ½¨Ä¿Â¼(ÎÄ¼ş¼Ğ)²¢´ò¿ª,Èç¹ûÄ¿Â
 {
 	CH376SetFileName( name );  /* ÉèÖÃ½«Òª²Ù×÷µÄÎÄ¼şµÄÎÄ¼şÃû */
 #ifndef	DEF_IC_V43_U
+
 	if ( name[0] == DEF_SEPAR_CHAR1 || name[0] == DEF_SEPAR_CHAR2 ) CH376WriteVar32( VAR_CURRENT_CLUST, 0 );
+
 #endif
 	return( CH376SendCmdWaitInt( CMD0H_DIR_CREATE ) );
 }
@@ -274,9 +323,13 @@ UINT8	CH376DirCreate( PUINT8 name )  /* ÔÚ¸ùÄ¿Â¼ÏÂĞÂ½¨Ä¿Â¼(ÎÄ¼ş¼Ğ)²¢´ò¿ª,Èç¹ûÄ¿Â
 UINT8	CH376SeparatePath( PUINT8 path )  /* ´ÓÂ·¾¶ÖĞ·ÖÀë³ö×îºóÒ»¼¶ÎÄ¼şÃû»òÕßÄ¿Â¼(ÎÄ¼ş¼Ğ)Ãû,·µ»Ø×îºóÒ»¼¶ÎÄ¼şÃû»òÕßÄ¿Â¼ÃûµÄ×Ö½ÚÆ«ÒÆ */
 {
 	PUINT8	pName;
+
 	for ( pName = path; *pName != 0; ++ pName );  /* µ½ÎÄ¼şÃû×Ö·û´®½áÊøÎ»ÖÃ */
+
 	while ( *pName != DEF_SEPAR_CHAR1 && *pName != DEF_SEPAR_CHAR2 && pName != path ) pName --;  /*  ËÑË÷µ¹ÊıµÚÒ»¸öÂ·¾¶·Ö¸ô·û */
+
 	if ( pName != path ) pName ++;  /* ÕÒµ½ÁËÂ·¾¶·Ö¸ô·û,ÔòĞŞ¸ÄÖ¸ÏòÄ¿±êÎÄ¼şµÄ×îºóÒ»¼¶ÎÄ¼şÃû,Ìø¹ıÇ°ÃæµÄ¶à¼¶Ä¿Â¼Ãû¼°Â·¾¶·Ö¸ô·û */
+
 	return( pName - path );
 }
 
@@ -286,17 +339,25 @@ UINT8	CH376FileOpenDir( PUINT8 PathName, UINT8 StopName )  /* ´ò¿ª¶à¼¶Ä¿Â¼ÏÂµÄÎÄ
 	UINT8	i, s;
 	s = 0;
 	i = 1;  /* Ìø¹ıÓĞ¿ÉÄÜµÄ¸ùÄ¿Â¼·û */
-	while ( 1 ) {
+
+	while ( 1 )
+	{
 		while ( PathName[i] != DEF_SEPAR_CHAR1 && PathName[i] != DEF_SEPAR_CHAR2 && PathName[i] != 0 ) ++ i;  /* ËÑË÷ÏÂÒ»¸öÂ·¾¶·Ö¸ô·û»òÕßÂ·¾¶½áÊø·û */
+
 		if ( PathName[i] ) i ++;  /* ÕÒµ½ÁËÂ·¾¶·Ö¸ô·û,ĞŞ¸ÄÖ¸ÏòÄ¿±êÎÄ¼şµÄ×îºóÒ»¼¶ÎÄ¼şÃû */
 		else i = 0;  /* Â·¾¶½áÊø */
+
 		s = CH376FileOpen( &PathName[s] );  /* ´ò¿ªÎÄ¼ş»òÕßÄ¿Â¼ */
-		if ( i && i != StopName ) {  /* Â·¾¶ÉĞÎ´½áÊø */
-			if ( s != ERR_OPEN_DIR ) {  /* ÒòÎªÊÇÖğ¼¶´ò¿ª,ÉĞÎ´µ½Â·¾¶½áÊø,ËùÒÔ,Èç¹û²»ÊÇ³É¹¦´ò¿ªÁËÄ¿Â¼,ÄÇÃ´ËµÃ÷ÓĞÎÊÌâ */
+
+		if ( i && i != StopName )    /* Â·¾¶ÉĞÎ´½áÊø */
+		{
+			if ( s != ERR_OPEN_DIR )    /* ÒòÎªÊÇÖğ¼¶´ò¿ª,ÉĞÎ´µ½Â·¾¶½áÊø,ËùÒÔ,Èç¹û²»ÊÇ³É¹¦´ò¿ªÁËÄ¿Â¼,ÄÇÃ´ËµÃ÷ÓĞÎÊÌâ */
+			{
 				if ( s == USB_INT_SUCCESS ) return( ERR_FOUND_NAME );  /* ÖĞ¼äÂ·¾¶±ØĞëÊÇÄ¿Â¼Ãû,Èç¹ûÊÇÎÄ¼şÃûÔò³ö´í */
 				else if ( s == ERR_MISS_FILE ) return( ERR_MISS_DIR );  /* ÖĞ¼äÂ·¾¶µÄÄ³¸ö×ÓÄ¿Â¼Ã»ÓĞÕÒµ½,¿ÉÄÜÊÇÄ¿Â¼Ãû³Æ´íÎó */
 				else return( s );  /* ²Ù×÷³ö´í */
 			}
+
 			s = i;  /* ´ÓÏÂÒ»¼¶Ä¿Â¼¿ªÊ¼¼ÌĞø */
 		}
 		else return( s );  /* Â·¾¶½áÊø,USB_INT_SUCCESSÎª³É¹¦´ò¿ªÎÄ¼ş,ERR_OPEN_DIRÎª³É¹¦´ò¿ªÄ¿Â¼(ÎÄ¼ş¼Ğ),ÆäËüÎª²Ù×÷³ö´í */
@@ -313,14 +374,19 @@ UINT8	CH376FileCreatePath( PUINT8 PathName )  /* ĞÂ½¨¶à¼¶Ä¿Â¼ÏÂµÄÎÄ¼ş,Ö§³Ö¶à¼¶Ä¿
 	UINT8	s;
 	UINT8	Name;
 	Name = CH376SeparatePath( PathName );  /* ´ÓÂ·¾¶ÖĞ·ÖÀë³ö×îºóÒ»¼¶ÎÄ¼şÃû,·µ»Ø×îºóÒ»¼¶ÎÄ¼şÃûµÄÆ«ÒÆ */
-	if ( Name ) {  /* ÊÇ¶à¼¶Ä¿Â¼ */
+
+	if ( Name )    /* ÊÇ¶à¼¶Ä¿Â¼ */
+	{
 		s = CH376FileOpenDir( PathName, Name );  /* ´ò¿ª¶à¼¶Ä¿Â¼ÏÂµÄ×îºóÒ»¼¶Ä¿Â¼,¼´´ò¿ªĞÂ½¨ÎÄ¼şµÄÉÏ¼¶Ä¿Â¼ */
-		if ( s != ERR_OPEN_DIR ) {  /* ÒòÎªÊÇ´ò¿ªÉÏ¼¶Ä¿Â¼,ËùÒÔ,Èç¹û²»ÊÇ³É¹¦´ò¿ªÁËÄ¿Â¼,ÄÇÃ´ËµÃ÷ÓĞÎÊÌâ */
+
+		if ( s != ERR_OPEN_DIR )    /* ÒòÎªÊÇ´ò¿ªÉÏ¼¶Ä¿Â¼,ËùÒÔ,Èç¹û²»ÊÇ³É¹¦´ò¿ªÁËÄ¿Â¼,ÄÇÃ´ËµÃ÷ÓĞÎÊÌâ */
+		{
 			if ( s == USB_INT_SUCCESS ) return( ERR_FOUND_NAME );  /* ÖĞ¼äÂ·¾¶±ØĞëÊÇÄ¿Â¼Ãû,Èç¹ûÊÇÎÄ¼şÃûÔò³ö´í */
 			else if ( s == ERR_MISS_FILE ) return( ERR_MISS_DIR );  /* ÖĞ¼äÂ·¾¶µÄÄ³¸ö×ÓÄ¿Â¼Ã»ÓĞÕÒµ½,¿ÉÄÜÊÇÄ¿Â¼Ãû³Æ´íÎó */
 			else return( s );  /* ²Ù×÷³ö´í */
 		}
 	}
+
 	return( CH376FileCreate( &PathName[Name] ) );  /* ÔÚ¸ùÄ¿Â¼»òÕßµ±Ç°Ä¿Â¼ÏÂĞÂ½¨ÎÄ¼ş */
 }
 
@@ -332,78 +398,87 @@ UINT8	CH376DirCreatePath( PUINT8 PathName )
 	UINT8	ClustBuf[4];
 
 	Name = CH376SeparatePath( PathName );  		/* ´ÓÂ·¾¶ÖĞ·ÖÀë³ö×îºóÒ»¼¶Ä¿Â¼Ãû,·µ»Ø×îºóÒ»¼¶ÎÄ¼şÃûµÄÆ«ÒÆ */
+
 	if ( Name ) 															/* ÊÇ¶à¼¶Ä¿Â¼ */
-	{  
+	{
 		s = CH376FileOpenDir( PathName, Name ); /* ´ò¿ª¶à¼¶Ä¿Â¼ÏÂµÄ×îºóÒ»¼¶Ä¿Â¼,¼´´ò¿ªĞÂ½¨Ä¿Â¼µÄÉÏ¼¶Ä¿Â¼ */
-		if ( s != ERR_OPEN_DIR ) 								/* ÒòÎªÊÇ´ò¿ªÉÏ¼¶Ä¿Â¼,ËùÒÔ,Èç¹û²»ÊÇ³É¹¦´ò¿ªÁËÄ¿Â¼,ÄÇÃ´ËµÃ÷ÓĞÎÊÌâ */				
-		{  
-			if ( s == USB_INT_SUCCESS ) 
+
+		if ( s != ERR_OPEN_DIR ) 								/* ÒòÎªÊÇ´ò¿ªÉÏ¼¶Ä¿Â¼,ËùÒÔ,Èç¹û²»ÊÇ³É¹¦´ò¿ªÁËÄ¿Â¼,ÄÇÃ´ËµÃ÷ÓĞÎÊÌâ */
+		{
+			if ( s == USB_INT_SUCCESS )
 			{
 				return( ERR_FOUND_NAME );  			/* ÖĞ¼äÂ·¾¶±ØĞëÊÇÄ¿Â¼Ãû,Èç¹ûÊÇÎÄ¼şÃûÔò³ö´í */
 			}
-			else if ( s == ERR_MISS_FILE ) 
+			else if ( s == ERR_MISS_FILE )
 			{
 				return( ERR_MISS_DIR );  				/* ÖĞ¼äÂ·¾¶µÄÄ³¸ö×ÓÄ¿Â¼Ã»ÓĞÕÒµ½,¿ÉÄÜÊÇÄ¿Â¼Ãû³Æ´íÎó */
 			}
-			else 
+			else
 			{
 				return( s );  									/* ²Ù×÷³ö´í */
 			}
 		}
+
 		xWriteCH376Cmd( CMD14_READ_VAR32 );
 		xWriteCH376Data( VAR_START_CLUSTER );  	/* ÉÏ¼¶Ä¿Â¼µÄÆğÊ¼´ØºÅ */
-		
-		for ( s = 0; s != 4; s ++ ) 
+
+		for ( s = 0; s != 4; s ++ )
 		{
 			ClustBuf[ s ] = xReadCH376Data( );
 		}
-		
+
 		xEndCH376Cmd( );
-		
+
 		s = CH376DirCreate( &PathName[Name] );  /* ÔÚµ±Ç°Ä¿Â¼ÏÂĞÂ½¨Ä¿Â¼ */
-		if ( s != USB_INT_SUCCESS ) 
+
+		if ( s != USB_INT_SUCCESS )
 		{
 			return( s );
 		}
-		
-		s = CH376ByteLocate( sizeof(FAT_DIR_INFO) 
-		+ STRUCT_OFFSET( FAT_DIR_INFO, DIR_FstClusHI ) );  /* ÒÆ¶¯ÎÄ¼şÖ¸Õë */
-		if ( s != USB_INT_SUCCESS ) 
+
+		s = CH376ByteLocate( sizeof(FAT_DIR_INFO)
+		                     + STRUCT_OFFSET( FAT_DIR_INFO, DIR_FstClusHI ) );  /* ÒÆ¶¯ÎÄ¼şÖ¸Õë */
+
+		if ( s != USB_INT_SUCCESS )
 		{
 			return( s );
 		}
-		
+
 		s = CH376ByteWrite( &ClustBuf[2], 2, NULL );  /* Ğ´ÈëÉÏ¼¶Ä¿Â¼µÄÆğÊ¼´ØºÅµÄ¸ß16Î» */
-		if ( s != USB_INT_SUCCESS ) 
+
+		if ( s != USB_INT_SUCCESS )
 		{
 			return( s );
 		}
-		
+
 		s = CH376ByteLocate( sizeof(FAT_DIR_INFO) + STRUCT_OFFSET( FAT_DIR_INFO, DIR_FstClusLO ) );  /* ÒÆ¶¯ÎÄ¼şÖ¸Õë */
-		if ( s != USB_INT_SUCCESS ) 
+
+		if ( s != USB_INT_SUCCESS )
 		{
 			return( s );
 		}
-		
+
 		s = CH376ByteWrite( ClustBuf, 2, NULL );  		/* Ğ´ÈëÉÏ¼¶Ä¿Â¼µÄÆğÊ¼´ØºÅµÄµÍ16Î» */
-		if ( s != USB_INT_SUCCESS ) 
+
+		if ( s != USB_INT_SUCCESS )
 		{
 			return( s );
 		}
-		
+
 		s = CH376ByteLocate( 0 );  										/* ÒÆ¶¯ÎÄ¼şÖ¸Õë,»Ö¸´µ½Ä¿Â¼Í·Î»ÖÃ */
-		if ( s != USB_INT_SUCCESS ) 
+
+		if ( s != USB_INT_SUCCESS )
 		{
 			return( s );
 		}
 	}
 	else 																				/* ²»ÊÇ¶à¼¶Ä¿Â¼ */
-	{  
-		if ( PathName[0] == DEF_SEPAR_CHAR1 || PathName[0] == DEF_SEPAR_CHAR2 ) 
+	{
+		if ( PathName[0] == DEF_SEPAR_CHAR1 || PathName[0] == DEF_SEPAR_CHAR2 )
 		{
 			return( CH376DirCreate( PathName ) );  	/* ÔÚ¸ùÄ¿Â¼ÏÂĞÂ½¨Ä¿Â¼ */
 		}
-		else 
+		else
 		{
 			return( ERR_MISS_DIR );  								/* ±ØĞëÌá¹©ÍêÕûÂ·¾¶²ÅÄÜÊµÏÖÔÚµ±Ç°Ä¿Â¼ÏÂĞÂ½¨Ä¿Â¼ */
 		}
@@ -414,14 +489,20 @@ UINT8	CH376DirCreatePath( PUINT8 PathName )
 UINT8	CH376FileErase( PUINT8 PathName )  /* É¾³ıÎÄ¼ş,Èç¹ûÒÑ¾­´ò¿ªÔòÖ±½ÓÉ¾³ı,·ñÔò¶ÔÓÚÎÄ¼ş»áÏÈ´ò¿ªÔÙÉ¾³ı,Ö§³Ö¶à¼¶Ä¿Â¼Â·¾¶ */
 {
 	UINT8	s;
-	if ( PathName ) {  /* ÎÄ¼şÉĞÎ´´ò¿ª */
+
+	if ( PathName )    /* ÎÄ¼şÉĞÎ´´ò¿ª */
+	{
 		for ( s = 1; PathName[s] != DEF_SEPAR_CHAR1 && PathName[s] != DEF_SEPAR_CHAR2 && PathName[s] != 0; ++ s );  /* ËÑË÷ÏÂÒ»¸öÂ·¾¶·Ö¸ô·û»òÕßÂ·¾¶½áÊø·û */
-		if ( PathName[s] ) {  /* ÓĞÂ·¾¶·Ö¸ô·û,ÊÇ¶à¼¶Ä¿Â¼ÏÂµÄÎÄ¼ş»òÕßÄ¿Â¼ */
+
+		if ( PathName[s] )    /* ÓĞÂ·¾¶·Ö¸ô·û,ÊÇ¶à¼¶Ä¿Â¼ÏÂµÄÎÄ¼ş»òÕßÄ¿Â¼ */
+		{
 			s = CH376FileOpenPath( PathName );  /* ´ò¿ª¶à¼¶Ä¿Â¼ÏÂµÄÎÄ¼ş»òÕßÄ¿Â¼ */
+
 			if ( s != USB_INT_SUCCESS && s != ERR_OPEN_DIR ) return( s );  /* ²Ù×÷³ö´í */
 		}
 		else CH376SetFileName( PathName );  /* Ã»ÓĞÂ·¾¶·Ö¸ô·û,ÊÇ¸ùÄ¿Â¼»òÕßµ±Ç°Ä¿Â¼ÏÂµÄÎÄ¼ş»òÕßÄ¿Â¼,ÉèÖÃ½«Òª²Ù×÷µÄÎÄ¼şµÄÎÄ¼şÃû */
 	}
+
 	return( CH376SendCmdWaitInt( CMD0H_FILE_ERASE ) );
 }
 
@@ -458,17 +539,23 @@ UINT8	CH376ByteRead( PUINT8 buf, UINT16 ReqCount, PUINT16 RealCount )  /* ÒÔ×Ö½Ú
 	xWriteCH376Data( (UINT8)ReqCount );
 	xWriteCH376Data( (UINT8)(ReqCount>>8) );
 	xEndCH376Cmd( );
+
 	if ( RealCount ) *RealCount = 0;
-	while ( 1 ) {
+
+	while ( 1 )
+	{
 		s = Wait376Interrupt( );
-		if ( s == USB_INT_DISK_READ ) {
+
+		if ( s == USB_INT_DISK_READ )
+		{
 			s = CH376ReadBlock( buf );  /* ´Óµ±Ç°Ö÷»ú¶ËµãµÄ½ÓÊÕ»º³åÇø¶ÁÈ¡Êı¾İ¿é,·µ»Ø³¤¶È */
 			xWriteCH376Cmd( CMD0H_BYTE_RD_GO );
 			xEndCH376Cmd( );
 			buf += s;
+
 			if ( RealCount ) *RealCount += s;
 		}
-/*		else if ( s == USB_INT_SUCCESS ) return( s );*/  /* ½áÊø */
+		/*		else if ( s == USB_INT_SUCCESS ) return( s );*/  /* ½áÊø */
 		else return( s );  /* ´íÎó */
 	}
 }
@@ -480,18 +567,24 @@ UINT8	CH376ByteWrite( PUINT8 buf, UINT16 ReqCount, PUINT16 RealCount )  /* ÒÔ×Ö½
 	xWriteCH376Data( (UINT8)ReqCount );
 	xWriteCH376Data( (UINT8)(ReqCount>>8) );
 	xEndCH376Cmd( );
+
 	if ( RealCount ) *RealCount = 0;
-	while ( 1 ) {
+
+	while ( 1 )
+	{
 		s = Wait376Interrupt( );
-		if ( s == USB_INT_DISK_WRITE ) {
+
+		if ( s == USB_INT_DISK_WRITE )
+		{
 			s = CH376WriteReqBlock( buf );  /* ÏòÄÚ²¿Ö¸¶¨»º³åÇøĞ´ÈëÇëÇóµÄÊı¾İ¿é,·µ»Ø³¤¶È */
 			sx = s;
 			xWriteCH376Cmd( CMD0H_BYTE_WR_GO );
 			xEndCH376Cmd( );
 			buf += s;
+
 			if ( RealCount ) *RealCount += s;
 		}
-/*		else if ( s == USB_INT_SUCCESS ) return( s );*/  /* ½áÊø */
+		/*		else if ( s == USB_INT_SUCCESS ) return( s );*/  /* ½áÊø */
 		else return( s );  /* ´íÎó */
 	}
 }
@@ -502,12 +595,15 @@ UINT8	CH376DiskCapacity( PUINT32 DiskCap )  /* ²éÑ¯´ÅÅÌÎïÀíÈİÁ¿,ÉÈÇøÊı */
 {
 	UINT8	s;
 	s = CH376SendCmdWaitInt( CMD0H_DISK_CAPACITY );
-	if ( s == USB_INT_SUCCESS ) {  /* ²Î¿¼CH376INC.HÎÄ¼şÖĞCH376_CMD_DATA½á¹¹µÄDiskCapacity */
+
+	if ( s == USB_INT_SUCCESS )    /* ²Î¿¼CH376INC.HÎÄ¼şÖĞCH376_CMD_DATA½á¹¹µÄDiskCapacity */
+	{
 		xWriteCH376Cmd( CMD01_RD_USB_DATA0 );
 		xReadCH376Data( );  /* ³¤¶È×ÜÊÇsizeof(CH376_CMD_DATA.DiskCapacity) */
 		*DiskCap = CH376Read32bitDat( );  /* CH376_CMD_DATA.DiskCapacity.mDiskSizeSec,´ÓCH376Ğ¾Æ¬¶ÁÈ¡32Î»µÄÊı¾İ²¢½áÊøÃüÁî */
 	}
 	else *DiskCap = 0;
+
 	return( s );
 }
 
@@ -517,25 +613,28 @@ UINT8	CH376DiskQuery( PUINT32 DiskFre )  /* ²éÑ¯´ÅÅÌÊ£Óà¿Õ¼äĞÅÏ¢,ÉÈÇøÊı */
 	UINT8	c0, c1, c2, c3;
 #ifndef	DEF_IC_V43_U
 	xWriteCH376Cmd( CMD01_GET_IC_VER );
-	if ( xReadCH376Data( ) < 0x43 ) {
+
+	if ( xReadCH376Data( ) < 0x43 )
+	{
 		if ( CH376ReadVar8( VAR_DISK_STATUS ) >= DEF_DISK_READY ) CH376WriteVar8( VAR_DISK_STATUS, DEF_DISK_MOUNTED );
 	}
+
 #endif
- 	s = CH376SendCmdWaitInt( CMD0H_DISK_QUERY );
+	s = CH376SendCmdWaitInt( CMD0H_DISK_QUERY );
 // 	if ( s == USB_INT_SUCCESS ) {  /* ²Î¿¼CH376INC.HÎÄ¼şÖĞCH376_CMD_DATA½á¹¹µÄDiskQuery */
-		xWriteCH376Cmd( CMD01_RD_USB_DATA0 );
-		xReadCH376Data( );  /* ³¤¶È×ÜÊÇsizeof(CH376_CMD_DATA.DiskQuery) */
-		xReadCH376Data( );  /* CH376_CMD_DATA.DiskQuery.mTotalSector */
-		xReadCH376Data( );
-		xReadCH376Data( );
-		xReadCH376Data( );
-		c0 = xReadCH376Data( );  /* CH376_CMD_DATA.DiskQuery.mFreeSector */
-		c1 = xReadCH376Data( );
-		c2 = xReadCH376Data( );
-		c3 = xReadCH376Data( );
-		*DiskFre = c0 | (UINT16)c1 << 8 | (UINT32)c2 << 16 | (UINT32)c3 << 24;
-		xReadCH376Data( );  /* CH376_CMD_DATA.DiskQuery.mDiskFat */
-		xEndCH376Cmd( );
+	xWriteCH376Cmd( CMD01_RD_USB_DATA0 );
+	xReadCH376Data( );  /* ³¤¶È×ÜÊÇsizeof(CH376_CMD_DATA.DiskQuery) */
+	xReadCH376Data( );  /* CH376_CMD_DATA.DiskQuery.mTotalSector */
+	xReadCH376Data( );
+	xReadCH376Data( );
+	xReadCH376Data( );
+	c0 = xReadCH376Data( );  /* CH376_CMD_DATA.DiskQuery.mFreeSector */
+	c1 = xReadCH376Data( );
+	c2 = xReadCH376Data( );
+	c3 = xReadCH376Data( );
+	*DiskFre = c0 | (UINT16)c1 << 8 | (UINT32)c2 << 16 | (UINT32)c3 << 24;
+	xReadCH376Data( );  /* CH376_CMD_DATA.DiskQuery.mDiskFat */
+	xEndCH376Cmd( );
 // 	}
 // 	else *DiskFre = 0;
 	return( s );
@@ -561,7 +660,9 @@ UINT8	CH376DiskReadSec( PUINT8 buf, UINT32 iLbaStart, UINT8 iSectorCount )  /* ´
 {
 	UINT8	s=0, err;
 	UINT16	mBlockCount;
-	for ( err = 0; err != 3; ++ err ) {  /* ³ö´íÖØÊÔ */
+
+	for ( err = 0; err != 3; ++ err )    /* ³ö´íÖØÊÔ */
+	{
 		xWriteCH376Cmd( CMD5H_DISK_READ );  /* ´ÓUSB´æ´¢Æ÷¶ÁÉÈÇø */
 		xWriteCH376Data( (UINT8)iLbaStart );  /* LBAµÄ×îµÍ8Î» */
 		xWriteCH376Data( (UINT8)( (UINT16)iLbaStart >> 8 ) );
@@ -569,9 +670,13 @@ UINT8	CH376DiskReadSec( PUINT8 buf, UINT32 iLbaStart, UINT8 iSectorCount )  /* ´
 		xWriteCH376Data( (UINT8)( iLbaStart >> 24 ) );  /* LBAµÄ×î¸ß8Î» */
 		xWriteCH376Data( iSectorCount );  /* ÉÈÇøÊı */
 		xEndCH376Cmd( );
-		for ( mBlockCount = iSectorCount * DEF_SECTOR_SIZE / CH376_DAT_BLOCK_LEN; mBlockCount != 0; -- mBlockCount ) {  /* Êı¾İ¿é¼ÆÊı */
+
+		for ( mBlockCount = iSectorCount * DEF_SECTOR_SIZE / CH376_DAT_BLOCK_LEN; mBlockCount != 0; -- mBlockCount )    /* Êı¾İ¿é¼ÆÊı */
+		{
 			s = Wait376Interrupt( );  /* µÈ´ıÖĞ¶Ï²¢»ñÈ¡×´Ì¬ */
-			if ( s == USB_INT_DISK_READ ) {  /* USB´æ´¢Æ÷¶ÁÊı¾İ¿é,ÇëÇóÊı¾İ¶Á³ö */
+
+			if ( s == USB_INT_DISK_READ )    /* USB´æ´¢Æ÷¶ÁÊı¾İ¿é,ÇëÇóÊı¾İ¶Á³ö */
+			{
 				s = CH376ReadBlock( buf );  /* ´Óµ±Ç°Ö÷»ú¶ËµãµÄ½ÓÊÕ»º³åÇø¶ÁÈ¡Êı¾İ¿é,·µ»Ø³¤¶È */
 				xWriteCH376Cmd( CMD0H_DISK_RD_GO );  /* ¼ÌĞøÖ´ĞĞUSB´æ´¢Æ÷µÄ¶Á²Ù×÷ */
 				xEndCH376Cmd( );
@@ -579,13 +684,19 @@ UINT8	CH376DiskReadSec( PUINT8 buf, UINT32 iLbaStart, UINT8 iSectorCount )  /* ´
 			}
 			else break;  /* ·µ»Ø´íÎó×´Ì¬ */
 		}
-		if ( mBlockCount == 0 ) {
+
+		if ( mBlockCount == 0 )
+		{
 			s = Wait376Interrupt( );  /* µÈ´ıÖĞ¶Ï²¢»ñÈ¡×´Ì¬ */
+
 			if ( s == USB_INT_SUCCESS ) return( USB_INT_SUCCESS );  /* ²Ù×÷³É¹¦ */
 		}
+
 		if ( s == USB_INT_DISCONNECT ) return( s );  /* UÅÌ±»ÒÆ³ı */
+
 		CH376DiskReqSense( );  /* ¼ì²éUSB´æ´¢Æ÷´íÎó */
 	}
+
 	return( s );  /* ²Ù×÷Ê§°Ü */
 }
 
@@ -594,7 +705,9 @@ UINT8	CH376DiskWriteSec( PUINT8 buf, UINT32 iLbaStart, UINT8 iSectorCount )  /* 
 {
 	UINT8	s=0, err;
 	UINT16	mBlockCount;
-	for ( err = 0; err != 3; ++ err ) {  /* ³ö´íÖØÊÔ */
+
+	for ( err = 0; err != 3; ++ err )    /* ³ö´íÖØÊÔ */
+	{
 		xWriteCH376Cmd( CMD5H_DISK_WRITE );  /* ÏòUSB´æ´¢Æ÷Ğ´ÉÈÇø */
 		xWriteCH376Data( (UINT8)iLbaStart );  /* LBAµÄ×îµÍ8Î» */
 		xWriteCH376Data( (UINT8)( (UINT16)iLbaStart >> 8 ) );
@@ -602,9 +715,13 @@ UINT8	CH376DiskWriteSec( PUINT8 buf, UINT32 iLbaStart, UINT8 iSectorCount )  /* 
 		xWriteCH376Data( (UINT8)( iLbaStart >> 24 ) );  /* LBAµÄ×î¸ß8Î» */
 		xWriteCH376Data( iSectorCount );  /* ÉÈÇøÊı */
 		xEndCH376Cmd( );
-		for ( mBlockCount = iSectorCount * DEF_SECTOR_SIZE / CH376_DAT_BLOCK_LEN; mBlockCount != 0; -- mBlockCount ) {  /* Êı¾İ¿é¼ÆÊı */
+
+		for ( mBlockCount = iSectorCount * DEF_SECTOR_SIZE / CH376_DAT_BLOCK_LEN; mBlockCount != 0; -- mBlockCount )    /* Êı¾İ¿é¼ÆÊı */
+		{
 			s = Wait376Interrupt( );  /* µÈ´ıÖĞ¶Ï²¢»ñÈ¡×´Ì¬ */
-			if ( s == USB_INT_DISK_WRITE ) {  /* USB´æ´¢Æ÷Ğ´Êı¾İ¿é,ÇëÇóÊı¾İĞ´Èë */
+
+			if ( s == USB_INT_DISK_WRITE )    /* USB´æ´¢Æ÷Ğ´Êı¾İ¿é,ÇëÇóÊı¾İĞ´Èë */
+			{
 				CH376WriteHostBlock( buf, CH376_DAT_BLOCK_LEN );  /* ÏòUSBÖ÷»ú¶ËµãµÄ·¢ËÍ»º³åÇøĞ´ÈëÊı¾İ¿é */
 				xWriteCH376Cmd( CMD0H_DISK_WR_GO );  /* ¼ÌĞøÖ´ĞĞUSB´æ´¢Æ÷µÄĞ´²Ù×÷ */
 				xEndCH376Cmd( );
@@ -612,13 +729,19 @@ UINT8	CH376DiskWriteSec( PUINT8 buf, UINT32 iLbaStart, UINT8 iSectorCount )  /* 
 			}
 			else break;  /* ·µ»Ø´íÎó×´Ì¬ */
 		}
-		if ( mBlockCount == 0 ) {
+
+		if ( mBlockCount == 0 )
+		{
 			s = Wait376Interrupt( );  /* µÈ´ıÖĞ¶Ï²¢»ñÈ¡×´Ì¬ */
+
 			if ( s == USB_INT_SUCCESS ) return( USB_INT_SUCCESS );  /* ²Ù×÷³É¹¦ */
 		}
+
 		if ( s == USB_INT_DISCONNECT ) return( s );  /* UÅÌ±»ÒÆ³ı */
+
 		CH376DiskReqSense( );  /* ¼ì²éUSB´æ´¢Æ÷´íÎó */
 	}
+
 	return( s );  /* ²Ù×÷Ê§°Ü */
 }
 
@@ -630,12 +753,17 @@ UINT8	CH376SecRead( PUINT8 buf, UINT8 ReqCount, PUINT8 RealCount )  /* ÒÔÉÈÇøÎªµ
 #ifndef	DEF_IC_V43_U
 	UINT32	fsz, fofs;
 #endif
+
 	if ( RealCount ) *RealCount = 0;
-	do {
+
+	do
+	{
 #ifndef	DEF_IC_V43_U
 		xWriteCH376Cmd( CMD01_GET_IC_VER );
 		cnt = xReadCH376Data( );
-		if ( cnt == 0x41 ) {
+
+		if ( cnt == 0x41 )
+		{
 			xWriteCH376Cmd( CMD14_READ_VAR32 );
 			xWriteCH376Data( VAR_FILE_SIZE );
 			xReadCH376Data( );
@@ -649,19 +777,25 @@ UINT8	CH376SecRead( PUINT8 buf, UINT8 ReqCount, PUINT8 RealCount )  /* ÒÔÉÈÇøÎªµ
 			fofs = xReadCH376Data( );
 			fofs |= (UINT16)(xReadCH376Data( )) << 8;
 			fofs |= (UINT32)(xReadCH376Data( )) << 16;
+
 			if ( fsz >= fofs + 510 ) CH376WriteVar8( VAR_FILE_SIZE + 3, 0xFF );
 			else cnt = 0xFF;
 		}
 		else cnt = 0xFF;
+
 #endif
 		xWriteCH376Cmd( CMD1H_SEC_READ );
 		xWriteCH376Data( ReqCount );
 		xEndCH376Cmd( );
 		s = Wait376Interrupt( );
 #ifndef	DEF_IC_V43_U
+
 		if ( cnt != 0xFF ) CH376WriteVar8( VAR_FILE_SIZE + 3, cnt );
+
 #endif
+
 		if ( s != USB_INT_SUCCESS ) return( s );
+
 		xWriteCH376Cmd( CMD01_RD_USB_DATA0 );
 		xReadCH376Data( );  /* ³¤¶È×ÜÊÇsizeof(CH376_CMD_DATA.SectorRead) */
 		cnt = xReadCH376Data( );  /* CH376_CMD_DATA.SectorRead.mSectorCount */
@@ -669,13 +803,21 @@ UINT8	CH376SecRead( PUINT8 buf, UINT8 ReqCount, PUINT8 RealCount )  /* ÒÔÉÈÇøÎªµ
 		xReadCH376Data( );
 		xReadCH376Data( );
 		StaSec = CH376Read32bitDat( );  /* CH376_CMD_DATA.SectorRead.mStartSector,´ÓCH376Ğ¾Æ¬¶ÁÈ¡32Î»µÄÊı¾İ²¢½áÊøÃüÁî */
+
 		if ( cnt == 0 ) break;
+
 		s = CH376DiskReadSec( buf, StaSec, cnt );  /* ´ÓUÅÌ¶ÁÈ¡¶à¸öÉÈÇøµÄÊı¾İ¿éµ½»º³åÇø */
+
 		if ( s != USB_INT_SUCCESS ) return( s );
+
 		buf += cnt * DEF_SECTOR_SIZE;
+
 		if ( RealCount ) *RealCount += cnt;
+
 		ReqCount -= cnt;
-	} while ( ReqCount );
+	}
+	while ( ReqCount );
+
 	return( s );
 }
 
@@ -684,13 +826,18 @@ UINT8	CH376SecWrite( PUINT8 buf, UINT8 ReqCount, PUINT8 RealCount )  /* ÒÔÉÈÇøÎª
 	UINT8	s;
 	UINT8	cnt;
 	UINT32	StaSec;
+
 	if ( RealCount ) *RealCount = 0;
-	do {
+
+	do
+	{
 		xWriteCH376Cmd( CMD1H_SEC_WRITE );
 		xWriteCH376Data( ReqCount );
 		xEndCH376Cmd( );
 		s = Wait376Interrupt( );
+
 		if ( s != USB_INT_SUCCESS ) return( s );
+
 		xWriteCH376Cmd( CMD01_RD_USB_DATA0 );
 		xReadCH376Data( );  /* ³¤¶È×ÜÊÇsizeof(CH376_CMD_DATA.SectorWrite) */
 		cnt = xReadCH376Data( );  /* CH376_CMD_DATA.SectorWrite.mSectorCount */
@@ -698,13 +845,21 @@ UINT8	CH376SecWrite( PUINT8 buf, UINT8 ReqCount, PUINT8 RealCount )  /* ÒÔÉÈÇøÎª
 		xReadCH376Data( );
 		xReadCH376Data( );
 		StaSec = CH376Read32bitDat( );  /* CH376_CMD_DATA.SectorWrite.mStartSector,´ÓCH376Ğ¾Æ¬¶ÁÈ¡32Î»µÄÊı¾İ²¢½áÊøÃüÁî */
+
 		if ( cnt == 0 ) break;
+
 		s = CH376DiskWriteSec( buf, StaSec, cnt );  /* ½«»º³åÇøÖĞµÄ¶à¸öÉÈÇøµÄÊı¾İ¿éĞ´ÈëUÅÌ */
+
 		if ( s != USB_INT_SUCCESS ) return( s );
+
 		buf += cnt * DEF_SECTOR_SIZE;
+
 		if ( RealCount ) *RealCount += cnt;
+
 		ReqCount -= cnt;
-	} while ( ReqCount );
+	}
+	while ( ReqCount );
+
 	return( s );
 }
 
@@ -718,28 +873,40 @@ UINT8	CH376LongNameWrite( PUINT8 buf, UINT16 ReqCount )  /* ³¤ÎÄ¼şÃû×¨ÓÃµÄ×Ö½ÚĞ´
 #ifndef	DEF_IC_V43_U
 	UINT8	c;
 	c = CH376ReadVar8( VAR_DISK_STATUS );
+
 	if ( c == DEF_DISK_OPEN_ROOT ) CH376WriteVar8( VAR_DISK_STATUS, DEF_DISK_OPEN_DIR );
+
 #endif
 	xWriteCH376Cmd( CMD2H_BYTE_WRITE );
 	xWriteCH376Data( (UINT8)ReqCount );
 	xWriteCH376Data( (UINT8)(ReqCount>>8) );
 	xEndCH376Cmd( );
-	while ( 1 ) {
+
+	while ( 1 )
+	{
 		s = Wait376Interrupt( );
-		if ( s == USB_INT_DISK_WRITE ) {
+
+		if ( s == USB_INT_DISK_WRITE )
+		{
 			if ( buf ) buf += CH376WriteReqBlock( buf );  /* ÏòÄÚ²¿Ö¸¶¨»º³åÇøĞ´ÈëÇëÇóµÄÊı¾İ¿é,·µ»Ø³¤¶È */
-			else {
+			else
+			{
 				xWriteCH376Cmd( CMD01_WR_REQ_DATA );  /* ÏòÄÚ²¿Ö¸¶¨»º³åÇøĞ´ÈëÇëÇóµÄÊı¾İ¿é */
 				s = xReadCH376Data( );  /* ³¤¶È */
+
 				while ( s -- ) xWriteCH376Data( 0 );  /* Ìî³ä0 */
 			}
+
 			xWriteCH376Cmd( CMD0H_BYTE_WR_GO );
 			xEndCH376Cmd( );
 		}
-/*		else if ( s == USB_INT_SUCCESS ) return( s );*/  /* ½áÊø */
-		else {
+		/*		else if ( s == USB_INT_SUCCESS ) return( s );*/  /* ½áÊø */
+		else
+		{
 #ifndef	DEF_IC_V43_U
+
 			if ( c == DEF_DISK_OPEN_ROOT ) CH376WriteVar8( VAR_DISK_STATUS, c );
+
 #endif
 			return( s );  /* ´íÎó */
 		}
@@ -751,7 +918,9 @@ UINT8	CH376CheckNameSum( PUINT8 DirName )  /* ¼ÆËã³¤ÎÄ¼şÃûµÄ¶ÌÎÄ¼şÃû¼ìÑéºÍ,ÊäÈëÎ
 	UINT8	NameLen;
 	UINT8	CheckSum;
 	CheckSum = 0;
+
 	for ( NameLen = 0; NameLen != 11; NameLen ++ ) CheckSum = ( CheckSum & 1 ? 0x80 : 0x00 ) + ( CheckSum >> 1 ) + *DirName++;
+
 	return( CheckSum );
 }
 
@@ -762,21 +931,34 @@ UINT8	CH376LocateInUpDir( PUINT8 PathName )  /* ÔÚÉÏ¼¶Ä¿Â¼(ÎÄ¼ş¼Ğ)ÖĞÒÆ¶¯ÎÄ¼şÖ¸Õë
 	UINT8	s;
 	xWriteCH376Cmd( CMD14_READ_VAR32 );
 	xWriteCH376Data( VAR_FAT_DIR_LBA );  /* µ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢ËùÔÚµÄÉÈÇøLBAµØÖ· */
+
 	for ( s = 4; s != 8; s ++ ) GlobalBuf[ s ] = xReadCH376Data( );  /* ÁÙÊ±±£´æÓÚÈ«¾Ö»º³åÇøÖĞ,½ÚÔ¼RAM */
+
 	xEndCH376Cmd( );
 	s = CH376SeparatePath( PathName );  /* ´ÓÂ·¾¶ÖĞ·ÖÀë³ö×îºóÒ»¼¶ÎÄ¼şÃû»òÕßÄ¿Â¼Ãû,·µ»Ø×îºóÒ»¼¶ÎÄ¼şÃû»òÕßÄ¿Â¼ÃûµÄÆ«ÒÆ */
+
 	if ( s ) s = CH376FileOpenDir( PathName, s );  /* ÊÇ¶à¼¶Ä¿Â¼,´ò¿ª¶à¼¶Ä¿Â¼ÏÂµÄ×îºóÒ»¼¶Ä¿Â¼,¼´´ò¿ªÎÄ¼şµÄÉÏ¼¶Ä¿Â¼ */
 	else s = CH376FileOpen( "/" );  /* ¸ùÄ¿Â¼ÏÂµÄÎÄ¼ş,Ôò´ò¿ª¸ùÄ¿Â¼ */
+
 	if ( s != ERR_OPEN_DIR ) return( s );
+
 	*(PUINT32)(&GlobalBuf[0]) = 0;  /* Ä¿Â¼ÉÈÇøÆ«ÒÆÉÈÇøÊı,±£´æÔÚÈ«¾Ö»º³åÇøÖĞ,½ÚÔ¼RAM */
-	while ( 1 ) {  /* ²»¶ÏÒÆ¶¯ÎÄ¼şÖ¸Õë,Ö±µ½Óëµ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢ËùÔÚµÄÉÈÇøLBAµØÖ·Æ¥Åä */
+
+	while ( 1 )    /* ²»¶ÏÒÆ¶¯ÎÄ¼şÖ¸Õë,Ö±µ½Óëµ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢ËùÔÚµÄÉÈÇøLBAµØÖ·Æ¥Åä */
+	{
 		s = CH376SecLocate( *(PUINT32)(&GlobalBuf[0]) );  /* ÒÔÉÈÇøÎªµ¥Î»ÔÚÉÏ¼¶Ä¿Â¼ÖĞÒÆ¶¯ÎÄ¼şÖ¸Õë */
+
 		if ( s != USB_INT_SUCCESS ) return( s );
+
 		CH376ReadBlock( &GlobalBuf[8] );  /* ´ÓÄÚ´æ»º³åÇø¶ÁÈ¡CH376_CMD_DATA.SectorLocate.mSectorLbaÊı¾İ¿é,·µ»Ø³¤¶È×ÜÊÇsizeof(CH376_CMD_DATA.SectorLocate) */
+
 		if ( *(PUINT32)(&GlobalBuf[8]) == *(PUINT32)(&GlobalBuf[4]) ) return( USB_INT_SUCCESS );  /* ÒÑµ½µ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢ÉÈÇø */
+
 		xWriteCH376Cmd( CMD50_WRITE_VAR32 );
 		xWriteCH376Data( VAR_FAT_DIR_LBA );  /* µÃµ½Ç°Ò»¸öÉÈÇø,ÉèÖÃÎªĞÂµÄÎÄ¼şÄ¿Â¼ĞÅÏ¢ÉÈÇøLBAµØÖ· */
+
 		for ( s = 8; s != 12; s ++ ) xWriteCH376Data( GlobalBuf[ s ] );
+
 		xEndCH376Cmd( );
 		++ *(PUINT32)(&GlobalBuf[0]);
 	}
@@ -789,50 +971,76 @@ UINT8	CH376GetLongName( PUINT8 PathName, PUINT8 LongName )  /* ÓÉ¶ÌÎÄ¼şÃû»òÕßÄ¿Â
 	UINT8	s;
 	UINT16	NameCount;	/* ³¤ÎÄ¼şÃû×Ö½Ú¼ÆÊı */
 	s = CH376FileOpenPath( PathName );  /* ´ò¿ª¶à¼¶Ä¿Â¼ÏÂµÄÎÄ¼ş»òÕßÄ¿Â¼ */
+
 	if ( s != USB_INT_SUCCESS && s != ERR_OPEN_DIR ) return( s );
+
 	s = CH376DirInfoRead( );  /* ¶ÁÈ¡µ±Ç°ÎÄ¼şµÄÄ¿Â¼ĞÅÏ¢FAT_DIR_INFO,½«Ïà¹ØÊı¾İµ÷µ½ÄÚ´æÖĞ */
+
 	if ( s != USB_INT_SUCCESS ) return( s );
+
 	CH376ReadBlock( GlobalBuf );  /* ´ÓÄÚ´æ»º³åÇø¶ÁÈ¡FAT_DIR_INFOÊı¾İ¿é,·µ»Ø³¤¶È×ÜÊÇsizeof(FAT_DIR_INFO) */
 	CH376EndDirInfo( );  /* »ñÈ¡ÍêFAT_DIR_INFO½á¹¹ */
 	GlobalBuf[32] = CH376CheckNameSum( GlobalBuf );  /* ¼ÆËã³¤ÎÄ¼şÃûµÄ¶ÌÎÄ¼şÃû¼ìÑéºÍ,±£´æÔÚÈ«¾Ö»º³åÇøÖĞ,½ÚÔ¼RAM */
 	GlobalBuf[33] = CH376ReadVar8( VAR_FILE_DIR_INDEX );  /* µ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢ÔÚÉÈÇøÄÚµÄË÷ÒıºÅ,±£´æÔÚÈ«¾Ö»º³åÇøÖĞ,½ÚÔ¼RAM */
 	NameCount = 0;
-	while ( 1 ) {
-		if ( GlobalBuf[33] == 0 ) {  /* µ±Ç°µÄÎÄ¼şÄ¿Â¼ĞÅÏ¢ÉÈÇø´¦Àí½áÊø,×ªµ½Ç°Ò»¸öÉÈÇø */
+
+	while ( 1 )
+	{
+		if ( GlobalBuf[33] == 0 )    /* µ±Ç°µÄÎÄ¼şÄ¿Â¼ĞÅÏ¢ÉÈÇø´¦Àí½áÊø,×ªµ½Ç°Ò»¸öÉÈÇø */
+		{
 			s = CH376LocateInUpDir( PathName );  /* ÔÚÉÏ¼¶Ä¿Â¼ÖĞÒÆ¶¯ÎÄ¼şÖ¸Õëµ½µ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢ËùÔÚµÄÉÈÇø */
+
 			if ( s != USB_INT_SUCCESS ) break;
-			if ( CH376ReadVar32( VAR_CURRENT_OFFSET ) == 0 ) {  /* µ±Ç°ÒÑ¾­´¦ÓÚÄ¿Â¼ÉÈÇøµÄ¿ªÊ¼,ÎŞ·¨»ñÈ¡³¤ÎÄ¼şÃû */
+
+			if ( CH376ReadVar32( VAR_CURRENT_OFFSET ) == 0 )    /* µ±Ç°ÒÑ¾­´¦ÓÚÄ¿Â¼ÉÈÇøµÄ¿ªÊ¼,ÎŞ·¨»ñÈ¡³¤ÎÄ¼şÃû */
+			{
 				s = ERR_LONG_NAME_ERR;
 				break;
 			}
+
 			GlobalBuf[33] = DEF_SECTOR_SIZE / sizeof( FAT_DIR_INFO );  /* Ö¸ÏòÇ°Ò»¸öÉÈÇøµÄ×îºóÒ»¸öÎÄ¼şÄ¿Â¼ĞÅÏ¢ */
 		}
+
 		GlobalBuf[33] --;  /* ´ÓºóÏòÇ°ËÑË÷ÎÄ¼şÄ¿Â¼ĞÅÏ¢ */
 		s = CH376SendCmdDatWaitInt( CMD1H_DIR_INFO_READ, GlobalBuf[33] );  /* ¶ÁÈ¡Ö¸¶¨µÄÄ¿Â¼ĞÅÏ¢FAT_DIR_INFO,½«Ïà¹ØÊı¾İµ÷µ½ÄÚ´æÖĞ */
+
 		if ( s != USB_INT_SUCCESS ) break;
+
 		CH376ReadBlock( GlobalBuf );  /* ´ÓÄÚ´æ»º³åÇø¶ÁÈ¡FAT_DIR_INFOÊı¾İ¿é,·µ»Ø³¤¶È×ÜÊÇsizeof(FAT_DIR_INFO) */
 		CH376EndDirInfo( );  /* »ñÈ¡ÍêFAT_DIR_INFO½á¹¹ */
-		if ( ( GlobalBuf[11] & ATTR_LONG_NAME_MASK ) != ATTR_LONG_NAME || GlobalBuf[13] != GlobalBuf[32] ) {  /* ÀàĞÍ´íÎó»òÕßĞ£ÑéºÍ´íÎó */
+
+		if ( ( GlobalBuf[11] & ATTR_LONG_NAME_MASK ) != ATTR_LONG_NAME || GlobalBuf[13] != GlobalBuf[32] )    /* ÀàĞÍ´íÎó»òÕßĞ£ÑéºÍ´íÎó */
+		{
 			s = ERR_LONG_NAME_ERR;
 			break;  /* Ã»ÓĞÖ±½Ó·µ»ØÊÇÒòÎªÈç¹ûÊÇ´ò¿ªÁË¸ùÄ¿Â¼ÄÇÃ´±ØĞëÒª¹Ø±Õºó²ÅÄÜ·µ»Ø */
 		}
-		for ( s = 1; s < sizeof( FAT_DIR_INFO ); s += 2 ) {  /* ÊÕ¼¯³¤ÎÄ¼şÃû,³¤ÎÄ¼şÃûµÄ×Ö·ûÔÚ´ÅÅÌÉÏUNICODEÓÃĞ¡¶Ë·½Ê½´æ·Å */
+
+		for ( s = 1; s < sizeof( FAT_DIR_INFO ); s += 2 )    /* ÊÕ¼¯³¤ÎÄ¼şÃû,³¤ÎÄ¼şÃûµÄ×Ö·ûÔÚ´ÅÅÌÉÏUNICODEÓÃĞ¡¶Ë·½Ê½´æ·Å */
+		{
 			if ( s == 1 + 5 * 2 ) s = 14;  /* ´Ó³¤ÎÄ¼şÃûµÄµÚÒ»×é1-5¸ö×Ö·ûÌøµ½µÚ¶ş×é6-11¸ö×Ö·û */
 			else if ( s == 14 + 6 * 2 ) s = 28;  /* ´Ó³¤ÎÄ¼şÃûµÄµÚ¶ş×é6-11¸ö×Ö·ûÌøµ½µÚÈı×é12-13¸ö×Ö·û */
+
 			LongName[ NameCount++ ] = GlobalBuf[ s ];
 			LongName[ NameCount++ ] = GlobalBuf[ s + 1 ];
+
 			if ( GlobalBuf[ s ] == 0 && GlobalBuf[ s + 1 ] == 0 ) break;  /* ³¤ÎÄ¼şÃû½áÊø */
-			if ( NameCount >= LONG_NAME_BUF_LEN ) {  /* ³¤ÎÄ¼şÃû»º³åÇøÒç³ö */
+
+			if ( NameCount >= LONG_NAME_BUF_LEN )    /* ³¤ÎÄ¼şÃû»º³åÇøÒç³ö */
+			{
 				s = ERR_LONG_BUF_OVER;
 				goto CH376GetLongNameE;
 			}
 		}
-		if ( GlobalBuf[0] & 0x40 ) {  /* ³¤ÎÄ¼şÃûÄ¿Â¼ĞÅÏ¢¿é½áÊø */
+
+		if ( GlobalBuf[0] & 0x40 )    /* ³¤ÎÄ¼şÃûÄ¿Â¼ĞÅÏ¢¿é½áÊø */
+		{
 			if ( s >= sizeof( FAT_DIR_INFO ) ) *(PUINT16)( &LongName[ NameCount ] ) = 0x0000;  /* ÉĞÎ´ÊÕ¼¯µ½³¤ÎÄ¼şÃûµÄ½áÊø·û,ÔòÇ¿ÖÆ½áÊø */
+
 			s = USB_INT_SUCCESS;  /* ³É¹¦Íê³É³¤ÎÄ¼şÃûÊÕ¼¯Íê³É */
 			break;
 		}
 	}
+
 CH376GetLongNameE:
 	CH376FileClose( FALSE );  /* ¶ÔÓÚ¸ùÄ¿Â¼Ôò±ØĞëÒª¹Ø±Õ */
 	return( s );
@@ -847,86 +1055,143 @@ UINT8	CH376CreateLongName( PUINT8 PathName, PUINT8 LongName )  /* ĞÂ½¨¾ßÓĞ³¤ÎÄ¼ş
 	UINT16	count;			/* ÁÙÊ±±äÁ¿,ÓÃÓÚ¼ÆÊı,ÓÃÓÚ×Ö½Ú¶ÁÎÄ¼ş·½Ê½ÏÂÊµ¼Ê¶ÁÈ¡µÄ×Ö½ÚÊı */
 	UINT16	NameCount;		/* ³¤ÎÄ¼şÃû×Ö½Ú¼ÆÊı */
 	UINT32	NewFileLoc;		/* µ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢ÔÚÉÏ¼¶Ä¿Â¼ÖĞµÄÆğÊ¼Î»ÖÃ,Æ«ÒÆµØÖ· */
+
 	for ( count = 0; count < LONG_NAME_BUF_LEN; count += 2 ) if ( *(PUINT16)(&LongName[count]) == 0 ) break;  /* µ½½áÊøÎ»ÖÃ */
+
 	if ( count == 0 || count >= LONG_NAME_BUF_LEN || count > LONE_NAME_MAX_CHAR ) return( ERR_LONG_NAME_ERR );  /* ³¤ÎÄ¼şÃûÎŞĞ§ */
+
 	DirBlockCnt = count / LONG_NAME_PER_DIR;  /* ³¤ÎÄ¼şÃûÕ¼ÓÃÎÄ¼şÄ¿Â¼½á¹¹µÄ¸öÊı */
 	i = count - DirBlockCnt * LONG_NAME_PER_DIR;
-	if ( i ) {  /* ÓĞÁãÍ· */
+
+	if ( i )    /* ÓĞÁãÍ· */
+	{
 		if ( ++ DirBlockCnt * LONG_NAME_PER_DIR > LONG_NAME_BUF_LEN ) return( ERR_LONG_BUF_OVER );  /* »º³åÇøÒç³ö */
+
 		count += 2;  /* ¼ÓÉÏ0½áÊø·ûºóµÄ³¤¶È */
 		i += 2;
-		if ( i < LONG_NAME_PER_DIR ) {  /* ×îÄ©µÄÎÄ¼şÄ¿Â¼½á¹¹²»Âú */
+
+		if ( i < LONG_NAME_PER_DIR )    /* ×îÄ©µÄÎÄ¼şÄ¿Â¼½á¹¹²»Âú */
+		{
 			while ( i++ < LONG_NAME_PER_DIR ) LongName[count++] = 0xFF;  /* °ÑÊ£ÓàÊı¾İÌîÎª0xFF */
 		}
 	}
+
 	s = CH376FileOpenPath( PathName );  /* ´ò¿ª¶à¼¶Ä¿Â¼ÏÂµÄÎÄ¼ş */
-	if ( s == USB_INT_SUCCESS ) {   /* ¶ÌÎÄ¼şÃû´æÔÚÔò·µ»Ø´íÎó */
+
+	if ( s == USB_INT_SUCCESS )     /* ¶ÌÎÄ¼şÃû´æÔÚÔò·µ»Ø´íÎó */
+	{
 		s = ERR_NAME_EXIST;
 		goto CH376CreateLongNameE;
 	}
+
 	if ( s != ERR_MISS_FILE ) return( s );
+
 	s = CH376FileCreatePath( PathName );  /* ĞÂ½¨¶à¼¶Ä¿Â¼ÏÂµÄÎÄ¼ş */
+
 	if ( s != USB_INT_SUCCESS ) return( s );
+
 	i = CH376ReadVar8( VAR_FILE_DIR_INDEX );  /* ÁÙÊ±ÓÃÓÚ±£´æµ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢ÔÚÉÈÇøÄÚµÄË÷ÒıºÅ */
 	s = CH376LocateInUpDir( PathName );  /* ÔÚÉÏ¼¶Ä¿Â¼ÖĞÒÆ¶¯ÎÄ¼şÖ¸Õëµ½µ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢ËùÔÚµÄÉÈÇø */
+
 	if ( s != USB_INT_SUCCESS ) goto CH376CreateLongNameE;  /* Ã»ÓĞÖ±½Ó·µ»ØÊÇÒòÎªÈç¹ûÊÇ´ò¿ªÁË¸ùÄ¿Â¼ÄÇÃ´±ØĞëÒª¹Ø±Õºó²ÅÄÜ·µ»Ø */
+
 	NewFileLoc = CH376ReadVar32( VAR_CURRENT_OFFSET ) + i * sizeof(FAT_DIR_INFO);  /* ¼ÆËãµ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢ÔÚÉÏ¼¶Ä¿Â¼ÖĞµÄÆğÊ¼Î»ÖÃ,Æ«ÒÆµØÖ· */
 	s = CH376ByteLocate( NewFileLoc );  /* ÔÚÉÏ¼¶Ä¿Â¼ÖĞÒÆ¶¯ÎÄ¼şÖ¸Õëµ½µ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢µÄÎ»ÖÃ */
+
 	if ( s != USB_INT_SUCCESS ) goto CH376CreateLongNameE;
+
 	s = CH376ByteRead( &GlobalBuf[ sizeof(FAT_DIR_INFO) ], sizeof(FAT_DIR_INFO), NULL );  /* ÒÔ×Ö½ÚÎªµ¥Î»¶ÁÈ¡Êı¾İ,»ñµÃµ±Ç°ÎÄ¼şµÄÄ¿Â¼ĞÅÏ¢FAT_DIR_INFO */
+
 	if ( s != USB_INT_SUCCESS ) goto CH376CreateLongNameE;
-	for ( i = DirBlockCnt; i != 0; -- i ) {  /* ËÑË÷¿ÕÏĞµÄÎÄ¼şÄ¿Â¼½á¹¹ÓÃÓÚ´æ·Å³¤ÎÄ¼şÃû */
+
+	for ( i = DirBlockCnt; i != 0; -- i )    /* ËÑË÷¿ÕÏĞµÄÎÄ¼şÄ¿Â¼½á¹¹ÓÃÓÚ´æ·Å³¤ÎÄ¼şÃû */
+	{
 		s = CH376ByteRead( GlobalBuf, sizeof(FAT_DIR_INFO), &count );  /* ÒÔ×Ö½ÚÎªµ¥Î»¶ÁÈ¡Êı¾İ,»ñµÃÏÂÒ»¸öÎÄ¼şÄ¿Â¼ĞÅÏ¢FAT_DIR_INFO */
+
 		if ( s != USB_INT_SUCCESS ) goto CH376CreateLongNameE;
+
 		if ( count == 0 ) break;  /* ÎŞ·¨¶Á³öÊı¾İ,ÉÏ¼¶Ä¿Â¼½áÊøÁË */
-		if ( GlobalBuf[0] && GlobalBuf[0] != 0xE5 ) {  /* ºóÃæÓĞÕıÔÚÊ¹ÓÃµÄÎÄ¼şÄ¿Â¼½á¹¹,ÓÉÓÚ³¤ÎÄ¼şÃû±ØĞëÁ¬½Ó´æ·Å,ËùÒÔ¿Õ¼ä²»¹»,±ØĞë·ÅÆúµ±Ç°Î»ÖÃ²¢Ïòºó×ªÒÆ */
+
+		if ( GlobalBuf[0] && GlobalBuf[0] != 0xE5 )    /* ºóÃæÓĞÕıÔÚÊ¹ÓÃµÄÎÄ¼şÄ¿Â¼½á¹¹,ÓÉÓÚ³¤ÎÄ¼şÃû±ØĞëÁ¬½Ó´æ·Å,ËùÒÔ¿Õ¼ä²»¹»,±ØĞë·ÅÆúµ±Ç°Î»ÖÃ²¢Ïòºó×ªÒÆ */
+		{
 			s = CH376ByteLocate( NewFileLoc );  /* ÔÚÉÏ¼¶Ä¿Â¼ÖĞÒÆ¶¯ÎÄ¼şÖ¸Õëµ½µ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢µÄÎ»ÖÃ */
+
 			if ( s != USB_INT_SUCCESS ) goto CH376CreateLongNameE;
+
 			GlobalBuf[ 0 ] = 0xE5;  /* ÎÄ¼şÉ¾³ı±êÖ¾ */
+
 			for ( s = 1; s != sizeof(FAT_DIR_INFO); s ++ ) GlobalBuf[ s ] = GlobalBuf[ sizeof(FAT_DIR_INFO) + s ];
+
 			s = CH376LongNameWrite( GlobalBuf, sizeof(FAT_DIR_INFO) );  /* Ğ´ÈëÒ»¸öÎÄ¼şÄ¿Â¼½á¹¹,ÓÃÓÚÉ¾³ıÖ®Ç°ĞÂ½¨µÄÎÄ¼ş,Êµ¼ÊÉÏÉÔºó»á½«Ö®×ªÒÆµ½Ä¿Â¼µÄ×îÄ©Î»ÖÃ */
+
 			if ( s != USB_INT_SUCCESS ) goto CH376CreateLongNameE;
-			do {  /* ÏòºóËÑË÷¿ÕÏĞµÄÎÄ¼şÄ¿Â¼½á¹¹ */
+
+			do    /* ÏòºóËÑË÷¿ÕÏĞµÄÎÄ¼şÄ¿Â¼½á¹¹ */
+			{
 				s = CH376ByteRead( GlobalBuf, sizeof(FAT_DIR_INFO), &count );  /* ÒÔ×Ö½ÚÎªµ¥Î»¶ÁÈ¡Êı¾İ,»ñµÃÏÂÒ»¸öÎÄ¼şÄ¿Â¼ĞÅÏ¢FAT_DIR_INFO */
+
 				if ( s != USB_INT_SUCCESS ) goto CH376CreateLongNameE;
-			} while ( count && GlobalBuf[0] );  /* Èç¹ûÈÔÈ»ÊÇÕıÔÚÊ¹ÓÃµÄÎÄ¼şÄ¿Â¼½á¹¹Ôò¼ÌĞøÏòºóËÑË÷,Ö±µ½ÉÏ¼¶Ä¿Â¼½áÊø»òÕßÓĞÉĞÎ´Ê¹ÓÃ¹ıµÄÎÄ¼şÄ¿Â¼½á¹¹ */
+			}
+			while ( count && GlobalBuf[0] );    /* Èç¹ûÈÔÈ»ÊÇÕıÔÚÊ¹ÓÃµÄÎÄ¼şÄ¿Â¼½á¹¹Ôò¼ÌĞøÏòºóËÑË÷,Ö±µ½ÉÏ¼¶Ä¿Â¼½áÊø»òÕßÓĞÉĞÎ´Ê¹ÓÃ¹ıµÄÎÄ¼şÄ¿Â¼½á¹¹ */
+
 			NewFileLoc = CH376ReadVar32( VAR_CURRENT_OFFSET );  /* ÓÃÉÏ¼¶Ä¿Â¼µÄµ±Ç°ÎÄ¼şÖ¸Õë×÷Îªµ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢ÔÚÉÏ¼¶Ä¿Â¼ÖĞµÄÆğÊ¼Î»ÖÃ */
 			i = DirBlockCnt + 1;  /* ĞèÒªµÄ¿ÕÏĞµÄÎÄ¼şÄ¿Â¼½á¹¹µÄ¸öÊı,°üÀ¨¶ÌÎÄ¼şÃû±¾ÉíÒ»¸öºÍ³¤ÎÄ¼şÃû */
+
 			if ( count == 0 ) break;  /* ÎŞ·¨¶Á³öÊı¾İ,ÉÏ¼¶Ä¿Â¼½áÊøÁË */
+
 			NewFileLoc -= sizeof(FAT_DIR_INFO);  /* µ¹»Øµ½¸Õ²ÅËÑË÷µ½µÄ¿ÕÏĞµÄÎÄ¼şÄ¿Â¼½á¹¹µÄÆğÊ¼Î»ÖÃ */
 		}
 	}
-	if ( i ) {  /* ¿ÕÏĞµÄÎÄ¼şÄ¿Â¼½á¹¹²»×ãÒÔ´æ·Å³¤ÎÄ¼şÃû,Ô­ÒòÊÇÉÏ¼¶Ä¿Â¼½áÊøÁË,ÏÂÃæÔö¼ÓÉÏ¼¶Ä¿Â¼µÄ³¤¶È */
+
+	if ( i )    /* ¿ÕÏĞµÄÎÄ¼şÄ¿Â¼½á¹¹²»×ãÒÔ´æ·Å³¤ÎÄ¼şÃû,Ô­ÒòÊÇÉÏ¼¶Ä¿Â¼½áÊøÁË,ÏÂÃæÔö¼ÓÉÏ¼¶Ä¿Â¼µÄ³¤¶È */
+	{
 		s = CH376ReadVar8( VAR_SEC_PER_CLUS );  /* Ã¿´ØÉÈÇøÊı */
-		if ( s == 128 ) {  /* FAT12/FAT16µÄ¸ùÄ¿Â¼,ÈİÁ¿ÊÇ¹Ì¶¨µÄ,ÎŞ·¨Ôö¼ÓÎÄ¼şÄ¿Â¼½á¹¹ */
+
+		if ( s == 128 )    /* FAT12/FAT16µÄ¸ùÄ¿Â¼,ÈİÁ¿ÊÇ¹Ì¶¨µÄ,ÎŞ·¨Ôö¼ÓÎÄ¼şÄ¿Â¼½á¹¹ */
+		{
 			s = ERR_FDT_OVER;  /* FAT12/FAT16¸ùÄ¿Â¼ÏÂµÄÎÄ¼şÊıÓ¦¸ÃÉÙÓÚ512¸ö,ĞèÒª´ÅÅÌÕûÀí */
 			goto CH376CreateLongNameE;
 		}
+
 		count = s * DEF_SECTOR_SIZE;  /* Ã¿´Ø×Ö½ÚÊı */
+
 		if ( count < i * sizeof(FAT_DIR_INFO) ) count <<= 1;  /* Ò»´Ø²»¹»ÔòÔö¼ÓÒ»´Ø,ÕâÖÖÇé¿öÖ»»á·¢ÉúÓÚÃ¿´ØÎª512×Ö½ÚµÄÇé¿öÏÂ */
+
 		s = CH376LongNameWrite( NULL, count );  /* ÒÔ×Ö½ÚÎªµ¥Î»Ïòµ±Ç°Î»ÖÃĞ´ÈëÈ«0Êı¾İ¿é,Çå¿ÕĞÂÔö¼ÓµÄÎÄ¼şÄ¿Â¼´Ø */
+
 		if ( s != USB_INT_SUCCESS ) goto CH376CreateLongNameE;
 	}
+
 	s = CH376ByteLocate( NewFileLoc );  /* ÔÚÉÏ¼¶Ä¿Â¼ÖĞÒÆ¶¯ÎÄ¼şÖ¸Õëµ½µ±Ç°ÎÄ¼şÄ¿Â¼ĞÅÏ¢µÄÎ»ÖÃ */
+
 	if ( s != USB_INT_SUCCESS ) goto CH376CreateLongNameE;
+
 	GlobalBuf[11] = ATTR_LONG_NAME;
 	GlobalBuf[12] = 0x00;
 	GlobalBuf[13] = CH376CheckNameSum( &GlobalBuf[ sizeof(FAT_DIR_INFO) ] );  /* ¼ÆËã³¤ÎÄ¼şÃûµÄ¶ÌÎÄ¼şÃû¼ìÑéºÍ */
 	GlobalBuf[26] = 0x00;
 	GlobalBuf[27] = 0x00;
-	for ( s = 0; DirBlockCnt != 0; ) {  /* ³¤ÎÄ¼şÃûÕ¼ÓÃµÄÎÄ¼şÄ¿Â¼½á¹¹¼ÆÊı */
+
+	for ( s = 0; DirBlockCnt != 0; )    /* ³¤ÎÄ¼şÃûÕ¼ÓÃµÄÎÄ¼şÄ¿Â¼½á¹¹¼ÆÊı */
+	{
 		GlobalBuf[0] = s ? DirBlockCnt : DirBlockCnt | 0x40;  /* Ê×´ÎÒªÖÃ³¤ÎÄ¼şÃûÈë¿Ú±êÖ¾ */
 		DirBlockCnt --;
 		NameCount = DirBlockCnt * LONG_NAME_PER_DIR;
-		for ( s = 1; s < sizeof( FAT_DIR_INFO ); s += 2 ) {  /* Êä³ö³¤ÎÄ¼şÃû,³¤ÎÄ¼şÃûµÄ×Ö·ûÔÚ´ÅÅÌÉÏUNICODEÓÃĞ¡¶Ë·½Ê½´æ·Å */
+
+		for ( s = 1; s < sizeof( FAT_DIR_INFO ); s += 2 )    /* Êä³ö³¤ÎÄ¼şÃû,³¤ÎÄ¼şÃûµÄ×Ö·ûÔÚ´ÅÅÌÉÏUNICODEÓÃĞ¡¶Ë·½Ê½´æ·Å */
+		{
 			if ( s == 1 + 5 * 2 ) s = 14;  /* ´Ó³¤ÎÄ¼şÃûµÄµÚÒ»×é1-5¸ö×Ö·ûÌøµ½µÚ¶ş×é6-11¸ö×Ö·û */
 			else if ( s == 14 + 6 * 2 ) s = 28;  /* ´Ó³¤ÎÄ¼şÃûµÄµÚ¶ş×é6-11¸ö×Ö·ûÌøµ½µÚÈı×é12-13¸ö×Ö·û */
+
 			GlobalBuf[ s ] = LongName[ NameCount++ ];
 			GlobalBuf[ s + 1 ] = LongName[ NameCount++ ];
 		}
+
 		s = CH376LongNameWrite( GlobalBuf, sizeof(FAT_DIR_INFO) );  /* ÒÔ×Ö½ÚÎªµ¥Î»Ğ´ÈëÒ»¸öÎÄ¼şÄ¿Â¼½á¹¹,³¤ÎÄ¼şÃû */
+
 		if ( s != USB_INT_SUCCESS ) goto CH376CreateLongNameE;
 	}
+
 	s = CH376LongNameWrite( &GlobalBuf[ sizeof(FAT_DIR_INFO) ], sizeof(FAT_DIR_INFO) );  /* ÒÔ×Ö½ÚÎªµ¥Î»Ğ´ÈëÒ»¸öÎÄ¼şÄ¿Â¼½á¹¹,ÕâÊÇ×ªÒÆÀ´µÄÖ®Ç°ĞÂ½¨µÄÎÄ¼şµÄÄ¿Â¼ĞÅÏ¢ */
 CH376CreateLongNameE:
 	CH376FileClose( FALSE );  /* ¶ÔÓÚ¸ùÄ¿Â¼Ôò±ØĞëÒª¹Ø±Õ */

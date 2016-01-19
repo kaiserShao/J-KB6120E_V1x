@@ -18,7 +18,7 @@ BOOL	CPS120_Load ( uint8_t IO_Buf[4] )
 		bus_i2c_stop();
 		return	FALSE;
 	}
-	
+
 	IO_Buf[0] = bus_i2c_shin( I2C_ACK );	// Receive and send ACK
 	IO_Buf[1] = bus_i2c_shin( I2C_ACK );	// Receive and send ACK
 	IO_Buf[2] = bus_i2c_shin( I2C_ACK );	// Receive and send ACK
@@ -36,14 +36,16 @@ BOOL	CPS120_Read ( uint16_t * pBa, uint16_t * pTemp )
 {
 	uint8_t	CPS120_Buf[4];
 	BOOL	state = FALSE;
-	
+
 	bus_i2c_mutex_apply();
 	state = CPS120_Load( CPS120_Buf );
+
 	if ( state )
 	{
 		* pBa = (( CPS120_Buf[1] + ( CPS120_Buf[0] * 256u )) & 0x3FFFu );
 		* pTemp = ((( CPS120_Buf[3] + ( CPS120_Buf[2] * 256u )) >> 2 ) & 0x3FFFu );
 	}
+
 	bus_i2c_mutex_release();
 
 	return	state;
@@ -60,7 +62,7 @@ BOOL	CPS121_Load ( uint8_t IO_Buf[5] )
 		bus_i2c_stop();
 		return	FALSE;
 	}
-	
+
 	if ( ! bus_i2c_shout( 0x06 ))
 	{
 		bus_i2c_stop();
@@ -72,7 +74,7 @@ BOOL	CPS121_Load ( uint8_t IO_Buf[5] )
 		bus_i2c_stop();
 		return	FALSE;
 	}
-	
+
 	IO_Buf[0] = bus_i2c_shin( I2C_ACK );	// Receive and send ACK
 	IO_Buf[1] = bus_i2c_shin( I2C_ACK );	// Receive and send ACK
 	IO_Buf[2] = bus_i2c_shin( I2C_ACK );	// Receive and send ACK
@@ -93,7 +95,7 @@ BOOL	CPS121_Read ( uint32_t * pBa, uint16_t  * pTemp )
 {
 	uint8_t	CPS121_Buf[5];
 	BOOL	state = FALSE;
-	
+
 	bus_i2c_mutex_apply();
 
 	state = CPS121_Load( CPS121_Buf );
@@ -106,6 +108,7 @@ BOOL	CPS121_Read ( uint32_t * pBa, uint16_t  * pTemp )
 		* pBa = PressureCode;
 		* pTemp = TemperatureCode;
 	}
+
 	bus_i2c_mutex_release();
 
 	return	state;

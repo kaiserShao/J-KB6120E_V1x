@@ -3,8 +3,8 @@
 #include "CH376INC.h"
 
 #define		ERR_USB_UNKNOWN		0xFA      		/* 未知错误,不应该发生的情况,需检查硬件或者程序错误 */
-#define CLI()      __set_PRIMASK(1)				/* 关闭总中断 */  
-#define SEI() __set_PRIMASK(0)						/* 开放总中断 */ 
+#define CLI()      __set_PRIMASK(1)				/* 关闭总中断 */
+#define SEI() __set_PRIMASK(0)						/* 开放总中断 */
 
 void   NVI_Init(void);
 
@@ -30,6 +30,6 @@ uint8_t CH376QueryInterrupt( void ); 			/*主机查询376的中断状态*/
 
 void    EXTI_PC13_Config( void );					/*中断线配置*/
 
- extern  uint8_t   CH376_Flag; 						/*中断标志字*/
+extern  uint8_t   CH376_Flag; 						/*中断标志字*/
 
 #endif

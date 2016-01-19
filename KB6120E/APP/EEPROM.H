@@ -22,7 +22,7 @@
 extern	void	ConfigureSave( void );
 extern	void	ConfigureLoad( void );
 extern	void	ConfigureLoadDefault( void );
-extern	void	CalibrateSave( void );	
+extern	void	CalibrateSave( void );
 extern	void	CalibrateLoad( void );
 extern	void	SampleSetSave( void );
 extern	void	SampleSetLoad( void );
@@ -84,7 +84,7 @@ struct	uFile_TSP //: public uFile
 	FP32		max_pr;				//	计前压力最大值
 	//	采样的累计值
 	FP32		vd, vnd;			//	累计采样体积
-	
+
 //	public:
 //		void	Save( uint16_t FileNum );
 //		void	Load( uint16_t FileNum );
@@ -142,13 +142,13 @@ struct	uFile_R24	//	日均与时均使用的记录结构完全相同，但分别定义，便于进行类型检
 
 struct	uFile_AIR
 {
-	
+
 	uint32_t	sample_begin;		//	记录采样开始时间
 	uint16_t	set_time;			//	设置采样时间
 	uint16_t	set_flow[2];			//	设置采样流量
 	uint8_t		set_loops; 			//	设置采样次数
 	uint8_t		run_loops;			//	记录采样次数
-	//	采样过程中的统计参数	
+	//	采样过程中的统计参数
 	uint16_t	sum_min;			//	实际采样时间，每分钟一计，最大24小时
 // 	FP32		vnd[2];				//	累计的采样体积，只记录标况体积
 //	FP32		sum_Ba;				//	大气压力

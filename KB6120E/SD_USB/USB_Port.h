@@ -6,8 +6,8 @@
 #include "file_sys.h"
 #include "CH376INC.h"
 #ifndef	__bool_true_false_are_defined
-	#include <stdbool.h>
-	typedef	bool	BOOL;
+#include <stdbool.h>
+typedef	bool	BOOL;
 #endif
 
 #endif

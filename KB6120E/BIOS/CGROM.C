@@ -2,10 +2,10 @@
 * 文 件 名: CGROM.C
 * 创 建 者: 董峰
 * 描  述  : 显示字模检索
-* 最后修改: 
+* 最后修改:
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "BSP.H"
 #include "BIOS.H"
@@ -23,9 +23,13 @@
 *******************************************************************************/
 CGROM	DotSeekDBC ( int8_t sc )
 {
-    uint8_t uc = (uint8_t)sc;
+	uint8_t uc = (uint8_t)sc;
 
-	if ( uc < 0x20U ){	uc = 0x7FU;	}
+	if ( uc < 0x20U )
+	{
+		uc = 0x7FU;
+	}
+
 	return	& chardot[( uc - 0x20U ) * 0x10U ];
 }
 
@@ -45,23 +49,27 @@ CGROM	DotSeekSBC ( int8_t cc0, int8_t cc1 )
 
 	low  = 1U;				/*	从[1]开始搜索	*/
 	high = (uint16_t)hzNum - 1U;
+
 	while ( low <= high )
 	{
 		mid = ( low + high ) / 2U;	/*	使用折半查找以加快检索速度	*/
 		cm16 = ( hzIndex[ 2U * mid ] * 0x100U ) + hzIndex[( 2U * mid ) + 1U ];
+
 		if ( cc16 == cm16 )
 		{
 			return	& hzdot[ mid * 0x20U ];
 		}
+
 		if ( cc16 > cm16 )
 		{
 			low  = mid + 1U;
-		} 
-		else 
+		}
+		else
 		{
 			high = mid - 1U;
 		}
 	}
+
 	return	& hzdot[0];		/*	[0]存放空白字符	*/
 }
 

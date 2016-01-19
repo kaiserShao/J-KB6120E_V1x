@@ -4,7 +4,7 @@
 * 描  述  : 按键扫描接口与访问接口
 * 最后修改: 2014年5月5日
 *********************************** 修订记录 ***********************************
-* 版  本: V2.0 
+* 版  本: V2.0
 * 修订人: 董峰
 * 说  明: 使用按键变化中断与按键事件信号，降低按键处理需要的时间。
 *******************************************************************************/
@@ -25,10 +25,11 @@ uKey	getKey( void )
 	uKey  KeyRead;
 
 	if ( ! KeyHited )
-	{	//	等待按键信号
+	{
+		//	等待按键信号
 		osSemaphoreWait( semiKeyHited, osWaitForever );
 	}
-	
+
 	KeyRead = KeyBuffer;
 	KeyHited = FALSE;
 	tick();
@@ -38,10 +39,11 @@ uKey	getKey( void )
 BOOL	hitKey( uint16_t iRetry )
 {
 	if ( ! KeyHited )
-	{	//	等待按键信号
+	{
+		//	等待按键信号
 		osSemaphoreWait( semiKeyHited, iRetry * 10u );
 	}
-	
+
 	return	KeyHited;
 }
 
@@ -53,8 +55,10 @@ BOOL	releaseKey( uKey lastKey, uint16_t iRetry )
 		{
 			break;
 		}
+
 		delay( 10u );
 	}
+
 	return	( lastKey != KeyDirect ) ? TRUE : FALSE;
 }
 
@@ -91,39 +95,51 @@ void		DisplaySetTimeout( uint8_t setTimeout )
 {
 	switch ( setTimeout )
 	{
-	case 0:	TimeoutLight = 0u;			break;
-	case 1:	TimeoutLight = 15 * 1000u;	break;
-	case 2:	TimeoutLight = 30 * 1000u;	break;
-	case 3:	TimeoutLight = 60 * 1000u;	break;
-	default:
-	case 4:	TimeoutLight = osWaitForever;	break;
+		case 0:
+			TimeoutLight = 0u;
+			break;
+		case 1:
+			TimeoutLight = 15 * 1000u;
+			break;
+		case 2:
+			TimeoutLight = 30 * 1000u;
+			break;
+		case 3:
+			TimeoutLight = 60 * 1000u;
+			break;
+		default:
+		case 4:
+			TimeoutLight = osWaitForever;
+			break;
 	}
 }
 
 static	void	KeyboardStateChanged_Poll( void )
 {
 	int32_t	result;
-	
+
 	switch ( TimeoutLight )
 	{
-	case 0u:
-		Backlight_OFF();
-		osSemaphoreWait( semiKeyChanged, osWaitForever );
-		break;
-	case osWaitForever:
-		Backlight_ON();
-		osSemaphoreWait( semiKeyChanged, osWaitForever );
-		break;
-	default:
-		Backlight_ON();
-		result = osSemaphoreWait( semiKeyChanged, TimeoutLight );
-
-		if (  result <= 0 )
-		{	//	没有等到信号量，那么应该是超时时间到了，关闭背光。
+		case 0u:
 			Backlight_OFF();
 			osSemaphoreWait( semiKeyChanged, osWaitForever );
-		}
-		break;
+			break;
+		case osWaitForever:
+			Backlight_ON();
+			osSemaphoreWait( semiKeyChanged, osWaitForever );
+			break;
+		default:
+			Backlight_ON();
+			result = osSemaphoreWait( semiKeyChanged, TimeoutLight );
+
+			if (  result <= 0 )
+			{
+				//	没有等到信号量，那么应该是超时时间到了，关闭背光。
+				Backlight_OFF();
+				osSemaphoreWait( semiKeyChanged, osWaitForever );
+			}
+
+			break;
 	}
 }
 
@@ -139,21 +155,24 @@ __task	void	_task_Keyboard( void const * p_arg )
 	delay( 100u );
 
 	Keyboard_PortInit();
+
 	for (;;)
 	{
 		Keyboard_IRQ_Enable();			//	允许按键变化触发中断
 		delay( 20u );					//	等待按键状态稳定后再读
 		keyPortState = Keyboard_PortRead();
 		KeyboardStateChanged_Poll();	//	等待按键变化事件信号
-		do 
-    {
+
+		do
+		{
 			keyDebounce = keyPortState;
 			delay( 10u );
 			keyPortState = Keyboard_PortRead();
-		} while ( keyDebounce != keyPortState );	//	==时	松开按键后才能响应---缺点是不能进行组合按键
+		}
+		while ( keyDebounce != keyPortState );	//	==时	松开按键后才能响应---缺点是不能进行组合按键
 
 		KeyDirect = keyDebounce;		//	保存扫描结果
-		
+
 		//	新的按键入队并告知主程序有新的按键按下。
 		if ( ! KeyHited )
 		{
@@ -161,10 +180,12 @@ __task	void	_task_Keyboard( void const * p_arg )
 			{
 				KeyHited = TRUE;
 			}
+
 			KeyBuffer = KeyDirect;
 
 			if ( KeyHited )
-			{	//	向等待按键的任务发信号
+			{
+				//	向等待按键的任务发信号
 				osSemaphoreRelease( semiKeyHited );
 			}
 		}

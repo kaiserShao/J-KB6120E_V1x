@@ -4,8 +4,8 @@
 * 描  述  : KB6120E 芯片端口访问(MODBUS部分)
 * 最后修改: 2013年12月27日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 #include "BSP.H"
 #include "Pin.H"
@@ -34,7 +34,8 @@ extern	void	vMBM_RTU_Receive_ISR( void );
 //	}
 
 void	RS485_Direct_OE ( BOOL NewState )
-{	//	RE <--> PC.12，低电平允许接收
+{
+	//	RE <--> PC.12，低电平允许接收
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
 	GPIOC->BSRR  = NewState ? ( 1 << 12 ) : ( 1 << ( 12 + 16 ));
 	MODIFY_REG( GPIOC->CRH, 0x000F0000u, 0x00030000u );
@@ -84,7 +85,7 @@ void	TIM4_Cmd( BOOL NewState )
 void	USART3_Init( uint32_t ulBaudRate )
 {
 	USART_TypeDef * USARTx = USART3;
-	
+
 	SET_BIT( RCC->APB1ENR, RCC_APB1ENR_USART3EN );
 
 	USARTx->CR1 = 0u;
@@ -99,7 +100,7 @@ void	USART3_Init( uint32_t ulBaudRate )
 //		CLEAR_BIT( USARTx->CR1, USART_CR1_M );
 //		break;
 //	case 8:
-		SET_BIT( USARTx->CR1, USART_CR1_M );
+	SET_BIT( USARTx->CR1, USART_CR1_M );
 //		break;
 //	}
 
@@ -111,11 +112,11 @@ void	USART3_Init( uint32_t ulBaudRate )
 //	case MB_PAR_ODD:    	/*!< Odd parity. */
 //		SET_BIT( USARTx->CR1, USART_CR1_PS );
 //		SET_BIT( USARTx->CR1, USART_CR1_PCE );
-//		break;		
+//		break;
 //	case MB_PAR_EVEN:   	/*!< Even parity. */
-		CLEAR_BIT( USARTx->CR1, USART_CR1_PS );
-		SET_BIT( USARTx->CR1, USART_CR1_PCE );
-//		break;		
+	CLEAR_BIT( USARTx->CR1, USART_CR1_PS );
+	SET_BIT( USARTx->CR1, USART_CR1_PCE );
+//		break;
 //	}
 
 	SET_BIT( USARTx->CR1, USART_CR1_UE );		// Enable USARTx
@@ -139,7 +140,7 @@ void	USART3_PortInit ( void )
 	//	PC.11 USART3 Rx, 4：(0100B)浮空输入模式(复位后的状态)
 	//	PC.10 USART3 Tx, B：(1011B)复用功能推挽输出模式50MHz
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
- 	MODIFY_REG( GPIOC->CRH, 0x0000FF00u, 0x00004B00u );
+	MODIFY_REG( GPIOC->CRH, 0x0000FF00u, 0x00004B00u );
 }
 
 
@@ -193,7 +194,7 @@ __irq	void	TIM4_IRQHandler( void )
 __irq	void	USART3_IRQHandler( void )
 {
 	USART_TypeDef * USARTx = USART3;
-	
+
 	if ( READ_BIT( USARTx->CR1, USART_CR1_RXNEIE ))
 	{
 		if ( READ_BIT( USARTx->SR, USART_SR_RXNE ))
@@ -208,13 +209,13 @@ __irq	void	USART3_IRQHandler( void )
 // 		if ( READ_BIT( USARTx->SR, USART_SR_TXE ))
 // 		{
 	if ( READ_BIT( USARTx->CR1, USART_CR1_TCIE ))
- 	{
- 		if ( READ_BIT( USARTx->SR, USART_SR_TC ))
- 		{
- 			//	发送数据处理
+	{
+		if ( READ_BIT( USARTx->SR, USART_SR_TC ))
+		{
+			//	发送数据处理
 			vMBM_RTU_Send_ISR( );
- 		}
- 	}
+		}
+	}
 }
 
 /********  (C) COPYRIGHT 2013 青岛金仕达电子科技有限公司  **** End Of File ****/

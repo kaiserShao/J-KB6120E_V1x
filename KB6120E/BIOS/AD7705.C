@@ -4,8 +4,8 @@
 * 描  述  : 读写AD7705程序
 * 最后修改: 2014年5月5日
 *********************************** 修订记录 ***********************************
-* 版  本: 
-* 修订人: 
+* 版  本:
+* 修订人:
 *******************************************************************************/
 /*lint	--e{750}	Info 750: local macro 'XX' not referenced	*/
 
@@ -79,23 +79,23 @@ static	void    ShiftOut( uint8_t b )
 BOOL	Initialize7705( )
 {
 	uint8_t	i;
-	 
+
 	bus_SPI1xPortInit();
-	
+
 	for( i = 7u; i != 0u; --i )
 	{
 		ShiftOut( 0xFFu );
 	}
-	
+
 	ShiftOut( RS_4 );				// Test Register, 8 Bits
 	ShiftOut( 0x00u );				// Default: 0x00
 	ShiftOut( RS_2 );				// Clock Register, 8 Bits
 	ShiftOut( CLKDIV + FS_1_0 );	// 50Hz @ 4.9152MHz
-	
+
 	ShiftOut( RS_1 + 0u );			// 启动指定通道的自校准转换
 	ShiftOut( MD_1 + BIPOLAR  + G_5 + BUF );
 	delay( 300u );
-	
+
 	ShiftOut( RS_1 + 1u );			// 启动指定通道的自校准转换
 	ShiftOut( MD_1 + BIPOLAR  + G_4 + BUF );
 	delay( 300u);
@@ -115,6 +115,7 @@ void	Convert7705( uint8_t ChannelSelect )
 	{
 		ShiftOut( MD_0 + BIPOLAR  + G_4 + BUF );
 	}
+
 	ShiftOut( RS_3 + READ + ChannelSelect );	// Reset DRDY#
 	ShiftIn();
 	ShiftIn();
@@ -126,21 +127,24 @@ uint16_t	Readout7705( uint8_t ChannelSelect )
 	uint8_t  state, ResultH, ResultL;
 	BOOL	 isReady;
 	uint16_t iRetry;
-	
+
 	for ( iRetry = 20u; iRetry; --iRetry )
 	{
 		ShiftOut( RS_0 + READ + ChannelSelect );
 		state = ShiftIn();
 		isReady = ( state & DRDY ) ? FALSE : TRUE;	//	DRDY 低电平有效
+
 		if ( isReady )
 		{
 			ShiftOut( RS_3 + READ + ChannelSelect );		// do Read
 			ResultH = ShiftIn();
-			ResultL = ShiftIn();	
+			ResultL = ShiftIn();
 			return  ( ResultL + ( ResultH * 256u ));
 		}
+
 		delay( 10u );
 	}
+
 	return 0u;	// failure !!!
 }
 
