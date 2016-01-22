@@ -408,8 +408,8 @@ void	TM12864_GrayInit( void )
 
 BOOL	OW_0_Init( void )
 {
-	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
-	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
+// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
+// 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
 
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
 	MODIFY_REG( GPIOA->CRH, 0xF0000000u, 0x70000000u );
@@ -660,103 +660,103 @@ uint8_t	bus_i2c_shin( enum I2C_AcknowlegeSet AcknowlegeSet )
 	return	cInByte;
 }
 
-// /********************************** 功能说明 ***********************************
-// *	访问 SPI 总线( SPIx )
-// *******************************************************************************/
-// #ifdef	SimulationSPI
+/********************************** 功能说明 ***********************************
+*	访问 SPI 总线( SPIx )
+*******************************************************************************/
+#ifdef	SimulationSPI
 
-// #define	Pin_SPIxSCK		PinBB( GPIOB->ODR,  3U )
-// #define	Pin_SPIxMISO		PinBB( GPIOB->IDR,  4U )
-// #define	Pin_SPIxMOSI		PinBB( GPIOB->ODR,  5U )
+#define	Pin_SPIxSCK		PinBB( GPIOB->ODR,  3U )
+#define	Pin_SPIxMISO		PinBB( GPIOB->IDR,  4U )
+#define	Pin_SPIxMOSI		PinBB( GPIOB->ODR,  5U )
 
-// uint8_t bus_SPIxShift( uint8_t OutByte )
-// {
-// 	uint8_t i;
+uint8_t bus_SPIxShift( uint8_t OutByte )
+{
+	uint8_t i;
 //
-// 	for ( i = 8u; i != 0u; --i )
-// 	{
-// 		delay_us( 1 );
-// 		if ( OutByte & 0x80u )
-// 		{
-// 			Pin_SPIxMOSI = 1;
-// 		}
-// 		else
-// 		{
-// 			Pin_SPIxMOSI = 0;
-// 		}
+	for ( i = 8u; i != 0u; --i )
+	{
+		delay_us( 1 );
+		if ( OutByte & 0x80u )
+		{
+			Pin_SPIxMOSI = 1;
+		}
+		else
+		{
+			Pin_SPIxMOSI = 0;
+		}
 
-// 		delay_us( 1 );
-// 		Pin_SPIxSCK = 0;
+		delay_us( 1 );
+		Pin_SPIxSCK = 0;
 
-// 		delay_us( 1 );
+		delay_us( 1 );
 
-// 		OutByte <<= 1;
-// 		if ( Pin_SPIxMISO )
-// 		{
-// 			OutByte |= 0x01u;
-// 		}
-// 		else
-// 		{
-// 			OutByte &= 0xFEu;
-// 		}
+		OutByte <<= 1;
+		if ( Pin_SPIxMISO )
+		{
+			OutByte |= 0x01u;
+		}
+		else
+		{
+			OutByte &= 0xFEu;
+		}
 
-// 		delay_us( 1 );
-// 		Pin_SPIxSCK = 1;
-// 	}
-//
-// 	return	OutByte;
-// }
+		delay_us( 1 );
+		Pin_SPIxSCK = 1;
+	}
+
+	return	OutByte;
+}
 
 
-// void	bus_SPIxPortInit( void )
-// {
-// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
-//  	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
+void	bus_SPIxPortInit( void )
+{
+	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
+	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
 
-//  	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
-// 	Pin_SPIxSCK = 1;
-//  	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00343000u );
-// }
+ 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
+	Pin_SPIxSCK = 1;
+ 	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00343000u );
+}
 
-// #else
+#else
 
-// uint8_t bus_SPIxShift( uint8_t IOByte )
-// {
-// 	SPI_TypeDef * SPIx = SPI1;
+uint8_t bus_SPIxShift( uint8_t IOByte )
+{
+	SPI_TypeDef * SPIx = SPI1;
 
-// 	while ( ! READ_BIT( SPIx->SR, SPI_SR_TXE ));	// Wait if TXE cleared, Tx FIFO is empty.
-// 	SPIx->DR = IOByte;
-// 	while ( ! READ_BIT( SPIx->SR, SPI_SR_RXNE ));	// Wait if RXNE cleared, Rx FIFO is empty.
-// 	IOByte = SPIx->DR;
+	while ( ! READ_BIT( SPIx->SR, SPI_SR_TXE ));	// Wait if TXE cleared, Tx FIFO is empty.
+	SPIx->DR = IOByte;
+	while ( ! READ_BIT( SPIx->SR, SPI_SR_RXNE ));	// Wait if RXNE cleared, Rx FIFO is empty.
+	IOByte = SPIx->DR;
 
-// 	return	IOByte;
-// }
+	return	IOByte;
+}
 
-// void	bus_SPIxPortInit( void )
-// {
-// 	SPI_TypeDef * SPIx = SPI1;
+void	bus_SPIxPortInit( void )
+{
+	SPI_TypeDef * SPIx = SPI1;
 
-// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_SPI1EN );
+	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_SPI1EN );
 
-// 	SPIx->CR1	= SPI_CR1_MSTR
-// 				| SPI_CR1_CPHA
-// 				| SPI_CR1_CPOL
-// 				| SPI_CR1_SSM
-// 				| SPI_CR1_SSI
-// 				| SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0
-// 				;
-// 	SPIx->CR2   = 0;
-// 	SET_BIT( SPIx->CR1, SPI_CR1_SPE );
-//
-// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
-// 	CLEAR_BIT(  AFIO->MAPR, AFIO_MAPR_SWJ_CFG );
-// 	SET_BIT(    AFIO->MAPR, AFIO_MAPR_SPI1_REMAP );
-// 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
-// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
-//  	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00B4B000u );
-// }
+	SPIx->CR1	= SPI_CR1_MSTR
+				| SPI_CR1_CPHA
+				| SPI_CR1_CPOL
+				| SPI_CR1_SSM
+				| SPI_CR1_SSI
+				| SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0
+				;
+	SPIx->CR2   = 0;
+	SET_BIT( SPIx->CR1, SPI_CR1_SPE );
 
-// #endif
+	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
+	CLEAR_BIT(  AFIO->MAPR, AFIO_MAPR_SWJ_CFG );
+	SET_BIT(    AFIO->MAPR, AFIO_MAPR_SPI1_REMAP );
+	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_SWJ_CFG, AFIO_MAPR_SWJ_CFG_JTAGDISABLE );
+	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPBEN );
+ 	MODIFY_REG( GPIOB->CRL, 0x00FFF000u, 0x00B4B000u );
+}
+
+#endif
 
 /********************************** 功能说明 ***********************************
 *	访问 USART1，实现RS232，主要用于实现与微打或上位机进行通讯
@@ -817,35 +817,6 @@ uint16_t	BackupRegister_Read( uint16_t BKP_DR )
 	return	(*(__IO uint16_t *) tmp );
 }
 
-
-/********************************** 功能说明 ***********************************
-*	使用 TIM1 计数 ETR 脉冲，测量风扇转动圈数。
-*******************************************************************************/
-static	void	TIM1_Init( void )
-{
-	TIM_TypeDef	* TIMx = TIM1;
-
-	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_TIM1EN );
-
-	TIMx->SMCR	= TIM_SMCR_ETP
-	              | TIM_SMCR_ETF_3
-	              | TIM_SMCR_ETPS_0
-	              ;
-
-	/* Enable the TIM Counter */
-	SET_BIT( TIMx->SMCR, TIM_SMCR_ECE );
-	SET_BIT( TIMx->CR1, TIM_CR1_CEN );
-
-	// 	//	使用 TI2
-	//  	CLEAR_BIT( TIMx->CCER,  TIM_CCER_CC2E );
-	//  	MODIFY_REG( TIMx->CCMR1, TIM_CCMR1_CC2S | TIM_CCMR1_IC2F, TIM_CCMR1_CC2S_0 );
-	//  	SET_BIT(   TIMx->CCER,  TIM_CCER_CC2P | TIM_CCER_CC2E );
-
-	// 	/* Select the Trigger source */
-	// 	MODIFY_REG( TIMx->SMCR, TIM_SMCR_TS, TIM_SMCR_TS_2 | TIM_SMCR_TS_1 );	//	TIM_TIxExternalCLK1Source_TI2
-	// 	/* Select the External clock mode1 */
-	// 	SET_BIT( TIMx->SMCR, TIM_SMCR_SMS );	//	TIM_SlaveMode_External1
-}
 
 /********************************** 功能说明 ***********************************
 *	使用 TIM2 实现 直流PWM 电机调速
@@ -924,27 +895,21 @@ static	void	TIM3_Init( void )
 	//	配置过程中暂时全部关闭输出
 	TIMx->CCER = 0u;
 	TIMx->CCMR1 = TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1
-	              | TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1;
+	            | TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1;
 	TIMx->CCMR2 = TIM_CCMR2_OC3M_2 | TIM_CCMR2_OC3M_1
-	              | TIM_CCMR2_OC4M_2 | TIM_CCMR2_OC4M_1;
+	            | TIM_CCMR2_OC4M_2 | TIM_CCMR2_OC4M_1;
 	TIMx->CCR1 = 0u;
 	TIMx->CCR2 = 0u;
 	TIMx->CCR3 = 0u;
 	TIMx->CCR4 = 0u;
 
-//	SET_BIT( TIMx->CCER, TIM_CCER_CC3E );	//	T3CH3 接大气采样泵
-//	SET_BIT( TIMx->CCER, TIM_CCER_CC4E );	//	T3CH4 接制冷箱风扇
 	//	TIMx 使能
 	SET_BIT( TIMx->CR1, TIM_CR1_CEN );
 
 	//	配置输出管脚
 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_AFIOEN );
 	MODIFY_REG( AFIO->MAPR, AFIO_MAPR_TIM3_REMAP, AFIO_MAPR_TIM3_REMAP_FULLREMAP );
-//	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
-//	MODIFY_REG( GPIOC->CRL, 0x0F000000u, 0x0B000000u );		//	PC.6, T3CH1
-//	MODIFY_REG( GPIOC->CRL, 0xF0000000u, 0xB0000000u );		//	PC.7, T3CH2
-// 	MODIFY_REG( GPIOC->CRH, 0x0000000Fu, 0x0000000Bu );		//	PC.8, T3CH3
-// 	MODIFY_REG( GPIOC->CRH, 0x000000F0u, 0x000000B0u );		//	PC.9, T3CH4
+
 }
 
 void	PWM1_SetOutput( uint16_t OutValue )
@@ -975,23 +940,6 @@ void	PWM4_SetOutput( uint16_t OutValue )
 	TIMx->CCR4 = _TIM3_PWM_Regular( OutValue );
 }
 
-/********************************** 功能说明 ***********************************
-*	测量风扇转速（此处实际是测量风扇转的圈数，实际转速需要根据时间进一步确定）
-*******************************************************************************/
-void	HCBoxFan_Circle_PortInit( void )
-{
-	TIM1_Init();
-
-	// PA.12 上拉输入模式
-	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
-	GPIOA->BSRR = GPIO_BSRR_BS12;
-	MODIFY_REG( GPIOA->CRH, 0x000F0000u, 0x00080000u );
-}
-
-uint16_t	HCBoxFan_Circle_Read( void )
-{
-	return	TIM1->CNT;
-}
 
 /********************************** 功能说明 ***********************************
 *	访问 GPIO
@@ -1010,26 +958,25 @@ void	AIRLightOutCmd( BOOL NewState )
 	GPIOC->BSRR = NewState ? GPIO_BSRR_BS9 : GPIO_BSRR_BR9;
 	MODIFY_REG( GPIOC->CRH, 0x000000F0u, 0x00000030u );
 }
-// void	HCBoxHeat_OutCmd( BOOL NewState )
-// {	//	PA.8
-// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
-// 	GPIOA->BSRR = NewState ? GPIO_BSRR_BS8 : GPIO_BSRR_BR8;
-//  	MODIFY_REG( GPIOA->CRH, 0x0000000Fu, 0x00000003u );
-// }
 
-// void	HCBoxCool_OutCmd( BOOL NewState )
-// {	//	PA.11
-// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPAEN );
-// 	GPIOA->BSRR = NewState ? GPIO_BSRR_BS11 : GPIO_BSRR_BR11;
-// 	MODIFY_REG( GPIOA->CRH, 0x0000F000u, 0x00003000u );
-// }
-
-// void	HCBoxFan_OutCmd( BOOL NewState )
-// {	//	PC.9, on-off mode
-// 	SET_BIT( RCC->APB2ENR, RCC_APB2ENR_IOPCEN );
-// 	GPIOC->BSRR = NewState ? GPIO_BSRR_BS9 : GPIO_BSRR_BR9;
-// 	MODIFY_REG( GPIOC->CRH, 0x000000F0u, 0x00000030u );
-// }
+/******************************************************************************
+* 函  数  名      : bus_SPIxNSS
+* 描      述      : SPI3的片选线
+*
+* 输      入      : 高低电平
+* 返      回      : 无
+*******************************************************************************/
+void	bus_SPIxNSS( BOOL NewOutLevel )
+{
+	if ( NewOutLevel )
+	{
+		GPIOA->BSRR = ( 1 << 15 );
+	}
+	else
+	{
+		GPIOA->BRR  = ( 1 << 15 );
+	}
+}
 
 void	Speaker_OutCmd( BOOL NewState )
 {
@@ -1185,8 +1132,6 @@ static	void	NVIC_Init( void )
 void	BIOS_Init( void )
 {
 	NVIC_Init();		//	在特权模式下执行低层配置，配置完成后(可选)切换到非特权模式。
-//	GPIO_Init();		//	主要对未用的端口进行配置，让系统更加稳定一些。
-//	TIM1_Init();		//	for HCBox Fan Speed.
 	TIM2_Init();		//	for 100L Motor PWMx1.
 	TIM3_Init();		//	for PWMx4。
 }

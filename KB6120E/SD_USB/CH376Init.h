@@ -1,12 +1,10 @@
-#ifndef __SPI3INIT_H
-#define __SPI3INIT_H
+#ifndef __CHINIT_H
+#define __CHINIT_H
 #include "CH376INC.h"
 
-#define		ERR_USB_UNKNOWN		0xFA      		/* 未知错误,不应该发生的情况,需检查硬件或者程序错误 */
-#define CLI()      __set_PRIMASK(1)				/* 关闭总中断 */
-#define SEI() __set_PRIMASK(0)						/* 开放总中断 */
-
-void   NVI_Init(void);
+#define	ERR_USB_UNKNOWN	0xFA      		/* 未知错误,不应该发生的情况,需检查硬件或者程序错误 */
+#define CLI()	__set_PRIMASK(1)				/* 关闭总中断 */
+#define SEI()	__set_PRIMASK(0)						/* 开放总中断 */
 
 void	INT_IRQ_Enable( void );
 

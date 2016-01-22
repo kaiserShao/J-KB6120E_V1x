@@ -39,7 +39,7 @@ BOOL USB_PrintInit(void)
 	switch( USB_Init() )
 	{
 		case 0:
-			File_Creat();
+			USB_File_Creat();
 			return TRUE;
 		case 1:
 			MsgBox( "Ó²¼þ¹ÊÕÏ !", vbOKOnly );
@@ -54,7 +54,7 @@ BOOL USB_PrintInit(void)
 			SD_Init();
 			return FALSE;
 		case 4:
-			File_Creat();
+			USB_File_Creat();
 			return TRUE;
 		case 5:
 			MsgBox( "Î´Öª¹ÊÕÏ !", vbOKOnly );

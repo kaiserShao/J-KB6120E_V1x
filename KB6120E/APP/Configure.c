@@ -166,7 +166,6 @@ static	void	menu_SetupClock( void )
 			default:
 				break;
 		}
-
 		if( graychanged == true )
 		{
 			DisplaySetGrayVolt( gray * 0.01f );

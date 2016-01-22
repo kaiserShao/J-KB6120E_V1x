@@ -188,9 +188,6 @@ FP32	get_Tr( enum enumPumpSelect PumpSelect )
 static	FP32	fetch_flow( enum enumPumpSelect PumpSelect )
 {
 	FP32	f_org;
-	FP32	Ba, Tr, Pr;
-	FP32	pf;
-
 	//	读取传感器（未归一化、未校准的）流量
 	switch( Configure.PumpType[PumpSelect] )
 	{
@@ -201,12 +198,28 @@ static	FP32	fetch_flow( enum enumPumpSelect PumpSelect )
 		case enumOrifice_1:	//	1L孔板流量计
 		case enumOrifice_2:	//	2L孔板流量计
 			{
-
+				FP32	Ba, Tr, Pr, Te;
+				FP32	pf;
 				Ba = get_Ba();
+				Te = get_Te();
 				Tr = get_Tr( PumpSelect );
 				Pr = get_Pr( PumpSelect );
 				pf = get_pf( PumpSelect );
-				f_org = Calc_fstd( pf, Tr, Pr, Ba );
+				switch ( SamplerSelect )
+				{
+					case PP_TSP:
+						f_org = Calc_fstd( pf, Te, Pr, Ba );
+						break;
+					case PP_R24_A:
+					case PP_R24_B:				
+					case PP_SHI_C:
+					case PP_SHI_D:
+						f_org = Calc_fstd( pf, Tr, Pr, Ba );
+						break;
+					default:
+						f_org = 0.0f;
+						break;
+				}	
 			}
 			break;
 	}

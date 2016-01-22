@@ -7,8 +7,9 @@ extern	void	Keyboard_IRQ_Enable( void );
 extern	void	Keyboard_IRQ_Disable( void );
 
 //	BIOS.C - SPI1x
-extern	uint8_t	bus_SPI1xShift( uint8_t OutByte );
-extern	void	bus_SPI1xPortInit( void );
+extern	uint8_t	bus_SPIxShift( uint8_t OutByte );
+extern	void	bus_SPIxPortInit( void );
+extern  void  bus_SPIxNSS(BOOL NewOutLevel);
 
 //	BIOS.C - I2C
 #define	_SLAVE_24C512	0xA0u

@@ -466,11 +466,6 @@
               <FileType>1</FileType>
               <FilePath>..\SD_USB\SPI_HW.C</FilePath>
             </File>
-            <File>
-              <FileName>SPI1Init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SD_USB\SPI1Init.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

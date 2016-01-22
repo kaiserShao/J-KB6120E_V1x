@@ -20,6 +20,7 @@ uint8_t Byte_OPEN_READ_PATH ( const char * BUF_Name , uint32_t Addr, uint8_t* bu
 uint8_t Byte_OPEN_WRITE_PATH ( const char * BUF_Name ,   uint8_t * Content , uint32_t Addr, uint32_t offset );
 //SD卡初始化
 void SD_Init(void);
+void	SD_File_Creat(void);
 //SD接口
 BOOL ByteLoad( const char * B_Name , uint32_t Addr, uint8_t * bufread, uint32_t offset  );
 BOOL ByteSave( const char * BUF_Name ,  uint8_t * Content , uint32_t Addr,uint32_t offset );
@@ -38,7 +39,7 @@ uint8_t Sec_OPEN_READ_PATH ( const char * BUF_Name , uint32_t Addr, uint8_t* buf
 uint8_t Sec_OPEN_WRITE_PATH ( const char * BUF_Name ,   uint8_t * Content , uint32_t Addr, uint8_t offset );
 //Sec卡初始化
 uint8_t USB_Init(void);
-void File_Creat(void);
+void		USB_File_Creat(void);
 uint8_t USB_CHAK(void);
 //void USBInit_Test(void);
 //USB接口

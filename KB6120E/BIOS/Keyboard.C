@@ -84,11 +84,6 @@ void	Keyboard_IRQ_Server( void )
 
 
 
-
-
-
-
-
 volatile	uint32_t	TimeoutLight = 0u;
 
 void		DisplaySetTimeout( uint8_t setTimeout )

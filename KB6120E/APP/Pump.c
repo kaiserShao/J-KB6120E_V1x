@@ -54,24 +54,17 @@ struct uMotorPID_Set
 	//	hardware access interface.
 	//	fetch_set, outCmd, setOutput
 };
-// struct  uMotorPID_Set const MotorPID_Set[PP_Max] =
-// {	// SetGain   Kp       Ki      Kd
-// 	{ 0.100f, 0.0025f, 0.00015f, 0.0015f },	//	MT_TSP
-// 	{ 0.001f, 0.0200f, 0.025f, 0.0500f },	//	MT_R24_A
-// 	{ 0.001f, 0.0200f, 0.025f, 0.0500f },	//	MT_R24_B
-// 	{ 0.100f, 0.0140f, 0.0150f, 0.0430f },	//	MT_SHI_C
-// 	{ 0.100f, 0.0140f, 0.0150f, 0.0430f },	//	MT_SHI_D
-// };// 	{ 0.100f, 0.0200f, 0.025f, 0.0500f },//
+
 static	FP32	MotorOutValue[PP_Max];
 
 struct  uMotorPID_Set const MotorPID_Set[PP_Max] =
 {
 	// SetGain   Kp       Ki      Kd
-	{ 0.100f, 0.00110f, 0.000105f, 0.00009f },//MT_TSP
-	{ 0.001f, 0.0190f, 0.025f, 0.0100f },	//	MT_R24_A
-	{ 0.001f, 0.0190f, 0.025f, 0.0100f },	//	MT_R24_B
-	{ 0.100f, 0.0140f, 0.0150f, 0.0430f },	//	MT_SHI_C
-	{ 0.100f, 0.0140f, 0.0150f, 0.0430f },	//	MT_SHI_D
+	{ 0.100f, 0.00110f, 0.000105f, 0.00009f },	//	MT_TSP
+	{ 0.001f, 0.0190f, 0.025f, 0.0100f },				//	MT_R24_A
+	{ 0.001f, 0.0190f, 0.025f, 0.0100f },				//	MT_R24_B
+	{ 0.100f, 0.0140f, 0.0150f, 0.0430f },			//	MT_SHI_C
+	{ 0.100f, 0.0140f, 0.0150f, 0.0430f },			//	MT_SHI_D
 };
 
 static	void	MotorPID_Task( enum enumPumpSelect PumpSelect )

@@ -3,7 +3,6 @@
 
 #include "Pin.H"//<reg52.h>
 #include	"ch376inc.h"
-#include  "SPI1Init.h"
 
 #ifndef	__CH376_HAL_H__
 #define __CH376_HAL_H__
