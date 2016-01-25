@@ -988,14 +988,14 @@ void	Speaker_OutCmd( BOOL NewState )
 
 void	beep( void )
 {
-// 	Speaker_OutCmd( TRUE );
+	Speaker_OutCmd( TRUE );
 	delay( 200u );
 	Speaker_OutCmd( FALSE );
 }
 
 void	tick( void )
 {
-// 	Speaker_OutCmd( TRUE );
+	Speaker_OutCmd( TRUE );
 	delay( 20u );
 	Speaker_OutCmd( FALSE );
 }

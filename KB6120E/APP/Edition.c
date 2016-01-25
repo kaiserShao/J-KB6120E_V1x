@@ -153,7 +153,7 @@ void	ConfigureLoadDefault_KB6120E( void )
 	Configure.Mothed_Ba = enumMeasureBa;	//	大气压力获取方式
 	Configure.set_Ba    = 10133u;			//	保存用户输入气压
 
-	Configure.DisplayGray  = 2000u;	//	显示灰度设置
+	Configure.DisplayGray  = 550u;	//	显示灰度设置
 	Configure.DisplayLight = 50u;	//	显示亮度设置
 	Configure.TimeoutLight = 2u;	//	背光延时时间
 
@@ -455,6 +455,7 @@ void	menu_NameConfig( void )
 
 void	ConfigureLoadDefault( void )
 {
+	ConfigureLoadDefault_KB6120E();
 	switch ( Configure.InstrumentType )
 	{
 		case type_KB6120A:
