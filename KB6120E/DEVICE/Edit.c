@@ -175,9 +175,9 @@ BOOL	EditClockDate( uint16_t yx, uClock * pClock )
 								sprintf( sbuffer, "%04u-%02u-%02u", year, month, day_m );
 								Lputs( yx, sbuffer );
 							}
-						else if ( ++month > 12u )
+						else if ( ++day_m > 12u )
 						{
-							month = 1u;
+							day_m = 1u;
 						}
 
 						break;
